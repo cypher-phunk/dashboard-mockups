@@ -1,0 +1,4468 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Activ8 Insights — Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --navy:  #0E1D29;
+    --white: #FFFFFF;
+    --blue:  #35A5CF;
+    --red:   #FF2137;
+    --grey1: #F4F6F8;
+    --grey2: #E2E6EA;
+    --grey3: #8A95A0;
+    --green: #22C55E;
+    --amber: #F59E0B;
+  }
+  body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--grey1);
+    color: var(--navy);
+    line-height: 1.5;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* ── Top Nav (matches Figma exactly) ───────────── */
+  .topnav {
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topnav-logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .topnav-logo span { color: var(--red); }
+  .topnav-links { display: flex; gap: 28px; list-style: none; }
+  .topnav-links a {
+    color: var(--white);
+    font-size: 16px;
+    opacity: .8;
+    transition: opacity .2s;
+    font-weight: 400;
+  }
+  .topnav-links a:hover { opacity: 1; }
+  .topnav-links a.active { color: var(--red); opacity: 1; font-weight: 600; }
+  .topnav-right { display: flex; align-items: center; gap: 24px; }
+  .topnav-user {
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topnav-user svg { opacity: .7; }
+  .btn-cta {
+    background: var(--white);
+    color: var(--navy);
+    border: 1px solid var(--blue);
+    border-radius: 41px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 var(--blue);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 0 0 var(--blue); }
+
+  /* ── Hero ──────────────────────────────────────── */
+  .hero {
+    background: var(--navy);
+    padding: 28px 100px 60px;
+  }
+  .hero h1 {
+    font-size: 46px;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: -1.38px;
+    line-height: 1.1;
+  }
+  .hero-sub { color: var(--grey3); font-size: 15px; margin-top: 8px; }
+
+  /* ── Layout ────────────────────────────────────── */
+  .app-body { display: flex; min-height: calc(100vh - 180px); }
+
+  /* ── Sidebar (matches Figma) ───────────────────── */
+  .sidebar {
+    width: 61px;
+    background: var(--navy);
+    border-radius: 12px;
+    margin: 8px 0 20px 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 76px;
+    align-self: flex-start;
+    z-index: 50;
+  }
+  .sb-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,.45);
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+  }
+  .sb-icon:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); }
+  .sb-icon.active { background: var(--white); color: var(--navy); }
+  .sb-icon svg { width: 20px; height: 20px; }
+  .sb-icon .tip {
+    display: none;
+    position: absolute;
+    left: 52px;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 200;
+  }
+  .sb-icon:hover .tip { display: block; }
+  .sb-collapse {
+    width: 44px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,.35);
+    cursor: pointer;
+  }
+  .sb-collapse svg { width: 18px; height: 18px; }
+  .sb-spacer { flex: 1; }
+  .sb-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    cursor: pointer;
+  }
+  .sb-avatar svg { width: 20px; height: 20px; }
+
+  /* ── Main ──────────────────────────────────────── */
+  .main {
+    flex: 1;
+    padding: 0 32px 40px 24px;
+    max-width: 1360px;
+  }
+  /* Pull home page content up into the hero area */
+  #page-home { margin-top: -40px; }
+  /* Investigators page needs clean top spacing */
+  #page-investigators { margin-top: 8px; }
+  #page-inv-profile { margin-top: 8px; }
+
+  /* ── Summary Cards ─────────────────────────────── */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 3px rgba(14,29,41,.06);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .card:hover { box-shadow: 0 4px 14px rgba(14,29,41,.1); transform: translateY(-2px); }
+  .card-label {
+    font-size: 12px;
+    color: var(--grey3);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+  }
+  .card-value { font-size: 28px; font-weight: 700; letter-spacing: -.5px; }
+  .card-change {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .card-change.up { color: var(--green); }
+  .card-change.down { color: var(--red); }
+  .card-change.neutral { color: var(--grey3); }
+
+  /* ── Card Header ───────────────────────────────── */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 16px; font-weight: 700; }
+  .card-subtitle { font-size: 13px; color: var(--grey3); margin-top: 2px; }
+  .chip-group { display: flex; gap: 6px; }
+  .chip {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--grey2);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--grey3);
+    transition: all .2s;
+  }
+  .chip.active, .chip:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  .chip.red.active, .chip.red:hover { background: var(--red); border-color: var(--red); }
+  .view-all {
+    font-size: 13px;
+    color: var(--blue);
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .view-all:hover { opacity: .7; }
+
+  /* ── Chart ─────────────────────────────────────── */
+  .chart-wrap { position: relative; height: 240px; }
+  .chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+  /* ── Grid layouts ──────────────────────────────── */
+  .grid-main {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .grid-impacts-news {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .grid-impacts-news .news-feed {
+    max-height: 380px;
+    overflow-y: auto;
+  }
+  .impacts-compact th, .impacts-compact td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  /* ── Report Cards (the hero of the home page) ─── */
+  .report-feed { display: flex; flex-direction: column; gap: 0; }
+  .report-item {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--grey1);
+    align-items: flex-start;
+    transition: background .15s;
+    cursor: pointer;
+  }
+  .report-item:last-child { border-bottom: none; }
+  .report-item:hover { background: rgba(53,165,207,.03); }
+  .report-time-col {
+    flex-shrink: 0;
+    width: 60px;
+    text-align: center;
+  }
+  .report-ago {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .report-date { font-size: 11px; color: var(--grey3); margin-top: 2px; }
+  .report-body { flex: 1; }
+  .report-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .report-investigator {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .report-type {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,33,55,.08);
+    color: var(--red);
+  }
+  .report-type.initial { background: rgba(255,33,55,.1); color: var(--red); }
+  .report-type.update { background: rgba(53,165,207,.1); color: var(--blue); }
+  .report-type.response { background: rgba(245,158,11,.1); color: var(--amber); }
+  .report-headline {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .report-target-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+  }
+  .report-ticker {
+    font-weight: 700;
+    color: var(--navy);
+    background: var(--grey1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .report-price { color: var(--grey3); }
+  .report-impact { font-weight: 700; }
+  .report-impact.down { color: var(--red); }
+  .report-impact.up { color: var(--green); }
+  .report-spark {
+    width: 70px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  /* ── Investigator Sidebar ──────────────────────── */
+  .inv-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--grey1);
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .inv-item:last-child { border-bottom: none; }
+  .inv-item:hover { opacity: .8; }
+  .inv-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .inv-info { flex: 1; }
+  .inv-name { font-size: 14px; font-weight: 700; }
+  .inv-sub { font-size: 12px; color: var(--grey3); margin-top: 1px; }
+  .inv-stat {
+    text-align: right;
+    font-size: 12px;
+  }
+  .inv-count { font-weight: 700; font-size: 14px; }
+
+  /* ── Targeted Sectors ──────────────────────────── */
+  .sector-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .sector-bar-item:last-child { margin-bottom: 0; }
+  .sector-label {
+    width: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .sector-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--grey2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .sector-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .6s ease;
+  }
+  .sector-count {
+    width: 40px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ── Stock Impact Table ────────────────────────── */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--grey3);
+    letter-spacing: .5px;
+    font-weight: 600;
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--grey2);
+  }
+  td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--grey1);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  .ticker-cell {
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag.down { background: rgba(255,33,55,.1); color: var(--red); }
+  .tag.up { background: rgba(34,197,94,.12); color: var(--green); }
+  .tag.neutral { background: var(--grey1); color: var(--grey3); }
+  .spark { width: 70px; height: 24px; }
+
+  /* ── Report Volume Chart ───────────────────────── */
+  .stat-highlight {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    background: var(--grey1);
+    border-radius: 10px;
+  }
+  .stat-box-value { font-size: 22px; font-weight: 700; }
+  .stat-box-label { font-size: 11px; color: var(--grey3); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
+
+  /* ── Drilldown report rows ──────────────────────── */
+  .drill-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--grey1);
+    font-size: 13px;
+    animation: fadeSlide .25s ease both;
+  }
+  .drill-row:last-child { border-bottom: none; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .drill-date {
+    width: 50px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--grey3);
+    font-weight: 500;
+  }
+  .drill-inv {
+    width: 150px;
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--blue);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .drill-ticker {
+    font-weight: 700;
+    background: var(--grey1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .drill-headline {
+    flex: 1;
+    font-weight: 500;
+    line-height: 1.3;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .drill-impact {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 70px;
+    text-align: right;
+  }
+  .drill-impact.down { color: var(--green); }
+  .drill-impact.up { color: var(--red); }
+
+  /* Active bar highlight */
+  #monthlyReportsCard .chart-wrap canvas { cursor: pointer; }
+
+  /* ── Watchlist ─────────────────────────────────── */
+  .watchlist-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .wl-stock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--grey1);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .wl-stock:hover { background: var(--grey2); }
+  .wl-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .wl-info { flex: 1; min-width: 0; }
+  .wl-ticker { font-size: 13px; font-weight: 700; }
+  .wl-name { font-size: 11px; color: var(--grey3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wl-right { text-align: right; flex-shrink: 0; }
+  .wl-price { font-size: 13px; font-weight: 600; }
+  .wl-change { font-size: 11px; font-weight: 700; }
+
+  /* ── News Feed ─────────────────────────────────── */
+  .news-feed { display: flex; flex-direction: column; gap: 0; }
+  .news-article {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--grey1);
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .news-article:last-child { border-bottom: none; }
+  .news-article:hover { opacity: .8; }
+  .news-badge {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+  .news-body { flex: 1; min-width: 0; }
+  .news-src { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
+  .news-headline { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .news-meta-row { display: flex; gap: 10px; margin-top: 4px; font-size: 12px; color: var(--grey3); }
+  .news-meta-row .news-tag { font-weight: 600; }
+
+  /* ── Sector avg return annotation ──────────────── */
+  .sector-bar-item .sector-return {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    min-width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── Clickable investigator bars ────────────────── */
+  #invReturnsChart { cursor: pointer !important; }
+
+  /* ── "NEW" badge ───────────────────────────────── */
+  .badge-new {
+    display: inline-block;
+    background: var(--red);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-left: 6px;
+    vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .6; }
+  }
+
+  /* ═══ PAGE SWITCHING ════════════════════════════ */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ═══ INVESTIGATORS PAGE — LIGHT THEME ═════════ */
+  .inv-page {
+    color: var(--navy);
+  }
+
+  /* ── Hero Tiles ─────────────────────────────── */
+  .inv-hero-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .inv-tile {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(14,29,41,.12);
+  }
+  .inv-tile-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--grey3);
+    margin-bottom: 8px;
+  }
+  .inv-tile-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+  .inv-tile-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .inv-tile-return {
+    font-size: 26px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .inv-tile-return.pos { color: var(--green); }
+  .inv-tile-return.neg { color: var(--red); }
+  .inv-tile-meta {
+    font-size: 10px;
+    color: rgba(255,255,255,.4);
+    position: absolute;
+    top: 18px;
+    right: 20px;
+  }
+  .inv-tile-badge {
+    display: inline-block;
+    background: rgba(53,165,207,.2);
+    color: var(--blue);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: .3px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .inv-tile-prev-winner {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: rgba(255,255,255,.5);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+  .inv-tile-prev-winner strong { color: rgba(255,255,255,.85); }
+
+  /* ── Sub-tabs ──────────────────────────────── */
+  .inv-tabs-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+    background: var(--grey2);
+    border-radius: 24px;
+    padding: 4px;
+    width: fit-content;
+  }
+  .inv-tab {
+    background: none;
+    border: none;
+    color: var(--grey3);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  .inv-tab.active {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(53,165,207,.25);
+  }
+  .inv-tab:hover:not(.active) { color: var(--navy); }
+
+  .inv-tab-content { display: none; }
+  .inv-tab-content.active { display: block; }
+
+  /* ── Filters ───────────────────────────────── */
+  .inv-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .inv-select {
+    background: #fff;
+    border: 1px solid var(--grey2);
+    color: var(--navy);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: auto;
+  }
+  .inv-select:focus { outline: 1px solid var(--blue); }
+  .inv-select option { background: #fff; color: var(--navy); }
+
+  /* ── Performance Table ─────────────────────── */
+  .inv-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 28px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+  .inv-perf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .inv-perf-table thead {
+    background: var(--grey1);
+  }
+  .inv-perf-table th {
+    padding: 12px 14px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--grey3);
+    border-bottom: 1px solid var(--grey2);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .inv-perf-table th:hover { color: var(--blue); }
+  .inv-th-name { text-align: left !important; }
+  .inv-th-spark { text-align: center !important; cursor: default !important; }
+  .inv-th-spark:hover { color: var(--grey3) !important; }
+  .inv-perf-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--grey1);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .inv-perf-table tbody tr {
+    transition: background .15s;
+    cursor: pointer;
+  }
+  .inv-perf-table tbody tr:hover {
+    background: rgba(53,165,207,.04);
+  }
+  .inv-td-name {
+    text-align: left !important;
+    font-weight: 700;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .inv-td-pos { color: var(--green); }
+  .inv-td-neg { color: var(--red); }
+  .inv-td-neutral { color: var(--grey3); }
+
+  /* ── Section title ─────────────────────────── */
+  .inv-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+    letter-spacing: .2px;
+  }
+
+  /* ── Monthly Returns chart area ────────────── */
+  .inv-monthly-wrap {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+
+  /* ── Drilldown ─────────────────────────────── */
+  .inv-drilldown {
+    margin-top: 16px;
+    background: var(--grey1);
+    border: 1px solid var(--grey2);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .inv-drilldown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .inv-drilldown-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .inv-drilldown-sub {
+    font-size: 12px;
+    color: var(--grey3);
+    margin-top: 2px;
+  }
+  .inv-drilldown-close {
+    background: var(--grey2);
+    border: none;
+    color: var(--grey3);
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .inv-drilldown-close:hover { background: var(--navy); color: #fff; }
+
+  .inv-drill-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 80px 100px;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--grey2);
+    align-items: center;
+    font-size: 13px;
+    animation: fadeSlide .3s ease both;
+  }
+  .inv-drill-row:last-child { border-bottom: none; }
+  .inv-drill-ticker {
+    font-weight: 700;
+    color: var(--blue);
+    font-size: 13px;
+  }
+  .inv-drill-name { color: var(--grey3); }
+  .inv-drill-return {
+    font-weight: 700;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .inv-drill-bar-wrap {
+    height: 6px;
+    background: var(--grey2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .inv-drill-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .4s ease;
+  }
+
+  /* ── Profile Tab ───────────────────────────── */
+  .inv-profile-selector {
+    margin-bottom: 24px;
+  }
+  .inv-profile-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .inv-profile-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+  .inv-profile-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .inv-profile-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Table row logo */
+  .inv-row-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    margin-right: 10px;
+    vertical-align: middle;
+    overflow: hidden;
+  }
+  .inv-row-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .inv-td-name-wrap {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .inv-profile-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .inv-profile-bio {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--grey3);
+    margin-bottom: 18px;
+  }
+  .inv-profile-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .inv-profile-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .inv-meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--grey3);
+    font-weight: 600;
+  }
+  .inv-meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* ── Fast Facts ────────────────────────────── */
+  .inv-fast-facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .inv-fact-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+  .inv-fact-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .inv-fact-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 2px;
+  }
+  .inv-fact-label {
+    font-size: 11px;
+    color: var(--grey3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+
+  /* ── Report History (profile) ───────────────── */
+  .inv-flag-yes { color: var(--green); font-weight: 700; }
+  .inv-flag-no { color: var(--grey2); }
+
+  /* Example stock sidebar icon highlight */
+  .sb-example-stock { border: 1px dashed rgba(255,255,255,.2); border-radius: 8px; }
+
+  /* ═══ STOCKS PAGE — LIGHT THEME (matches Home) ═ */
+  #page-stock { margin-top: 8px; }
+
+  /* ── Sticky Stock Header ────────────────────── */
+  .stk-header {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 220px 1fr 240px;
+    gap: 20px;
+    align-items: center;
+    color: #fff;
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+  }
+  .stk-company-name {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    line-height: 1.2;
+  }
+  .stk-ticker {
+    font-size: 12px;
+    color: var(--blue);
+    font-weight: 600;
+    margin-top: 4px;
+    letter-spacing: .5px;
+  }
+  .stk-context-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px 16px;
+  }
+  .stk-ctx-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .stk-ctx-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #5a6e7f;
+    font-weight: 600;
+  }
+  .stk-ctx-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #d0d8e0;
+  }
+  .stk-report-status {
+    text-align: right;
+  }
+  .stk-report-date {
+    font-size: 12px;
+    color: #8a95a0;
+  }
+  .stk-report-date strong { color: #d0d8e0; }
+  .stk-report-count {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .stk-risk-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .stk-risk-high { background: rgba(255,33,55,.15); color: #FF2137; }
+  .stk-risk-med { background: rgba(245,158,11,.15); color: #F59E0B; }
+  .stk-return-big {
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Chart + Sidebar layout ────────────────── */
+  .stk-chart-row {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stk-chart-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+  .stk-chart-toggles {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .stk-toggle {
+    background: var(--grey1);
+    border: none;
+    color: var(--grey3);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .stk-toggle.active { background: var(--navy); color: #fff; }
+  .stk-toggle:hover:not(.active) { background: var(--grey2); }
+
+  /* Chart markers */
+  .stk-chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--grey3);
+  }
+  .stk-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  /* ── Right sidebar cards ────────────────────── */
+  .stk-sidebar-stack { display: flex; flex-direction: column; gap: 16px; }
+  .stk-side-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+  .stk-side-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .stk-news-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--grey1);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .stk-news-item:last-child { border-bottom: none; }
+  .stk-news-time {
+    font-size: 10px;
+    color: var(--grey3);
+    white-space: nowrap;
+    min-width: 36px;
+    padding-top: 2px;
+  }
+  .stk-news-hl { font-weight: 600; color: var(--navy); }
+  .stk-news-src { font-size: 10px; color: var(--grey3); margin-top: 2px; }
+
+  .stk-borrow-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--grey1);
+    font-size: 13px;
+  }
+  .stk-borrow-row:last-child { border-bottom: none; }
+  .stk-borrow-yes {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .stk-borrow-no {
+    color: var(--red);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── Peer Shorts Strip ─────────────────────── */
+  .stk-peers {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    margin-bottom: 20px;
+  }
+  .stk-peers-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .stk-peers-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .stk-peer {
+    flex-shrink: 0;
+    background: var(--grey1);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 100px;
+  }
+  .stk-peer-ticker {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .stk-peer-date {
+    font-size: 10px;
+    color: var(--grey3);
+    margin: 2px 0;
+  }
+  .stk-peer-return {
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Section Title (Stocks page) ───────────── */
+  .stk-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .stk-section-sub {
+    font-size: 13px;
+    color: var(--grey3);
+    margin-bottom: 16px;
+  }
+
+  /* ── Diagnostic Cards ──────────────────────── */
+  .stk-diag-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stk-diag-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    position: relative;
+    border-top: 3px solid transparent;
+  }
+  .stk-diag-card.red { border-top-color: var(--red); }
+  .stk-diag-card.green { border-top-color: var(--green); }
+  .stk-diag-card.amber { border-top-color: var(--amber); }
+  .stk-diag-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stk-diag-label .stk-info {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--grey1);
+    color: var(--grey3);
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+  }
+  .stk-diag-score {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stk-diag-status {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .stk-diag-detail {
+    font-size: 11px;
+    color: var(--grey3);
+    line-height: 1.6;
+  }
+  .stk-diag-detail strong { color: var(--navy); font-weight: 600; }
+  .stk-diag-meta {
+    font-size: 10px;
+    color: var(--grey3);
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--grey1);
+  }
+
+  /* ── Governance Panel ──────────────────────── */
+  .stk-gov-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stk-gov-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+  }
+  .stk-gov-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .stk-gov-desc {
+    font-size: 12px;
+    color: var(--grey3);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .stk-gov-stat-row {
+    display: flex;
+    gap: 12px;
+  }
+  .stk-gov-stat {
+    flex: 1;
+    background: var(--grey1);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stk-gov-stat-val {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  .stk-gov-stat-label {
+    font-size: 10px;
+    color: var(--grey3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    margin-top: 2px;
+  }
+  /* Flow bars */
+  .stk-flow-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .stk-flow-label {
+    min-width: 70px;
+    font-weight: 600;
+    color: var(--navy);
+    text-align: right;
+  }
+  .stk-flow-bar-bg {
+    flex: 1;
+    height: 12px;
+    background: var(--grey1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .stk-flow-bar {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .4s ease;
+  }
+  .stk-flow-val {
+    min-width: 60px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+  }
+
+  /* Cluster score gauge */
+  .stk-cluster-gauge {
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--amber) 50%, var(--red) 100%);
+    border-radius: 5px;
+    position: relative;
+    margin: 16px 0 8px;
+  }
+  .stk-cluster-needle {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 18px;
+    background: var(--navy);
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+
+  /* ── Coming Soon & Feedback ────────────────── */
+  .stk-coming-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stk-coming-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    text-align: center;
+    opacity: .5;
+    position: relative;
+  }
+  .stk-coming-lock {
+    font-size: 28px;
+    margin-bottom: 8px;
+    opacity: .4;
+  }
+  .stk-coming-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .stk-coming-badge {
+    display: inline-block;
+    background: var(--grey2);
+    color: var(--grey3);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .stk-feedback {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .stk-feedback-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .stk-feedback-sub {
+    font-size: 13px;
+    color: var(--grey3);
+    margin-bottom: 16px;
+  }
+  .stk-feedback-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .stk-fb-btn {
+    padding: 10px 24px;
+    border-radius: 41px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .stk-fb-primary {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(53,165,207,.3);
+  }
+  .stk-fb-primary:hover { box-shadow: 0 4px 20px rgba(53,165,207,.4); }
+  .stk-fb-secondary {
+    background: var(--grey1);
+    color: var(--navy);
+  }
+  .stk-fb-secondary:hover { background: var(--grey2); }
+
+  /* ═══ INVESTIGATOR PROFILE PAGE ═══════════════════ */
+  #page-inv-profile { margin-top: 8px; }
+  .ip-page { color: var(--navy); }
+
+  /* ── Top row: stat cards + logo ─────────────── */
+  .ip-top-row {
+    display: grid;
+    grid-template-columns: 1fr repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .ip-stat-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ip-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--grey3);
+  }
+  .ip-stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.15;
+  }
+  .ip-stat-sub {
+    font-size: 12px;
+    color: var(--grey3);
+  }
+  .ip-logo-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .ip-logo-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .ip-logo-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* ── Main content grid: charts left, stock list right */
+  .ip-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .ip-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    padding: 20px 24px;
+  }
+  .ip-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .ip-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .ip-card-subtitle {
+    font-size: 12px;
+    color: var(--grey3);
+    margin-top: 2px;
+  }
+
+  /* ── Time-period slicer pills ───────────── */
+  .ip-slicer {
+    display: flex;
+    gap: 4px;
+    background: var(--grey1);
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .ip-slicer-btn {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--grey3);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .ip-slicer-btn:hover { color: var(--navy); }
+  .ip-slicer-btn.active {
+    background: #fff;
+    color: var(--navy);
+    box-shadow: 0 1px 3px rgba(14,29,41,.08);
+  }
+
+  /* ── Stock list table ────────────────────── */
+  .ip-stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .ip-stock-table thead th {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--grey3);
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--grey2);
+    background: var(--grey1);
+  }
+  .ip-stock-table tbody td {
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--grey1);
+    vertical-align: middle;
+    color: var(--navy);
+  }
+  .ip-stock-table tbody tr:hover { background: rgba(53,165,207,.04); }
+  .ip-stock-ticker {
+    font-weight: 700;
+    color: var(--blue);
+    cursor: pointer;
+  }
+  .ip-stock-ticker:hover { text-decoration: underline; }
+  .ip-impact-pos { color: var(--green); font-weight: 700; }
+  .ip-impact-neg { color: var(--red); font-weight: 700; }
+  .ip-tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--grey2);
+    color: var(--grey3);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: help;
+    margin-left: 4px;
+    position: relative;
+  }
+  .ip-tooltip-icon:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* ── Horizontal bar chart wrapper ────────── */
+  .ip-bar-wrap {
+    height: 360px;
+    position: relative;
+  }
+
+  /* ── Pie charts row ─────────────────────── */
+  .ip-pie-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .ip-pie-canvas-wrap {
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── News section ───────────────────────── */
+  .ip-news-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .ip-news-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .ip-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: opacity .15s;
+  }
+  .ip-back-link:hover { opacity: .7; }
+  .ip-inv-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+  .ip-inv-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .ip-inv-meta {
+    font-size: 13px;
+    color: var(--grey3);
+    margin-bottom: 20px;
+  }
+
+  /* ── Scatter plot card (shared by profile + investigators page) ── */
+  .ip-scatter-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .ip-scatter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .ip-scatter-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .ip-scatter-subtitle {
+    font-size: 12px;
+    color: var(--grey3);
+    margin-top: 2px;
+  }
+  .ip-scatter-wrap {
+    height: 340px;
+    position: relative;
+  }
+  .ip-scatter-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--grey3);
+  }
+  .ip-scatter-legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP NAV ═══════════════════════════════════ -->
+<nav class="topnav">
+  <div class="topnav-logo">ACTIV<span>8</span>INSIGHTS</div>
+  <ul class="topnav-links">
+    <li><a href="#">News</a></li>
+    <li><a href="#">Reports</a></li>
+    <li><a href="#">Activist &amp; Researchers</a></li>
+    <li><a href="#" class="active">Dashboard</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Learn</a></li>
+  </ul>
+  <div class="topnav-right">
+    <div class="topnav-user">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
+      Hi, David
+    </div>
+    <button class="btn-cta">Join Newsletter</button>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════ -->
+<div class="hero">
+  <h1>Welcome Back, David!</h1>
+  <p class="hero-sub">Tuesday, Feb 17 2026 &middot; 4 new short reports published today</p>
+</div>
+
+<div class="app-body">
+  <!-- ═══ SIDEBAR ════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sb-collapse">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+    </div>
+    <div class="sb-icon active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="tip">Home</span>
+    </div>
+    <div class="sb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="tip">Investigators</span>
+    </div>
+    <div class="sb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 17V13"/><path d="M12 17V9"/><path d="M17 17V5"/></svg>
+      <span class="tip">Stocks</span>
+    </div>
+    <div class="sb-icon sb-example-stock" onclick="navigateTo('stock')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="tip">Example: CVNA</span>
+    </div>
+    <div class="sb-icon sb-example-stock" onclick="navigateToInvProfile('Muddy Waters')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tip">Example: Muddy Waters</span>
+    </div>
+    <div class="sb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span class="tip">Monthly Reports</span>
+    </div>
+    <div class="sb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+      <span class="tip">Sectors</span>
+    </div>
+    <div class="sb-spacer"></div>
+    <div class="sb-avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ════════════════════════════ -->
+  <main class="main">
+
+  <!-- ────────── PAGE: HOME ────────── -->
+  <div id="page-home" class="page active">
+
+    <!-- ── 1. Summary Cards ───────────────────── -->
+    <div class="summary-row">
+      <div class="card">
+        <div class="card-label">Reports This Week</div>
+        <div class="card-value">12</div>
+        <div class="card-change up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg> +33% vs last week</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Stocks Targeted</div>
+        <div class="card-value">9</div>
+        <div class="card-change neutral">across 5 sectors</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Active Investigators</div>
+        <div class="card-value">6</div>
+        <div class="card-change neutral">published this week</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Avg. Stock Impact</div>
+        <div class="card-value" style="color:var(--red)">-14.2%</div>
+        <div class="card-change down"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg> within 5 trading days</div>
+      </div>
+    </div>
+
+    <!-- ── 2. Biggest Stock Impacts + Latest News (side by side) ── -->
+    <div class="grid-impacts-news">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Biggest Stock Impacts This Week</div>
+            <div class="card-subtitle">Price change since report publication</div>
+          </div>
+          <div class="chip-group">
+            <button class="chip active" onclick="setChip(this)">This Week</button>
+            <button class="chip" onclick="setChip(this)">This Month</button>
+            <button class="chip" onclick="setChip(this)">90 Days</button>
+          </div>
+        </div>
+        <table class="impacts-compact">
+          <thead><tr><th>Ticker</th><th>Company</th><th>Investigator</th><th>Impact</th><th style="text-align:right">Trend</th></tr></thead>
+          <tbody>
+            <tr><td class="ticker-cell">MDBV</td><td>MediBravo Inc.</td><td style="color:var(--blue);font-weight:600;font-size:13px">Grizzly Research</td><td><span class="tag down">-22.3%</span></td><td style="text-align:right"><canvas class="spark" data-values="59,56,53,50,48,47,46"></canvas></td></tr>
+            <tr><td class="ticker-cell">AIML</td><td>AiMill Corp.</td><td style="color:var(--blue);font-weight:600;font-size:13px">Kerrisdale Capital</td><td><span class="tag down">-18.7%</span></td><td style="text-align:right"><canvas class="spark" data-values="150,145,140,135,130,125,122"></canvas></td></tr>
+            <tr><td class="ticker-cell">SOLR</td><td>SolarEdge Alt.</td><td style="color:var(--blue);font-weight:600;font-size:13px">Muddy Waters</td><td><span class="tag down">-12.1%</span></td><td style="text-align:right"><canvas class="spark" data-values="36,35,34,33,32,32,31"></canvas></td></tr>
+            <tr><td class="ticker-cell">ACME</td><td>Acme Holdings</td><td style="color:var(--blue);font-weight:600;font-size:13px">Hindenburg Research</td><td><span class="tag down">-8.4%</span></td><td style="text-align:right"><canvas class="spark" data-values="92,91,89,88,86,85,84"></canvas></td></tr>
+            <tr><td class="ticker-cell">VNDR</td><td>Vendor Global</td><td style="color:var(--blue);font-weight:600;font-size:13px">Citron Research</td><td><span class="tag down">-4.6%</span></td><td style="text-align:right"><canvas class="spark" data-values="19,18.8,18.5,18.2,18,17.9,17.8"></canvas></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Latest News (moved up alongside impacts) -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Latest News</div><div class="card-subtitle">Activist short selling coverage</div></div>
+          <span class="view-all">All News &rarr;</span>
+        </div>
+        <div class="news-feed">
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--red)">A8</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--red)">Activ8 Insights</div>
+              <div class="news-headline">Hindenburg's ACME Report: Our Initial Analysis and Key Takeaways</div>
+              <div class="news-meta-row"><span>2h ago</span><span class="news-tag" style="color:var(--blue)">ACME</span><span class="news-tag" style="color:var(--blue)">Hindenburg</span></div>
+            </div>
+          </div>
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--red)">A8</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--red)">Activ8 Insights</div>
+              <div class="news-headline">Weekly Short Report Roundup: Feb 10–17 Saw Highest Volume in 6 Months</div>
+              <div class="news-meta-row"><span>5h ago</span><span class="news-tag" style="color:var(--blue)">Weekly Recap</span></div>
+            </div>
+          </div>
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--navy)">BBG</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--grey3)">Bloomberg</div>
+              <div class="news-headline">Activist Short Sellers Had Their Best Quarter Since 2020, Data Shows</div>
+              <div class="news-meta-row"><span>8h ago</span><span class="news-tag" style="color:var(--blue)">Industry</span></div>
+            </div>
+          </div>
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--blue)">FT</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--grey3)">Financial Times</div>
+              <div class="news-headline">Muddy Waters' Carson Block on Why AI Stocks Are the Next Big Short Target</div>
+              <div class="news-meta-row"><span>12h ago</span><span class="news-tag" style="color:var(--blue)">Muddy Waters</span><span class="news-tag" style="color:var(--blue)">AI Sector</span></div>
+            </div>
+          </div>
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--red)">A8</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--red)">Activ8 Insights</div>
+              <div class="news-headline">Investigator Spotlight: Grizzly Research's Track Record on Healthcare Shorts</div>
+              <div class="news-meta-row"><span>1d ago</span><span class="news-tag" style="color:var(--blue)">Grizzly</span><span class="news-tag" style="color:var(--blue)">Healthcare</span></div>
+            </div>
+          </div>
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--amber)">WSJ</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--grey3)">Wall Street Journal</div>
+              <div class="news-headline">SEC Weighs New Disclosure Rules for Short Selling Positions</div>
+              <div class="news-meta-row"><span>1d ago</span><span class="news-tag" style="color:var(--blue)">Regulation</span></div>
+            </div>
+          </div>
+          <div class="news-article">
+            <div class="news-badge" style="background:var(--navy)">BBG</div>
+            <div class="news-body">
+              <div class="news-src" style="color:var(--grey3)">Bloomberg</div>
+              <div class="news-headline">AIML Shares Halted After Kerrisdale Capital Report Triggers Circuit Breaker</div>
+              <div class="news-meta-row"><span>2d ago</span><span class="news-tag" style="color:var(--blue)">AIML</span><span class="news-tag" style="color:var(--blue)">Kerrisdale</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. Activ8 Watchlist ────────────────── -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Activ8 Watchlist <span class="badge-new" style="background:var(--blue);animation:none">Curated</span></div>
+          <div class="card-subtitle">8 stocks selected by our team based on recent activist activity</div>
+        </div>
+        <span class="view-all">Manage Watchlist &rarr;</span>
+      </div>
+      <div class="watchlist-grid">
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--red)"></div>
+          <div class="wl-info"><div class="wl-ticker">ACME</div><div class="wl-name">Acme Holdings</div></div>
+          <div class="wl-right"><div class="wl-price">$84.20</div><div class="wl-change" style="color:var(--red)">-8.4%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--red)"></div>
+          <div class="wl-info"><div class="wl-ticker">SOLR</div><div class="wl-name">SolarEdge Alt.</div></div>
+          <div class="wl-right"><div class="wl-price">$31.50</div><div class="wl-change" style="color:var(--red)">-12.1%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--red)"></div>
+          <div class="wl-info"><div class="wl-ticker">AIML</div><div class="wl-name">AiMill Corp.</div></div>
+          <div class="wl-right"><div class="wl-price">$122.40</div><div class="wl-change" style="color:var(--red)">-18.7%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--red)"></div>
+          <div class="wl-info"><div class="wl-ticker">MDBV</div><div class="wl-name">MediBravo Inc.</div></div>
+          <div class="wl-right"><div class="wl-price">$46.10</div><div class="wl-change" style="color:var(--red)">-22.3%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--amber)"></div>
+          <div class="wl-info"><div class="wl-ticker">VNDR</div><div class="wl-name">Vendor Global</div></div>
+          <div class="wl-right"><div class="wl-price">$17.82</div><div class="wl-change" style="color:var(--red)">-4.6%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--amber)"></div>
+          <div class="wl-info"><div class="wl-ticker">DKNG</div><div class="wl-name">DraftKings</div></div>
+          <div class="wl-right"><div class="wl-price">$38.42</div><div class="wl-change" style="color:var(--red)">-5.1%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--green)"></div>
+          <div class="wl-info"><div class="wl-ticker">SMCI</div><div class="wl-name">Super Micro</div></div>
+          <div class="wl-right"><div class="wl-price">$42.80</div><div class="wl-change" style="color:var(--green)">+3.2%</div></div>
+        </div>
+        <div class="wl-stock">
+          <div class="wl-dot" style="background:var(--green)"></div>
+          <div class="wl-info"><div class="wl-ticker">WOLF</div><div class="wl-name">Wolfspeed</div></div>
+          <div class="wl-right"><div class="wl-price">$11.24</div><div class="wl-change" style="color:var(--green)">+1.8%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. Recent Reports + Investigators ─── -->
+    <div class="grid-main">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Recent Short Reports <span class="badge-new">Live</span></div>
+            <div class="card-subtitle">Latest activist short selling reports</div>
+          </div>
+          <div class="chip-group">
+            <button class="chip active red" onclick="filterReports('all',this)">All</button>
+            <button class="chip" onclick="filterReports('initial',this)">Initial</button>
+            <button class="chip" onclick="filterReports('update',this)">Updates</button>
+          </div>
+        </div>
+        <div class="report-feed">
+          <div class="report-item"><div class="report-time-col"><div class="report-ago">2h ago</div><div class="report-date">Feb 17</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Hindenburg Research</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Allegations of Inflated Revenue Through Related-Party Transactions</div><div class="report-target-row"><span class="report-ticker">ACME</span><span class="report-price">$84.20</span><span class="report-impact down">-8.4% today</span><canvas class="report-spark" data-values="92,91,89,88,86,85,84" data-color="down"></canvas></div></div></div>
+          <div class="report-item"><div class="report-time-col"><div class="report-ago">5h ago</div><div class="report-date">Feb 17</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Muddy Waters</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Questionable Accounting Practices and Overstated Backlog</div><div class="report-target-row"><span class="report-ticker">SOLR</span><span class="report-price">$31.50</span><span class="report-impact down">-12.1% today</span><canvas class="report-spark" data-values="36,35,34,33,32,32,31" data-color="down"></canvas></div></div></div>
+          <div class="report-item"><div class="report-time-col"><div class="report-ago">1d ago</div><div class="report-date">Feb 16</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Citron Research</span><span class="report-type update">Update</span></div><div class="report-headline">Follow-Up: Management Response Fails to Address Core Claims</div><div class="report-target-row"><span class="report-ticker">VNDR</span><span class="report-price">$17.82</span><span class="report-impact down">-4.6% since report</span><canvas class="report-spark" data-values="19,18.8,18.5,18.2,18,17.9,17.8" data-color="down"></canvas></div></div></div>
+          <div class="report-item"><div class="report-time-col"><div class="report-ago">2d ago</div><div class="report-date">Feb 15</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Kerrisdale Capital</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Overvalued AI Play With Minimal Proprietary Technology</div><div class="report-target-row"><span class="report-ticker">AIML</span><span class="report-price">$122.40</span><span class="report-impact down">-18.7% since report</span><canvas class="report-spark" data-values="150,145,140,135,130,125,122" data-color="down"></canvas></div></div></div>
+          <div class="report-item"><div class="report-time-col"><div class="report-ago">3d ago</div><div class="report-date">Feb 14</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Grizzly Research</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Undisclosed Insider Selling and Channel-Stuffing Evidence</div><div class="report-target-row"><span class="report-ticker">MDBV</span><span class="report-price">$46.10</span><span class="report-impact down">-22.3% since report</span><canvas class="report-spark" data-values="59,56,53,50,48,47,46" data-color="down"></canvas></div></div></div>
+        </div>
+        <div style="text-align:center;padding-top:16px"><span class="view-all">View All Reports &rarr;</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Active Investigators</div><span class="view-all">All &rarr;</span></div>
+        <div class="inv-item"><div class="inv-avatar" style="background:#FF2137">H</div><div class="inv-info"><div class="inv-name">Hindenburg Research</div><div class="inv-sub">Last report: 2h ago</div></div><div class="inv-stat"><div class="inv-count">3</div><div style="font-size:11px;color:var(--grey3)">this month</div></div></div>
+        <div class="inv-item"><div class="inv-avatar" style="background:#35A5CF">M</div><div class="inv-info"><div class="inv-name">Muddy Waters</div><div class="inv-sub">Last report: 5h ago</div></div><div class="inv-stat"><div class="inv-count">2</div><div style="font-size:11px;color:var(--grey3)">this month</div></div></div>
+        <div class="inv-item"><div class="inv-avatar" style="background:#F59E0B">C</div><div class="inv-info"><div class="inv-name">Citron Research</div><div class="inv-sub">Last report: 1d ago</div></div><div class="inv-stat"><div class="inv-count">2</div><div style="font-size:11px;color:var(--grey3)">this month</div></div></div>
+        <div class="inv-item"><div class="inv-avatar" style="background:#0E1D29">K</div><div class="inv-info"><div class="inv-name">Kerrisdale Capital</div><div class="inv-sub">Last report: 2d ago</div></div><div class="inv-stat"><div class="inv-count">1</div><div style="font-size:11px;color:var(--grey3)">this month</div></div></div>
+        <div class="inv-item"><div class="inv-avatar" style="background:#22C55E">G</div><div class="inv-info"><div class="inv-name">Grizzly Research</div><div class="inv-sub">Last report: 3d ago</div></div><div class="inv-stat"><div class="inv-count">2</div><div style="font-size:11px;color:var(--grey3)">this month</div></div></div>
+        <div class="inv-item"><div class="inv-avatar" style="background:var(--grey3)">S</div><div class="inv-info"><div class="inv-name">Spruce Point Capital</div><div class="inv-sub">Last report: 5d ago</div></div><div class="inv-stat"><div class="inv-count">2</div><div style="font-size:11px;color:var(--grey3)">this month</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── 5. Reports by Month + Sectors (with avg return) ── -->
+    <div class="grid-2">
+      <div class="card" id="monthlyReportsCard">
+        <div class="card-header">
+          <div><div class="card-title">Reports by Month</div><div class="card-subtitle">Click a month to view individual reports</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <label for="yearSelect" style="font-size:12px;font-weight:600;color:var(--grey3);text-transform:uppercase;letter-spacing:.4px">Year</label>
+            <select id="yearSelect" onchange="switchYear(this.value)" style="appearance:none;-webkit-appearance:none;background:var(--navy);color:var(--white);border:none;border-radius:8px;padding:7px 32px 7px 14px;font-size:14px;font-weight:700;cursor:pointer;outline:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:12px"></select>
+          </div>
+        </div>
+        <div style="height:220px;position:relative;cursor:pointer"><canvas id="monthlyChart"></canvas></div>
+        <div id="monthDrilldown" style="display:none">
+          <div id="drilldownHeader" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px;border-top:1px solid var(--grey2);margin-top:16px">
+            <div style="display:flex;align-items:center;gap:10px"><div id="drilldownTitle" style="font-size:15px;font-weight:700"></div><div id="drilldownCount" class="tag" style="background:var(--navy);color:var(--white);font-size:11px"></div></div>
+            <button onclick="closeDrilldown()" style="background:none;border:1px solid var(--grey2);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--grey3);transition:all .15s" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--grey2)';this.style.color='var(--grey3)'">Close &times;</button>
+          </div>
+          <div id="drilldownBody" style="max-height:360px;overflow-y:auto"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Most Targeted Sectors</div><div class="card-subtitle">Report count &amp; avg. return</div></div>
+        </div>
+        <div style="height:180px;margin-bottom:20px"><canvas id="sectorChart"></canvas></div>
+        <div>
+          <div class="sector-bar-item"><div class="sector-label">Technology</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:72%;background:var(--blue)"></div></div><div class="sector-count">18</div><div class="sector-return">+19.4%</div></div>
+          <div class="sector-bar-item"><div class="sector-label">Healthcare</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:48%;background:var(--red)"></div></div><div class="sector-count">12</div><div class="sector-return">+24.1%</div></div>
+          <div class="sector-bar-item"><div class="sector-label">Consumer</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:32%;background:var(--amber)"></div></div><div class="sector-count">8</div><div class="sector-return">+15.7%</div></div>
+          <div class="sector-bar-item"><div class="sector-label">Financials</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:20%;background:var(--navy)"></div></div><div class="sector-count">5</div><div class="sector-return">+12.3%</div></div>
+          <div class="sector-bar-item"><div class="sector-label">Energy</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:16%;background:var(--green)"></div></div><div class="sector-count">4</div><div class="sector-return">+21.8%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 6. Investigator Avg. Returns (full width) ── -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div><div class="card-title">Investigator Avg. Returns</div><div class="card-subtitle">Click an investigator to view their profile</div></div>
+        <div class="chip-group">
+          <button class="chip" onclick="setChip(this)">30D</button>
+          <button class="chip active" onclick="setChip(this)">90D</button>
+          <button class="chip" onclick="setChip(this)">1Y</button>
+          <button class="chip" onclick="setChip(this)">All Time</button>
+        </div>
+      </div>
+      <div style="height:340px"><canvas id="invReturnsChart"></canvas></div>
+    </div>
+
+  </div><!-- /page-home -->
+
+  <!-- ────────── PAGE: INVESTIGATORS ────────── -->
+  <div id="page-investigators" class="page">
+    <div class="inv-page">
+
+      <!-- ── TOP HEADER: 3 Leader Tiles ── -->
+      <div class="inv-hero-row">
+        <div class="inv-tile">
+          <div class="inv-tile-label">Latest Report</div>
+          <div class="inv-tile-name">Culper Research</div>
+          <div class="inv-tile-bottom">
+            <span class="inv-tile-return neg">-2.0%</span>
+            <canvas class="inv-tile-spark" data-inv-spark="40,38,36,35,37,39,38" width="80" height="28"></canvas>
+          </div>
+          <div class="inv-tile-meta">Refreshed as of 02/17/2026</div>
+        </div>
+        <div class="inv-tile">
+          <div class="inv-tile-label">2026 Leader</div>
+          <div class="inv-tile-name">Fugazi Research</div>
+          <div class="inv-tile-bottom">
+            <span class="inv-tile-return pos">+35.0%</span>
+            <canvas class="inv-tile-spark" data-inv-spark="10,18,22,28,30,33,35" width="80" height="28"></canvas>
+          </div>
+          <div class="inv-tile-meta">Refreshed as of 02/17/2026</div>
+        </div>
+        <div class="inv-tile">
+          <div class="inv-tile-label">Short King of the Month <span class="inv-tile-badge">Feb 2026</span></div>
+          <div class="inv-tile-name">White Diamond Research</div>
+          <div class="inv-tile-bottom">
+            <span class="inv-tile-return pos">+26.0%</span>
+            <canvas class="inv-tile-spark" data-inv-spark="5,10,14,18,20,24,26" width="80" height="28"></canvas>
+          </div>
+          <div class="inv-tile-prev-winner">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            <span>Jan 2026: <strong>Fugazi Research</strong> +35.0%</span>
+          </div>
+          <div class="inv-tile-meta">Refreshed as of 02/17/2026</div>
+        </div>
+      </div>
+
+      <!-- ── Sub-tabs: Overview | Profile ── -->
+      <div class="inv-tabs-bar">
+        <button class="inv-tab active" onclick="switchInvTab('overview')">Overview</button>
+        <button class="inv-tab" onclick="switchInvTab('profile')">Profile</button>
+      </div>
+
+      <!-- ═══ OVERVIEW TAB ══════════════════════════ -->
+      <div id="inv-tab-overview" class="inv-tab-content active">
+
+        <!-- Filters -->
+        <div class="inv-filters">
+          <select class="inv-select" id="invFilterType">
+            <option value="all">All Types</option>
+            <option value="researcher">Researchers</option>
+            <option value="activist">Activists</option>
+          </select>
+          <select class="inv-select" id="invFilterSector">
+            <option value="all">All Sectors</option>
+            <option>Technology</option>
+            <option>Healthcare</option>
+            <option>Consumer</option>
+            <option>Financials</option>
+            <option>Energy</option>
+          </select>
+          <select class="inv-select" id="invFilterCountry">
+            <option value="all">All Countries</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>Hong Kong</option>
+            <option>Australia</option>
+          </select>
+          <select class="inv-select" id="invSortBy" onchange="sortInvTable(this.value)">
+            <option value="12m">Sort by: 12M Return</option>
+            <option value="6m">Sort by: 6M Return</option>
+            <option value="3m">Sort by: 3M Return</option>
+            <option value="1m">Sort by: 1M Return</option>
+            <option value="1d">Sort by: 1D Return</option>
+          </select>
+        </div>
+
+        <!-- Scatter Plot: Investigator Rankings -->
+        <div class="ip-scatter-card" style="margin-bottom:20px">
+          <div class="ip-scatter-header">
+            <div>
+              <div class="ip-scatter-title">Investigator Rankings</div>
+              <div class="ip-scatter-subtitle">Avg. report impact vs. total reports — larger dots = higher win rate. Click a dot to view profile.</div>
+            </div>
+            <div class="ip-slicer" id="invScatterSlicer">
+              <button class="ip-slicer-btn active" onclick="setInvScatterPeriod(this,'d1')">24 Hrs</button>
+              <button class="ip-slicer-btn" onclick="setInvScatterPeriod(this,'w1')">1 Week</button>
+              <button class="ip-slicer-btn" onclick="setInvScatterPeriod(this,'m1')">1 Month</button>
+              <button class="ip-slicer-btn" onclick="setInvScatterPeriod(this,'all')">Since Report</button>
+            </div>
+          </div>
+          <div class="ip-scatter-wrap">
+            <canvas id="invOverviewScatter"></canvas>
+          </div>
+          <div class="ip-scatter-legend">
+            <span><span class="ip-scatter-legend-dot" style="background:var(--red)"></span> Negative Impact (stock declined)</span>
+            <span><span class="ip-scatter-legend-dot" style="background:var(--green)"></span> Positive Impact (stock rose)</span>
+            <span style="margin-left:auto">Dot size = Win Rate</span>
+          </div>
+        </div>
+
+        <!-- Performance Table -->
+        <div class="inv-table-wrap">
+          <table class="inv-perf-table" id="invPerfTable">
+            <thead>
+              <tr>
+                <th class="inv-th-name">Researcher</th>
+                <th class="inv-th-num" onclick="sortInvTable('1d')">1D</th>
+                <th class="inv-th-num" onclick="sortInvTable('1m')">1M</th>
+                <th class="inv-th-num" onclick="sortInvTable('3m')">3M</th>
+                <th class="inv-th-num" onclick="sortInvTable('6m')">6M</th>
+                <th class="inv-th-num" onclick="sortInvTable('12m')">12M</th>
+                <th class="inv-th-spark">Trend</th>
+              </tr>
+            </thead>
+            <tbody id="invPerfBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Monthly Report Returns Chart -->
+        <div class="inv-section-title">Monthly Report Returns</div>
+        <div class="inv-monthly-wrap">
+          <div style="height:420px"><canvas id="invMonthlyReturnsChart"></canvas></div>
+          <div id="invMonthDrilldown" class="inv-drilldown" style="display:none">
+            <div class="inv-drilldown-header">
+              <div>
+                <div class="inv-drilldown-title" id="invDrillTitle">September 2025</div>
+                <div class="inv-drilldown-sub" id="invDrillSub">4 reports</div>
+              </div>
+              <button class="inv-drilldown-close" onclick="closeInvDrilldown()">&times;</button>
+            </div>
+            <div id="invDrillBody"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ PROFILE TAB ═══════════════════════════ -->
+      <div id="inv-tab-profile" class="inv-tab-content">
+
+        <!-- Profile selector -->
+        <div class="inv-profile-selector">
+          <select class="inv-select" id="profileSelect" onchange="loadProfile(this.value)" style="min-width:260px">
+            <option value="0">Hindenburg Research</option>
+            <option value="1">Grizzly Research</option>
+            <option value="2">Muddy Waters</option>
+            <option value="3">Kerrisdale Capital</option>
+            <option value="4">Citron Research</option>
+            <option value="5">Spruce Point Capital</option>
+            <option value="6">Iceberg Research</option>
+            <option value="7">Blue Orca Capital</option>
+            <option value="8">Viceroy Research</option>
+            <option value="9">Bonitas Research</option>
+            <option value="10">White Diamond Research</option>
+            <option value="11">Culper Research</option>
+            <option value="12">Fuzzy Panda Research</option>
+            <option value="13">J Capital Research</option>
+            <option value="14">Wolfpack Research</option>
+          </select>
+        </div>
+
+        <!-- SECTION 1 & 2: Overview + Fast Facts -->
+        <div class="inv-profile-top">
+          <!-- Researcher Overview Card -->
+          <div class="inv-profile-card">
+            <div class="inv-profile-logo" id="profileLogo">H</div>
+            <div class="inv-profile-name" id="profileName">Hindenburg Research</div>
+            <p class="inv-profile-bio" id="profileBio">Founded by Nathan Anderson, Hindenburg Research is one of the most prominent activist short sellers in the world. Known for forensic-style investigations into accounting fraud, undisclosed related-party transactions, and regulatory violations. Based in New York, their reports have led to billions in market cap destruction and multiple SEC investigations.</p>
+            <div class="inv-profile-meta-grid">
+              <div class="inv-profile-meta-item"><span class="inv-meta-label">Founded</span><span class="inv-meta-value" id="profileFounded">2017</span></div>
+              <div class="inv-profile-meta-item"><span class="inv-meta-label">Location</span><span class="inv-meta-value" id="profileLocation">New York, USA</span></div>
+              <div class="inv-profile-meta-item"><span class="inv-meta-label">Style</span><span class="inv-meta-value" id="profileStyle">Forensic Activist</span></div>
+              <div class="inv-profile-meta-item"><span class="inv-meta-label">Website</span><span class="inv-meta-value" id="profileWebsite">hindenburgresearch.com</span></div>
+            </div>
+          </div>
+
+          <!-- Fast Facts Tiles -->
+          <div class="inv-fast-facts">
+            <div class="inv-fact-card">
+              <div class="inv-fact-icon" style="background:rgba(34,197,94,.12);color:var(--green)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+              </div>
+              <div class="inv-fact-value" id="factWinRatio">72%</div>
+              <div class="inv-fact-label">Win Ratio</div>
+            </div>
+            <div class="inv-fact-card">
+              <div class="inv-fact-icon" style="background:rgba(34,197,94,.12);color:var(--green)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </div>
+              <div class="inv-fact-value" id="factHighest" style="color:var(--green)">+94%</div>
+              <div class="inv-fact-label">Highest Winner</div>
+            </div>
+            <div class="inv-fact-card">
+              <div class="inv-fact-icon" style="background:rgba(255,33,55,.12);color:var(--red)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+              </div>
+              <div class="inv-fact-value" id="factLowest" style="color:var(--red)">-38%</div>
+              <div class="inv-fact-label">Lowest Loser</div>
+            </div>
+            <div class="inv-fact-card">
+              <div class="inv-fact-icon" style="background:rgba(53,165,207,.12);color:var(--blue)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div class="inv-fact-value" id="factReports">42</div>
+              <div class="inv-fact-label"># of Reports</div>
+            </div>
+            <div class="inv-fact-card">
+              <div class="inv-fact-icon" style="background:rgba(255,33,55,.12);color:var(--red)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <div class="inv-fact-value" id="factDelisted">6</div>
+              <div class="inv-fact-label"># Delisted</div>
+            </div>
+            <div class="inv-fact-card">
+              <div class="inv-fact-icon" style="background:rgba(53,165,207,.12);color:var(--blue)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="inv-fact-value" id="factFrequency">~3/mo</div>
+              <div class="inv-fact-label">Report Frequency</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: Report History Table -->
+        <div class="inv-section-title" style="margin-top:28px">Report History</div>
+        <div class="inv-table-wrap">
+          <table class="inv-perf-table" id="profileHistoryTable">
+            <thead>
+              <tr>
+                <th class="inv-th-name">Ticker</th>
+                <th class="inv-th-num">Report Date</th>
+                <th class="inv-th-num">All-Time Return</th>
+                <th style="min-width:200px">Impact</th>
+                <th class="inv-th-num">Avg Return</th>
+              </tr>
+            </thead>
+            <tbody id="profileHistoryBody"></tbody>
+          </table>
+        </div>
+
+      </div><!-- /inv-tab-profile -->
+
+    </div>
+  </div><!-- /page-investigators -->
+
+  <!-- ────────── PAGE: STOCK (Example: CVNA) ────────── -->
+  <div id="page-stock" class="page">
+
+    <!-- ═══ STICKY STOCK HEADER ═══════════════════ -->
+    <div class="stk-header">
+      <div>
+        <div class="stk-company-name">Carvana Co.</div>
+        <div class="stk-ticker">NYSE: CVNA</div>
+      </div>
+      <div class="stk-context-grid">
+        <div class="stk-ctx-item"><span class="stk-ctx-label">Sector</span><span class="stk-ctx-value">Consumer Disc.</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">Industry</span><span class="stk-ctx-value">Auto Retail</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">CEO</span><span class="stk-ctx-value">Ernest Garcia III</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">Auditor</span><span class="stk-ctx-value">Grant Thornton</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">Headquarters</span><span class="stk-ctx-value">Tempe, AZ</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">Market Cap</span><span class="stk-ctx-value">$42.8B</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">Current Price</span><span class="stk-ctx-value" style="color:#fff;font-weight:700">$198.42</span></div>
+        <div class="stk-ctx-item"><span class="stk-ctx-label">52W Range</span><span class="stk-ctx-value">$32.10 – $284.50</span></div>
+      </div>
+      <div class="stk-report-status">
+        <div class="stk-report-date">Last Report: <strong>Jan 3, 2026</strong></div>
+        <div class="stk-report-date" style="color:#5a6e7f">46 days ago</div>
+        <div class="stk-report-count" style="margin-top:6px">
+          Total Reports: <strong>4</strong> &nbsp;<span class="stk-risk-badge stk-risk-high">High Risk</span>
+        </div>
+        <div class="stk-return-big" style="color:#22C55E">+18.4%</div>
+      </div>
+    </div>
+
+    <!-- ═══ CHART + SIDEBAR ══════════════════════ -->
+    <div class="stk-chart-row">
+      <div class="stk-chart-card">
+        <div class="stk-chart-toggles">
+          <button class="stk-toggle" onclick="setStockRange(this,'1d')">1D</button>
+          <button class="stk-toggle" onclick="setStockRange(this,'5d')">5D</button>
+          <button class="stk-toggle" onclick="setStockRange(this,'1m')">1M</button>
+          <button class="stk-toggle" onclick="setStockRange(this,'6m')">6M</button>
+          <button class="stk-toggle active" onclick="setStockRange(this,'ytd')">YTD</button>
+          <button class="stk-toggle" onclick="setStockRange(this,'1y')">1Y</button>
+          <button class="stk-toggle" onclick="setStockRange(this,'all')">All</button>
+        </div>
+        <div style="height:320px"><canvas id="stockPriceChart"></canvas></div>
+        <div class="stk-chart-legend">
+          <span><span class="stk-legend-dot" style="background:var(--red)"></span> Short Report Published</span>
+          <span><span class="stk-legend-dot" style="background:var(--amber)"></span> Earnings</span>
+          <span><span class="stk-legend-dot" style="background:var(--blue)"></span> Key Event</span>
+        </div>
+      </div>
+
+      <!-- Right Sidebar -->
+      <div class="stk-sidebar-stack">
+        <div class="stk-side-card">
+          <div class="stk-side-title">Latest News</div>
+          <div class="stk-news-item"><div class="stk-news-time">2h</div><div><div class="stk-news-hl">Hindenburg Alleges Related-Party Transactions Inflate CVNA Revenue</div><div class="stk-news-src">Activ8 Insights</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">5h</div><div><div class="stk-news-hl">CVNA Q4 Earnings Beat Estimates But Guidance Disappoints</div><div class="stk-news-src">Bloomberg</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">1d</div><div><div class="stk-news-hl">Used Car Market Softens as Credit Standards Tighten</div><div class="stk-news-src">Wall Street Journal</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">2d</div><div><div class="stk-news-hl">Analyst Downgrades CVNA Citing Valuation Stretch</div><div class="stk-news-src">Financial Times</div></div></div>
+        </div>
+        <div class="stk-side-card">
+          <div class="stk-side-title">Ability to Borrow</div>
+          <div class="stk-borrow-row"><span>Robinhood</span><span class="stk-borrow-yes">Available</span></div>
+          <div class="stk-borrow-row"><span>Fidelity</span><span class="stk-borrow-yes">Available</span></div>
+          <div class="stk-borrow-row"><span>Charles Schwab</span><span class="stk-borrow-no">Unavailable</span></div>
+          <div class="stk-borrow-row"><span>Webull</span><span class="stk-borrow-yes">Available</span></div>
+          <div class="stk-borrow-row"><span>Interactive Brokers</span><span class="stk-borrow-yes">Available</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PEER SHORTS STRIP ════════════════════ -->
+    <div class="stk-peers">
+      <div class="stk-peers-title">Other Consumer Discretionary Shorts</div>
+      <div class="stk-peers-strip">
+        <div class="stk-peer"><div class="stk-peer-ticker">DKNG</div><div class="stk-peer-date">Feb 2, 2026</div><div class="stk-peer-return" style="color:var(--green)">+14.2%</div></div>
+        <div class="stk-peer"><div class="stk-peer-ticker">WISH</div><div class="stk-peer-date">Aug 22, 2024</div><div class="stk-peer-return" style="color:var(--green)">+88.7%</div></div>
+        <div class="stk-peer"><div class="stk-peer-ticker">BYND</div><div class="stk-peer-date">Nov 5, 2023</div><div class="stk-peer-return" style="color:var(--green)">+58.4%</div></div>
+        <div class="stk-peer"><div class="stk-peer-ticker">HOOD</div><div class="stk-peer-date">Feb 8, 2026</div><div class="stk-peer-return" style="color:var(--green)">+16.3%</div></div>
+        <div class="stk-peer"><div class="stk-peer-ticker">CELH</div><div class="stk-peer-date">Feb 11, 2026</div><div class="stk-peer-return" style="color:var(--green)">+13.4%</div></div>
+        <div class="stk-peer"><div class="stk-peer-ticker">LMND</div><div class="stk-peer-date">Dec 14, 2025</div><div class="stk-peer-return" style="color:var(--red)">-4.8%</div></div>
+        <div class="stk-peer"><div class="stk-peer-ticker">OPEN</div><div class="stk-peer-date">Oct 3, 2025</div><div class="stk-peer-return" style="color:var(--green)">+22.1%</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ 7A: BUSINESS MODEL QUALITY SIGNALS ═══ -->
+    <div class="stk-section-title">Business Model Quality Signals</div>
+    <div class="stk-section-sub">Are revenues translating into durable profitability?</div>
+    <div class="stk-diag-row">
+      <div class="stk-diag-card red">
+        <div class="stk-diag-label">Revenue Quality Decay <span class="stk-info" title="Cost Ratio = COGS / Revenue. Higher = worse. Sector-adjusted: >5 worse than peers, <5 better.">i</span></div>
+        <div class="stk-diag-score" style="color:var(--red)">6.3</div>
+        <div class="stk-diag-status" style="color:var(--red)">Worse than peers</div>
+        <div class="stk-diag-detail">
+          <strong>Cost Ratio (COGS / Revenue)</strong><br>
+          CVNA: 0.87 vs Sector Avg: 0.72<br>
+          Higher cost absorption suggests thin unit economics and rising fulfillment costs eroding revenue quality.
+        </div>
+        <div class="stk-diag-meta">Latest: Q3 2025 &middot; Sector-adjusted</div>
+      </div>
+      <div class="stk-diag-card green">
+        <div class="stk-diag-label">Gross Margin Compression <span class="stk-info" title="Gross Margin = Gross Profit / Revenue. Sector-adjusted score.">i</span></div>
+        <div class="stk-diag-score" style="color:var(--green)">3.7</div>
+        <div class="stk-diag-status" style="color:var(--green)">Better than peers</div>
+        <div class="stk-diag-detail">
+          <strong>Gross Margin: 19.2%</strong><br>
+          vs Sector Avg: 16.8%<br>
+          GPU improvements from ADESA integration and wholesale arbitrage continue to outperform sector benchmarks.
+        </div>
+        <div class="stk-diag-meta">Latest: FY 2025 &middot; Sector-adjusted</div>
+      </div>
+      <div class="stk-diag-card green">
+        <div class="stk-diag-label">Operating Leverage Breakdown <span class="stk-info" title="EBIT / Revenue. Measures how efficiently revenue converts to operating profit.">i</span></div>
+        <div class="stk-diag-score" style="color:var(--green)">4.3</div>
+        <div class="stk-diag-status" style="color:var(--green)">Better than peers</div>
+        <div class="stk-diag-detail">
+          <strong>EBIT Margin: 6.1%</strong><br>
+          vs Sector Avg: 4.8%<br>
+          Operating leverage improving as fixed costs are spread across higher unit volumes. SGA ratio declining.
+        </div>
+        <div class="stk-diag-meta">Latest: FY 2025 &middot; Sector-adjusted</div>
+      </div>
+    </div>
+
+    <!-- ═══ 7B: POOR GOVERNANCE CONCERNS ═════════ -->
+    <div class="stk-section-title">Poor Governance Concerns at Carvana</div>
+    <div class="stk-section-sub">Insider behavior, ownership changes, and leadership stability</div>
+    <div class="stk-gov-grid">
+
+      <!-- Market vs Insider Positioning -->
+      <div class="stk-gov-card">
+        <div class="stk-gov-title">Market vs. Insider Positioning</div>
+        <div class="stk-gov-desc">Net dollar flow comparison: public market buying vs insider selling over the last 12 months.</div>
+        <div class="stk-flow-row">
+          <div class="stk-flow-label">Market</div>
+          <div class="stk-flow-bar-bg"><div class="stk-flow-bar" style="width:72%;background:var(--green)"></div></div>
+          <div class="stk-flow-val" style="color:var(--green)">+$1.4B</div>
+        </div>
+        <div class="stk-flow-row">
+          <div class="stk-flow-label">Executives</div>
+          <div class="stk-flow-bar-bg"><div class="stk-flow-bar" style="width:48%;background:var(--red)"></div></div>
+          <div class="stk-flow-val" style="color:var(--red)">-$680M</div>
+        </div>
+        <div class="stk-flow-row">
+          <div class="stk-flow-label">Officers</div>
+          <div class="stk-flow-bar-bg"><div class="stk-flow-bar" style="width:24%;background:var(--red)"></div></div>
+          <div class="stk-flow-val" style="color:var(--red)">-$142M</div>
+        </div>
+      </div>
+
+      <!-- Insider Ownership Change -->
+      <div class="stk-gov-card">
+        <div class="stk-gov-title">Insider Ownership Change (Rolling 12M)</div>
+        <div class="stk-gov-desc">Net % change in insider holdings relative to starting position. Measures conviction reduction.</div>
+        <div class="stk-gov-stat-row">
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val" style="color:var(--red)">-6.4%</div>
+            <div class="stk-gov-stat-label">Net Change</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">1.86M</div>
+            <div class="stk-gov-stat-label">Shares Sold</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">0.12M</div>
+            <div class="stk-gov-stat-label">Shares Bought</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coordinated Insider Selling -->
+      <div class="stk-gov-card">
+        <div class="stk-gov-title">Coordinated Insider Selling</div>
+        <div class="stk-gov-desc">Identifies clustered insider sales within short windows. Higher score = more coordinated, more concerning.</div>
+        <div class="stk-cluster-gauge"><div class="stk-cluster-needle" style="left:74%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--grey3);margin-bottom:12px"><span>Low Risk</span><span>High Risk</span></div>
+        <div class="stk-gov-stat-row">
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val" style="color:var(--red)">74</div>
+            <div class="stk-gov-stat-label">Cluster Score</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">5</div>
+            <div class="stk-gov-stat-label">Insiders</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">12</div>
+            <div class="stk-gov-stat-label">Trades (90D)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CFO Turnover -->
+      <div class="stk-gov-card">
+        <div class="stk-gov-title">CFO Turnover</div>
+        <div class="stk-gov-desc">Leadership stability signal. Frequent CFO changes correlate with accounting restatements and governance failures.</div>
+        <div class="stk-gov-stat-row">
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val" style="color:var(--red)">2</div>
+            <div class="stk-gov-stat-label">CFO Changes (36M)</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val" style="color:var(--amber)">1.4 yr</div>
+            <div class="stk-gov-stat-label">Avg Tenure</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">214</div>
+            <div class="stk-gov-stat-label">Days Since Last</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--grey3);margin-top:10px">Sector avg tenure: 3.2 years &middot; Sector avg changes (36M): 0.6</div>
+      </div>
+    </div>
+
+    <!-- ═══ 7C: BALANCE SHEET STRESS ═════════════ -->
+    <div class="stk-section-title">Balance Sheet Stress</div>
+    <div class="stk-section-sub">How long can the company sustain operations without refinancing?</div>
+    <div class="stk-diag-row">
+      <div class="stk-diag-card red">
+        <div class="stk-diag-label">Liquidity Score <span class="stk-info" title="1 = More runway than peers. <1 = Worse. <2 = Much worse.">i</span></div>
+        <div class="stk-diag-score" style="color:var(--red)">-0.18</div>
+        <div class="stk-diag-status" style="color:var(--red)">Worse than peers</div>
+        <div class="stk-diag-detail">
+          <strong>Cash:</strong> $2.2B<br>
+          <strong>Borrowing Capacity:</strong> $590M<br>
+          <strong>Cash Runway:</strong> 77 months<br>
+          <strong>Liquidity Runway:</strong> 97 months
+        </div>
+        <div class="stk-diag-meta">Scale: 1 = more runway &middot; &lt;1 worse &middot; &lt;2 much worse</div>
+      </div>
+      <div class="stk-diag-card amber">
+        <div class="stk-diag-label">Liabilities / Total Assets <span class="stk-info" title="<0.40 strong | 0.40-0.70 normal | >0.70 elevated | >0.90 concerning">i</span></div>
+        <div class="stk-diag-score" style="color:var(--amber)">0.70</div>
+        <div class="stk-diag-status" style="color:var(--amber)">Elevated structural risk</div>
+        <div class="stk-diag-detail">
+          <strong>Total Liabilities:</strong> $6.9B<br>
+          <strong>Total Assets:</strong> $9.8B<br>
+          At the upper boundary of normal range. Debt restructuring in 2023 reduced interest burden but principal remains elevated.
+        </div>
+        <div class="stk-diag-meta">&lt;0.40 strong &middot; 0.40–0.70 normal &middot; &gt;0.70 elevated &middot; &gt;0.90 concerning</div>
+      </div>
+      <div class="stk-diag-card green">
+        <div class="stk-diag-label">Operating Cash Flow / Liabilities <span class="stk-info" title=">0.25 strong | 0.10-0.25 moderate | <0.10 weak | <0.05 severe">i</span></div>
+        <div class="stk-diag-score" style="color:var(--green)">0.50</div>
+        <div class="stk-diag-status" style="color:var(--green)">Strong cash-based coverage</div>
+        <div class="stk-diag-detail">
+          <strong>Total Liabilities:</strong> $6.9B<br>
+          <strong>Net CFO:</strong> $3.45B<br>
+          Significant improvement from negative CFO in 2022. Operating cash generation now covers roughly half of total liabilities annually.
+        </div>
+        <div class="stk-diag-meta">&gt;0.25 strong &middot; 0.10–0.25 moderate &middot; &lt;0.10 weak &middot; &lt;0.05 severe</div>
+      </div>
+    </div>
+
+    <!-- ═══ COMING SOON ══════════════════════════ -->
+    <div class="stk-coming-row">
+      <div class="stk-coming-card">
+        <div class="stk-coming-lock">&#128274;</div>
+        <div class="stk-coming-label">Regulation Risk</div>
+        <div class="stk-coming-badge">Coming Soon</div>
+      </div>
+      <div class="stk-coming-card">
+        <div class="stk-coming-lock">&#128274;</div>
+        <div class="stk-coming-label">Social Trends</div>
+        <div class="stk-coming-badge">Coming Soon</div>
+      </div>
+    </div>
+
+    <!-- ═══ FEEDBACK CTA ═════════════════════════ -->
+    <div class="stk-feedback">
+      <div class="stk-feedback-title">Would you like to see more metrics or provide feedback?</div>
+      <div class="stk-feedback-sub">Help us build the best forensic analysis platform for activist short selling.</div>
+      <div class="stk-feedback-btns">
+        <button class="stk-fb-btn stk-fb-primary">Request Metrics</button>
+        <button class="stk-fb-btn stk-fb-secondary">Give Feedback</button>
+      </div>
+    </div>
+
+  </div><!-- /page-stock -->
+
+  <!-- ────────── PAGE: INVESTIGATOR PROFILE ────────── -->
+  <div id="page-inv-profile" class="page">
+  <div class="ip-page">
+
+    <!-- Back link -->
+    <div class="ip-back-link" onclick="navigateTo('investigators')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to Investigators
+    </div>
+
+    <!-- Investigator name header -->
+    <div class="ip-inv-header">
+      <div class="ip-logo-circle" id="ipHeaderLogo">MW</div>
+      <div class="ip-inv-title" id="ipHeaderName">Muddy Waters Research</div>
+    </div>
+    <div class="ip-inv-meta" id="ipHeaderMeta">San Francisco, USA &middot; Founded 2010 &middot; Forensic Activist &middot; muddywatersresearch.com</div>
+
+    <!-- ═══ TOP STAT CARDS ═════════════════════════ -->
+    <div class="ip-top-row">
+      <div class="ip-logo-card">
+        <div class="ip-logo-circle" id="ipLogoCircle" style="width:72px;height:72px;font-size:28px">MW</div>
+        <div class="ip-logo-name" id="ipLogoName">Muddy Waters<br>Research</div>
+      </div>
+      <div class="ip-stat-card">
+        <div class="ip-stat-label">Total Reports All Time</div>
+        <div class="ip-stat-value" id="ipTotalAll">35</div>
+        <div class="ip-stat-sub">Tracked on Activ8</div>
+      </div>
+      <div class="ip-stat-card">
+        <div class="ip-stat-label">Total Reports YTD</div>
+        <div class="ip-stat-value" id="ipTotalYTD">4</div>
+        <div class="ip-stat-sub">2026 year-to-date</div>
+      </div>
+      <div class="ip-stat-card">
+        <div class="ip-stat-label">Successful Reports YTD</div>
+        <div class="ip-stat-value" id="ipSuccessYTD">3</div>
+        <div class="ip-stat-sub" id="ipSuccessRate">75% success rate</div>
+      </div>
+      <div class="ip-stat-card">
+        <div class="ip-stat-label">Avg. Days Between Reports</div>
+        <div class="ip-stat-value" id="ipAvgDays">18</div>
+        <div class="ip-stat-sub">Across all reports</div>
+      </div>
+      <div class="ip-stat-card">
+        <div class="ip-stat-label">Earliest Report</div>
+        <div class="ip-stat-value" id="ipEarliest" style="font-size:18px">Jun 2010</div>
+        <div class="ip-stat-sub" id="ipTrackYears">~16 years tracked</div>
+      </div>
+    </div>
+
+    <!-- ═══ SCATTER PLOT: Investigator Rankings ═════ -->
+    <div class="ip-scatter-card">
+      <div class="ip-scatter-header">
+        <div>
+          <div class="ip-scatter-title">Investigator Rankings</div>
+          <div class="ip-scatter-subtitle">Avg. report impact vs. total reports — larger dots = higher win rate</div>
+        </div>
+        <div class="ip-slicer" id="ipScatterSlicer">
+          <button class="ip-slicer-btn active" onclick="setIpScatterPeriod(this,'d1')">24 Hrs</button>
+          <button class="ip-slicer-btn" onclick="setIpScatterPeriod(this,'w1')">1 Week</button>
+          <button class="ip-slicer-btn" onclick="setIpScatterPeriod(this,'m1')">1 Month</button>
+          <button class="ip-slicer-btn" onclick="setIpScatterPeriod(this,'all')">Since Report</button>
+        </div>
+      </div>
+      <div class="ip-scatter-wrap">
+        <canvas id="ipScatterChart"></canvas>
+      </div>
+      <div class="ip-scatter-legend">
+        <span><span class="ip-scatter-legend-dot" style="background:var(--blue)"></span> This Investigator</span>
+        <span><span class="ip-scatter-legend-dot" style="background:var(--red);opacity:.35"></span> Negative Impact</span>
+        <span><span class="ip-scatter-legend-dot" style="background:var(--green);opacity:.35"></span> Positive Impact</span>
+        <span style="margin-left:auto">Dot size = Win Rate</span>
+      </div>
+    </div>
+
+    <!-- ═══ MAIN CONTENT: Charts left, Stocks right ═ -->
+    <div class="ip-content-grid">
+
+      <!-- LEFT: Horizontal bar chart -->
+      <div class="ip-card">
+        <div class="ip-card-header">
+          <div>
+            <div class="ip-card-title">Report Impact by Stock</div>
+            <div class="ip-card-subtitle">Price change after each report published</div>
+          </div>
+          <div class="ip-slicer" id="ipBarSlicer">
+            <button class="ip-slicer-btn active" onclick="setIpBarPeriod(this,'d1')">24 Hrs</button>
+            <button class="ip-slicer-btn" onclick="setIpBarPeriod(this,'w1')">1 Week</button>
+            <button class="ip-slicer-btn" onclick="setIpBarPeriod(this,'m1')">1 Month</button>
+            <button class="ip-slicer-btn" onclick="setIpBarPeriod(this,'all')">Since Report</button>
+          </div>
+        </div>
+        <div class="ip-bar-wrap">
+          <canvas id="ipBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- RIGHT: Stock list table -->
+      <div class="ip-card">
+        <div class="ip-card-header">
+          <div>
+            <div class="ip-card-title">Published Reports</div>
+            <div class="ip-card-subtitle">All stocks reported on by this investigator</div>
+          </div>
+          <div class="ip-slicer" id="ipTableSlicer">
+            <button class="ip-slicer-btn active" onclick="setIpTablePeriod(this,'d1')">24 Hrs</button>
+            <button class="ip-slicer-btn" onclick="setIpTablePeriod(this,'w1')">1 Week</button>
+            <button class="ip-slicer-btn" onclick="setIpTablePeriod(this,'m1')">1 Month</button>
+            <button class="ip-slicer-btn" onclick="setIpTablePeriod(this,'all')">Since Report</button>
+          </div>
+        </div>
+        <div style="max-height:360px;overflow-y:auto">
+          <table class="ip-stock-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Date Published</th>
+                <th>Report Impact <span class="ip-tooltip-icon" data-tip="Stock price change after report was published, for the selected time period">?</span></th>
+              </tr>
+            </thead>
+            <tbody id="ipStockBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PIE CHARTS ROW ═════════════════════════ -->
+    <div class="ip-pie-row">
+      <div class="ip-card">
+        <div class="ip-card-header">
+          <div>
+            <div class="ip-card-title">Reports by Sector</div>
+            <div class="ip-card-subtitle">Distribution of reports across sectors</div>
+          </div>
+        </div>
+        <div class="ip-pie-canvas-wrap">
+          <canvas id="ipSectorPie"></canvas>
+        </div>
+      </div>
+      <div class="ip-card">
+        <div class="ip-card-header">
+          <div>
+            <div class="ip-card-title">Reports by Market Cap</div>
+            <div class="ip-card-subtitle">Size breakdown of targeted companies</div>
+          </div>
+        </div>
+        <div class="ip-pie-canvas-wrap">
+          <canvas id="ipCapPie"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ NEWS SECTION ═══════════════════════════ -->
+    <div class="ip-news-card">
+      <div class="ip-news-title">Latest News — <span id="ipNewsInvName">Muddy Waters</span></div>
+      <div class="news-feed" id="ipNewsFeed"></div>
+    </div>
+
+  </div>
+  </div><!-- /page-inv-profile -->
+
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   REPORT DATA GENERATOR (2008–2026)
+   ══════════════════════════════════════════════════ */
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const INV_POOL = [
+  'Muddy Waters','Citron Research','Hindenburg Research','Kerrisdale Capital',
+  'Spruce Point Capital','Grizzly Research','Blue Orca Capital','Iceberg Research',
+  'Gotham City Research','Prestige Global','Viceroy Research','Bonitas Research',
+  'J Capital Research','Wolfpack Research','White Diamond Research','Quintessential Capital',
+  'Fuzzy Panda Research','Night Market Research','Culper Research','Jehoshaphat Research'
+];
+
+const TICKER_POOL = [
+  'NKLA','CLOV','RIDE','QS','SPCE','HYLN','BLNK','SKLZ','WISH','IRNT',
+  'MVST','BARK','SOFI','LCID','RIVN','JOBY','BYND','PLUG','FTCH','OPEN',
+  'VLDR','ASTS','IONQ','CIFR','SMCI','WOLF','UPST','AFRM','RKLB','SOUN',
+  'PLTR','MARA','COIN','APPS','DKNG','TSLA','SNOW','HOOD','PATH','CELH',
+  'CRWD','MDBV','AIML','VNDR','SOLR','ACME','LMND','CPNG','GRAB','IREN',
+  'CHPT','FCEL','WKHS','GOEV','CLNE','GSAT','PSFE','BODY','CANO','UWMC',
+  'VNET','GSX','LK','IQ','TAL','EDU','JKS','HUYA','BILI','NIO',
+  'BABA','PDD','FUTU','TIGR','ZK','DOYU','GDS','KC','TUYA','BZUN'
+];
+
+const HEADLINE_POOL = [
+  'Inflated Revenue Through Related-Party Transactions',
+  'Undisclosed Insider Selling and Channel Stuffing Evidence',
+  'Questionable Accounting Practices and Overstated Backlog',
+  'Management Compensation Misaligned With Shareholder Value',
+  'Core Technology Claims Fail Independent Verification',
+  'Regulatory Investigation Undisclosed in SEC Filings',
+  'Customer Concentration Risk Hidden From Investors',
+  'Aggressive Revenue Recognition Before Delivery',
+  'Related-Party Transactions Obscure True Margins',
+  'Inventory Build-Up Signals Demand Weakness',
+  'Cash Flow Manipulation Through Working Capital Games',
+  'Board Independence Questions After Conflict of Interest',
+  'Overstated Total Addressable Market by 5-10x',
+  'Promotional Spend Masking Negative Unit Economics',
+  'IP Portfolio Largely Expired or Unenforceable',
+  'Geographic Revenue Claims Contradicted by Customs Data',
+  'Deferred Revenue Accounting Raises Red Flags',
+  'Supply Chain Audit Reveals Quality Control Failures',
+  'Guidance Assumes Unrealistic Market Share Gains',
+  'Warranty Reserve Inadequate Given Historical Claims',
+  'Insider Trading Pattern Precedes Negative Announcements',
+  'Joint Venture Structure Designed to Hide Losses',
+  'Executive Departures Signal Internal Knowledge of Issues',
+  'Channel Checks Reveal Significant Inventory Returns',
+  'Acquisition Accounting Inflates Reported Growth Rate',
+  'Off-Balance Sheet Liabilities Exceed Market Expectations',
+  'Product Recall Risk Not Reflected in Reserves',
+  'International Revenue Unverifiable Through Public Data',
+  'Customer Churn Rate Far Higher Than Disclosed',
+  'R&D Capitalization Policy Artificially Boosts Earnings',
+];
+
+/* Seeded PRNG for deterministic data */
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
+
+function generateYearData(year) {
+  const rng = mulberry32(year * 7919 + 31);
+  const pick = arr => arr[Math.floor(rng() * arr.length)];
+  const randInt = (lo, hi) => lo + Math.floor(rng() * (hi - lo + 1));
+  const randFloat = (lo, hi) => +(lo + rng() * (hi - lo)).toFixed(1);
+
+  /* Scale: fewer reports in early years, more in recent */
+  const basePerMonth = year < 2012 ? [1,3] : year < 2016 ? [2,5] : year < 2020 ? [3,7] : [4,12];
+
+  const endMonth = year === 2026 ? 1 : 11; /* 2026 only has Jan & Feb so far */
+  const data = {};
+
+  for (let m = 0; m <= endMonth; m++) {
+    const key = MONTH_NAMES[m] + ' ' + year;
+    const count = randInt(basePerMonth[0], basePerMonth[1]);
+    const reports = [];
+    const usedTickers = new Set();
+
+    for (let r = 0; r < count; r++) {
+      let ticker;
+      do { ticker = pick(TICKER_POOL); } while (usedTickers.has(ticker));
+      usedTickers.add(ticker);
+
+      const day = randInt(1, 28);
+      const impact = -randFloat(3, 42);
+
+      reports.push({
+        date: MONTH_NAMES[m] + ' ' + day,
+        inv: pick(INV_POOL),
+        ticker: ticker,
+        headline: pick(HEADLINE_POOL),
+        impact: impact
+      });
+    }
+    reports.sort((a, b) => parseInt(a.date.split(' ')[1]) - parseInt(b.date.split(' ')[1]));
+    data[key] = { count, reports };
+  }
+
+  /* For 2026, add Feb with the hand-crafted data */
+  if (year === 2026) {
+    data['Feb 2026'] = {
+      count: 12,
+      reports: [
+        { date: 'Feb 2',  inv: 'Muddy Waters',        ticker: 'DKNG', headline: 'Customer Lifetime Value Assumptions Wildly Optimistic',  impact: -14.2 },
+        { date: 'Feb 4',  inv: 'Hindenburg Research',  ticker: 'TSLA', headline: 'FSD Revenue Recognition Before Feature Completion',      impact: -11.8 },
+        { date: 'Feb 6',  inv: 'Kerrisdale Capital',   ticker: 'SNOW', headline: 'Consumption Model Masking Enterprise Churn',             impact: -19.5 },
+        { date: 'Feb 8',  inv: 'Grizzly Research',     ticker: 'HOOD', headline: 'PFOF Ban Impact Understated in Guidance',                impact: -16.3 },
+        { date: 'Feb 10', inv: 'Spruce Point Capital',  ticker: 'PATH', headline: 'RPA Market Share Losses to AI Coding Agents',            impact: -22.7 },
+        { date: 'Feb 11', inv: 'Blue Orca Capital',    ticker: 'CELH', headline: 'Distribution Agreement Terms Far Worse Than Presented',   impact: -13.4 },
+        { date: 'Feb 12', inv: 'Citron Research',       ticker: 'CRWD', headline: 'Outage Fallout Revenue Impact Hidden in Deferrals',      impact: -8.1 },
+        { date: 'Feb 14', inv: 'Grizzly Research',     ticker: 'MDBV', headline: 'Undisclosed Insider Selling and Channel-Stuffing',       impact: -22.3 },
+        { date: 'Feb 15', inv: 'Kerrisdale Capital',   ticker: 'AIML', headline: 'Overvalued AI Play With Minimal Proprietary Tech',       impact: -18.7 },
+        { date: 'Feb 16', inv: 'Citron Research',       ticker: 'VNDR', headline: 'Management Response Fails to Address Core Claims',       impact: -4.6 },
+        { date: 'Feb 17', inv: 'Muddy Waters',         ticker: 'SOLR', headline: 'Questionable Accounting and Overstated Backlog',         impact: -12.1 },
+        { date: 'Feb 17', inv: 'Hindenburg Research',  ticker: 'ACME', headline: 'Inflated Revenue Through Related-Party Transactions',    impact: -8.4 },
+      ]
+    };
+  }
+  return data;
+}
+
+/* Pre-generate all years */
+const ALL_YEARS = {};
+for (let y = 2008; y <= 2026; y++) {
+  ALL_YEARS[y] = generateYearData(y);
+}
+
+/* ── Populate year dropdown ──────────────────────── */
+const yearSelect = document.getElementById('yearSelect');
+for (let y = 2026; y >= 2008; y--) {
+  const opt = document.createElement('option');
+  opt.value = y;
+  opt.textContent = y;
+  if (y === 2026) opt.selected = true;
+  yearSelect.appendChild(opt);
+}
+
+/* ── State ───────────────────────────────────────── */
+let currentYear = 2026;
+let currentData = ALL_YEARS[currentYear];
+let currentMonths = Object.keys(currentData);
+let currentCounts = currentMonths.map(m => currentData[m].count);
+let selectedMonth = null;
+
+/* ── Monthly Bar Chart ───────────────────────────── */
+const monthCtx = document.getElementById('monthlyChart').getContext('2d');
+
+function getBarColors(counts, selectedIdx) {
+  return counts.map((_, i) => {
+    if (selectedIdx !== null && i === selectedIdx) return '#FF2137';
+    if (selectedIdx !== null) return 'rgba(53,165,207,.3)';
+    return i === counts.length - 1 ? '#FF2137' : '#35A5CF';
+  });
+}
+
+const monthlyChart = new Chart(monthCtx, {
+  type: 'bar',
+  data: {
+    labels: currentMonths.map(m => m.split(' ')[0]),
+    datasets: [{
+      data: currentCounts,
+      backgroundColor: getBarColors(currentCounts, null),
+      borderRadius: 6,
+      barPercentage: 0.55,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    onClick(evt, elems) {
+      if (!elems.length) return;
+      openDrilldown(elems[0].index);
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#0E1D29',
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          title: ctx => currentMonths[ctx[0].dataIndex],
+          label: ctx => ctx.parsed.y + ' reports — click to view',
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 12, weight: '600' }, color: '#0E1D29' }
+      },
+      y: {
+        grid: { color: '#F4F6F8' },
+        ticks: { stepSize: 3, font: { size: 11 }, color: '#8A95A0' },
+        border: { display: false },
+        beginAtZero: true
+      }
+    },
+    onHover(evt, elems) {
+      evt.native.target.style.cursor = elems.length ? 'pointer' : 'default';
+    }
+  },
+  plugins: [{
+    id: 'barCountLabels',
+    afterDatasetsDraw(chart) {
+      const c = chart.ctx;
+      chart.data.datasets[0].data.forEach((val, i) => {
+        const bar = chart.getDatasetMeta(0).data[i];
+        c.fillStyle = '#0E1D29';
+        c.font = 'bold 11px Inter, system-ui, sans-serif';
+        c.textAlign = 'center';
+        c.textBaseline = 'bottom';
+        c.fillText(val, bar.x, bar.y - 4);
+      });
+    }
+  }]
+});
+
+/* ── Year switcher ───────────────────────────────── */
+function switchYear(year) {
+  currentYear = parseInt(year);
+  currentData = ALL_YEARS[currentYear];
+  currentMonths = Object.keys(currentData);
+  currentCounts = currentMonths.map(m => currentData[m].count);
+  selectedMonth = null;
+
+  closeDrilldown();
+
+  monthlyChart.data.labels = currentMonths.map(m => m.split(' ')[0]);
+  monthlyChart.data.datasets[0].data = currentCounts;
+  monthlyChart.data.datasets[0].backgroundColor = getBarColors(currentCounts, null);
+  monthlyChart.update('none');
+}
+
+/* ── Drilldown logic ─────────────────────────────── */
+function openDrilldown(idx) {
+  selectedMonth = idx;
+  const month = currentMonths[idx];
+  const data = currentData[month];
+
+  monthlyChart.data.datasets[0].backgroundColor = getBarColors(currentCounts, idx);
+  monthlyChart.update();
+
+  document.getElementById('drilldownTitle').textContent = month + ' Reports';
+  document.getElementById('drilldownCount').textContent = data.count + ' report' + (data.count !== 1 ? 's' : '');
+
+  const body = document.getElementById('drilldownBody');
+  body.innerHTML = data.reports.map((r, i) => {
+    const isGood = r.impact < 0;
+    const displayImpact = isGood ? '+' + Math.abs(r.impact).toFixed(1) + '%' : r.impact.toFixed(1) + '%';
+    const impactClass = isGood ? 'down' : 'up';
+    return '<div class="drill-row" style="animation-delay:' + (i * 0.04) + 's">' +
+      '<div class="drill-date">' + r.date + '</div>' +
+      '<div class="drill-inv">' + r.inv + '</div>' +
+      '<div class="drill-ticker">' + r.ticker + '</div>' +
+      '<div class="drill-headline">' + r.headline + '</div>' +
+      '<div class="drill-impact ' + impactClass + '">' + displayImpact + '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('monthDrilldown').style.display = 'block';
+  document.getElementById('monthDrilldown').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDrilldown() {
+  selectedMonth = null;
+  document.getElementById('monthDrilldown').style.display = 'none';
+  monthlyChart.data.datasets[0].backgroundColor = getBarColors(currentCounts, null);
+  monthlyChart.update();
+}
+
+/* ── Sector Doughnut ─────────────────────────────── */
+new Chart(document.getElementById('sectorChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Technology','Healthcare','Consumer','Financials','Energy'],
+    datasets: [{ data: [18,12,8,5,4], backgroundColor: ['#35A5CF','#FF2137','#F59E0B','#0E1D29','#22C55E'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#0E1D29', padding: 10, cornerRadius: 8,
+        callbacks: {
+          label: ctx => {
+            const avgRets = ['+19.4%','+15.7%','+12.3%','+22.1%','+17.8%'];
+            return ctx.label + ': ' + ctx.parsed + ' reports';
+          },
+          afterLabel: ctx => {
+            const avgRets = ['+19.4%','+15.7%','+12.3%','+22.1%','+17.8%'];
+            return 'Avg. Return: ' + avgRets[ctx.dataIndex];
+          }
+        }
+      }
+    }
+  }
+});
+
+/* ── Investigator Returns Horizontal Bar Chart ───── */
+const invCtx = document.getElementById('invReturnsChart').getContext('2d');
+
+const investigators = [
+  'Hindenburg Research',
+  'Grizzly Research',
+  'Muddy Waters',
+  'Kerrisdale Capital',
+  'Citron Research',
+  'Spruce Point Capital',
+  'Iceberg Research',
+  'Blue Orca Capital'
+];
+const avgReturns = [28.4, 24.1, 21.7, 19.3, 16.8, 14.2, 11.5, 8.9];
+
+const invGrad = investigators.map((_, i) => {
+  const ratio = avgReturns[i] / Math.max(...avgReturns);
+  return ratio > 0.7 ? '#22C55E' : ratio > 0.4 ? '#35A5CF' : '#8A95A0';
+});
+
+const invChart = new Chart(invCtx, {
+  type: 'bar',
+  data: {
+    labels: investigators,
+    datasets: [{
+      data: avgReturns,
+      backgroundColor: invGrad,
+      borderRadius: 6,
+      barPercentage: 0.65,
+      categoryPercentage: 0.85,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 20 } },
+    onClick: (event, elements) => {
+      if (elements.length > 0) {
+        const idx = elements[0].index;
+        const name = investigators[idx];
+        navigateToInvProfile(name);
+      }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#0E1D29',
+        padding: 12,
+        cornerRadius: 8,
+        titleFont: { size: 13, weight: 'bold' },
+        bodyFont: { size: 13 },
+        callbacks: {
+          title: ctx => ctx[0].label,
+          label: ctx => 'Avg. Return: +' + ctx.parsed.x.toFixed(1) + '%',
+          afterLabel: ctx => {
+            const reports = [42, 38, 35, 27, 51, 31, 19, 15];
+            return reports[ctx.dataIndex] + ' reports analyzed';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: '#F4F6F8' },
+        ticks: {
+          font: { size: 12, weight: '600' },
+          color: '#8A95A0',
+          callback: v => '+' + v + '%'
+        },
+        border: { display: false },
+        title: {
+          display: true,
+          text: 'Avg. Stock Price Decline After Report (%)',
+          font: { size: 11, weight: '600' },
+          color: '#8A95A0',
+          padding: { top: 8 }
+        }
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          font: { size: 13, weight: '600' },
+          color: '#0E1D29',
+          padding: 8,
+        },
+        border: { display: false }
+      }
+    }
+  },
+  plugins: [{
+    id: 'barLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets[0].data.forEach((val, i) => {
+        const meta = chart.getDatasetMeta(0).data[i];
+        ctx.fillStyle = '#0E1D29';
+        ctx.font = 'bold 12px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('+' + val.toFixed(1) + '%', meta.x + 8, meta.y);
+      });
+    }
+  }]
+});
+
+/* ── Sparklines ──────────────────────────────────── */
+document.querySelectorAll('.spark, .report-spark').forEach(canvas => {
+  const vals = canvas.dataset.values.split(',').map(Number);
+  const isDown = canvas.dataset.color === 'down' || vals[vals.length-1] < vals[0];
+  const color = isDown ? '#FF2137' : '#22C55E';
+  new Chart(canvas, {
+    type: 'line',
+    data: { labels: vals, datasets: [{ data: vals, borderColor: color, borderWidth: 1.5, tension: .4, pointRadius: 0, fill: false }] },
+    options: { responsive: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: false }
+  });
+});
+
+/* ── Chip toggle helper ──────────────────────────── */
+function setChip(el) {
+  el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+function filterReports(type, el) {
+  el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ══════════════════════════════════════════════════
+   PAGE NAVIGATION (sidebar)
+   ══════════════════════════════════════════════════ */
+function navigateTo(pageName) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + pageName);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.sb-icon').forEach(el => el.classList.remove('active'));
+  const idxMap = { home: 0, investigators: 1, stocks: 2, stock: 3, 'inv-profile': 1 };
+  const idx = idxMap[pageName] ?? -1;
+  const icons = document.querySelectorAll('.sb-icon');
+  if (idx >= 0 && icons[idx]) icons[idx].classList.add('active');
+
+  /* Update hero visibility */
+  const hero = document.querySelector('.hero');
+  if (hero) hero.style.display = pageName === 'home' ? '' : 'none';
+
+  /* Scroll to top */
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  /* Initialize investigators tab charts on first visit */
+  if (pageName === 'investigators' && !window._invTabInit) {
+    window._invTabInit = true;
+    initInvestigatorsTab();
+  }
+
+  /* Initialize stock page chart on first visit */
+  if (pageName === 'stock' && !window._stockTabInit) {
+    window._stockTabInit = true;
+    initStockPage();
+  }
+}
+
+/* Wire sidebar clicks */
+document.querySelectorAll('.sb-icon').forEach((icon, i) => {
+  const pages = ['home','investigators','stocks','stock'];
+  if (i < pages.length) {
+    icon.addEventListener('click', () => navigateTo(pages[i]));
+  }
+});
+
+/* Also fix the home page inv chart click handler to actually navigate */
+if (invChart) {
+  invChart.options.onClick = (event, elements) => {
+    if (elements.length > 0) {
+      const idx = elements[0].index;
+      const name = investigators[idx];
+      navigateToInvProfile(name);
+    }
+  };
+  invChart.update();
+}
+
+/* ══════════════════════════════════════════════════
+   INVESTIGATORS TAB DATA
+   ══════════════════════════════════════════════════ */
+/* Logo colors for each investigator — will be replaced with actual logos */
+const INV_LOGO_COLORS = ['#FF2137','#22C55E','#35A5CF','#F59E0B','#FF2137','#8A95A0','#35A5CF','#0E6B8A','#F59E0B','#FF2137','#8A95A0','#35A5CF','#22C55E','#F59E0B','#FF2137'];
+
+const INVESTIGATOR_DATA = [
+  { name: 'Hindenburg Research', type: 'activist', country: 'United States', sector: 'Technology', founded: '2017', location: 'New York, USA', style: 'Forensic Activist', website: 'hindenburgresearch.com', logoUrl: '', bio: 'Founded by Nathan Anderson, Hindenburg Research is one of the most prominent activist short sellers in the world. Known for forensic-style investigations into accounting fraud, undisclosed related-party transactions, and regulatory violations. Their reports have led to billions in market cap destruction and multiple SEC investigations.', d1: -1.2, m1: -8.4, m3: -18.7, m6: -24.1, m12: -28.4, winRatio: 72, highest: 94, lowest: -38, reports: 42, delisted: 6, frequency: '~3/mo', sparkData: [20,22,25,24,28,30,28], reportHistory: [
+    { ticker: 'ACME', date: 'Feb 17, 2026', allTime: -8.4, d5: true, d10: false, d25: false, d50: false, avg: -8.4 },
+    { ticker: 'NKLA', date: 'Sep 10, 2020', allTime: -93.2, d5: true, d10: true, d25: true, d50: true, avg: -93.2 },
+    { ticker: 'CLOV', date: 'Feb 4, 2021', allTime: -72.8, d5: true, d10: true, d25: true, d50: true, avg: -72.8 },
+    { ticker: 'RIDE', date: 'Mar 12, 2021', allTime: -91.5, d5: true, d10: true, d25: true, d50: true, avg: -91.5 },
+    { ticker: 'QS', date: 'Apr 8, 2021', allTime: -67.3, d5: true, d10: true, d25: true, d50: true, avg: -67.3 },
+    { ticker: 'DKNG', date: 'Jun 15, 2022', allTime: -44.1, d5: true, d10: true, d25: true, d50: false, avg: -44.1 },
+    { ticker: 'TSLA', date: 'Feb 4, 2026', allTime: -11.8, d5: true, d10: true, d25: false, d50: false, avg: -11.8 },
+  ] },
+  { name: 'Grizzly Research', type: 'researcher', country: 'United States', sector: 'Healthcare', founded: '2019', location: 'San Francisco, USA', style: 'Forensic Research', website: 'grizzlyreports.com', bio: 'Grizzly Research specializes in deep forensic analysis of financial statements, focusing on healthcare and technology companies. Known for methodical, data-heavy reports that uncover hidden risks in company filings.', d1: -0.8, m1: -6.2, m3: -14.3, m6: -19.8, m12: -24.1, winRatio: 68, highest: 76, lowest: -22, reports: 38, delisted: 4, frequency: '~2/mo', sparkData: [15,18,20,19,22,24,23], reportHistory: [
+    { ticker: 'MDBV', date: 'Feb 14, 2026', allTime: -22.3, d5: true, d10: true, d25: false, d50: false, avg: -22.3 },
+    { ticker: 'HOOD', date: 'Feb 8, 2026', allTime: -16.3, d5: true, d10: true, d25: false, d50: false, avg: -16.3 },
+    { ticker: 'BYND', date: 'Nov 5, 2023', allTime: -58.4, d5: true, d10: true, d25: true, d50: true, avg: -58.4 },
+    { ticker: 'WISH', date: 'Aug 22, 2022', allTime: -88.7, d5: true, d10: true, d25: true, d50: true, avg: -88.7 },
+  ] },
+  { name: 'Muddy Waters', type: 'activist', country: 'United States', sector: 'Financials', founded: '2010', location: 'San Francisco, USA', style: 'Forensic Activist', website: 'muddywatersresearch.com', bio: 'Founded by Carson Block, Muddy Waters Capital is a pioneer of activist short selling. Initially focused on Chinese reverse-merger frauds, they have expanded globally. Known for thorough forensic analysis and dramatic public presentations of findings.', d1: -0.5, m1: -5.8, m3: -12.1, m6: -17.2, m12: -21.7, winRatio: 65, highest: 88, lowest: -31, reports: 35, delisted: 8, frequency: '~2/mo', sparkData: [18,20,19,22,21,23,22], reportHistory: [
+    { ticker: 'SOLR', date: 'Feb 17, 2026', allTime: -12.1, d5: true, d10: true, d25: false, d50: false, avg: -12.1 },
+    { ticker: 'GSX', date: 'Apr 14, 2020', allTime: -96.4, d5: true, d10: true, d25: true, d50: true, avg: -96.4 },
+    { ticker: 'LK', date: 'Jan 31, 2020', allTime: -97.8, d5: true, d10: true, d25: true, d50: true, avg: -97.8 },
+  ] },
+  { name: 'Kerrisdale Capital', type: 'activist', country: 'United States', sector: 'Technology', founded: '2009', location: 'New York, USA', style: 'Fundamental Short', website: 'kerrisdalecap.com', bio: 'Kerrisdale Capital Management is an investment firm that publishes detailed short-selling theses. Known for a quantitative approach, they focus on overhyped technology and healthcare companies with questionable unit economics.', d1: -1.8, m1: -7.1, m3: -15.9, m6: -18.3, m12: -19.3, winRatio: 61, highest: 71, lowest: -28, reports: 27, delisted: 3, frequency: '~2/mo', sparkData: [12,14,16,15,18,19,18], reportHistory: [
+    { ticker: 'AIML', date: 'Feb 15, 2026', allTime: -18.7, d5: true, d10: true, d25: false, d50: false, avg: -18.7 },
+    { ticker: 'SNOW', date: 'Feb 6, 2026', allTime: -19.5, d5: true, d10: true, d25: false, d50: false, avg: -19.5 },
+    { ticker: 'SMCI', date: 'Sep 11, 2024', allTime: -42.6, d5: true, d10: true, d25: true, d50: false, avg: -42.6 },
+  ] },
+  { name: 'Citron Research', type: 'activist', country: 'United States', sector: 'Consumer', founded: '2001', location: 'Los Angeles, USA', style: 'Activist Short', website: 'citronresearch.com', bio: 'Run by Andrew Left, Citron Research is one of the longest-running activist short sellers. Known for punchy, headline-grabbing reports and social media presence. Has targeted companies across virtually every sector over two decades.', d1: -0.3, m1: -4.6, m3: -11.8, m6: -14.5, m12: -16.8, winRatio: 58, highest: 82, lowest: -45, reports: 51, delisted: 9, frequency: '~4/mo', sparkData: [10,11,13,12,14,16,15], reportHistory: [
+    { ticker: 'VNDR', date: 'Feb 16, 2026', allTime: -4.6, d5: false, d10: false, d25: false, d50: false, avg: -4.6 },
+    { ticker: 'CRWD', date: 'Feb 12, 2026', allTime: -8.1, d5: true, d10: false, d25: false, d50: false, avg: -8.1 },
+  ] },
+  { name: 'Spruce Point Capital', type: 'researcher', country: 'United States', sector: 'Consumer', founded: '2009', location: 'New York, USA', style: 'Forensic Research', website: 'sprucepointcap.com', bio: 'Spruce Point Capital Management publishes forensic research reports on companies they believe have accounting irregularities. They focus on mid-cap industrials, technology, and consumer companies with complex financial structures.', d1: -0.9, m1: -5.1, m3: -10.4, m6: -13.2, m12: -14.2, winRatio: 63, highest: 65, lowest: -19, reports: 31, delisted: 2, frequency: '~2/mo', sparkData: [8,10,11,10,12,14,13], reportHistory: [
+    { ticker: 'PATH', date: 'Feb 10, 2026', allTime: -22.7, d5: true, d10: true, d25: false, d50: false, avg: -22.7 },
+  ] },
+  { name: 'Iceberg Research', type: 'researcher', country: 'Hong Kong', sector: 'Financials', founded: '2014', location: 'Hong Kong', style: 'Forensic Research', website: 'icebergresearch.com', bio: 'Iceberg Research is a Hong Kong-based forensic accounting firm known for their detailed reports on Asian-listed companies. They focus on financial irregularities, related-party transactions, and governance failures in Asia-Pacific markets.', d1: -0.4, m1: -3.8, m3: -8.2, m6: -10.8, m12: -11.5, winRatio: 56, highest: 52, lowest: -14, reports: 19, delisted: 1, frequency: '~1/mo', sparkData: [6,7,8,8,9,11,10], reportHistory: [] },
+  { name: 'Blue Orca Capital', type: 'activist', country: 'Hong Kong', sector: 'Technology', founded: '2018', location: 'Hong Kong', style: 'Activist Short', website: 'blueorcacapital.com', bio: 'Founded by former Muddy Waters analyst Soren Aandahl, Blue Orca Capital focuses on Asian-listed companies. Known for detailed forensic work on Chinese and Southeast Asian companies with ties to Western capital markets.', d1: -0.2, m1: -3.1, m3: -6.5, m6: -8.4, m12: -8.9, winRatio: 54, highest: 48, lowest: -12, reports: 15, delisted: 1, frequency: '~1/mo', sparkData: [4,5,6,6,7,8,8], reportHistory: [
+    { ticker: 'CELH', date: 'Feb 11, 2026', allTime: -13.4, d5: true, d10: true, d25: false, d50: false, avg: -13.4 },
+  ] },
+  { name: 'Viceroy Research', type: 'activist', country: 'Australia', sector: 'Financials', founded: '2016', location: 'Sydney, Australia', style: 'Forensic Activist', website: 'viceroyresearch.org', bio: 'Viceroy Research gained fame for exposing Steinhoff International. Based in Australia, they target companies globally with a focus on corporate governance failures and accounting irregularities. Known for aggressive, detailed reports.', d1: -1.1, m1: -6.8, m3: -13.5, m6: -16.9, m12: -20.3, winRatio: 67, highest: 91, lowest: -25, reports: 24, delisted: 3, frequency: '~2/mo', sparkData: [14,16,18,17,19,21,20], reportHistory: [] },
+  { name: 'Bonitas Research', type: 'researcher', country: 'United States', sector: 'Healthcare', founded: '2018', location: 'Dallas, USA', style: 'Forensic Research', website: 'bonitasresearch.com', bio: 'Bonitas Research focuses on healthcare and pharmaceutical companies with inflated revenue claims. Known for detailed channel checks and regulatory filing analysis to uncover discrepancies.', d1: -0.6, m1: -4.2, m3: -9.7, m6: -12.1, m12: -15.4, winRatio: 60, highest: 63, lowest: -20, reports: 16, delisted: 2, frequency: '~1/mo', sparkData: [7,9,10,10,12,14,14], reportHistory: [] },
+  { name: 'White Diamond Research', type: 'researcher', country: 'United States', sector: 'Technology', founded: '2015', location: 'New York, USA', style: 'Thematic Research', website: 'whitediamondresearch.com', bio: 'White Diamond Research focuses on small to mid-cap companies with overvalued growth narratives. Known for thematic reports that challenge consensus views on TAM estimates and competitive dynamics.', d1: -2.1, m1: -9.3, m3: -19.8, m6: -23.4, m12: -26.0, winRatio: 70, highest: 81, lowest: -32, reports: 22, delisted: 3, frequency: '~2/mo', sparkData: [12,16,19,18,22,25,26], reportHistory: [] },
+  { name: 'Culper Research', type: 'researcher', country: 'United States', sector: 'Consumer', founded: '2017', location: 'New York, USA', style: 'Forensic Research', website: 'culperresearch.com', bio: 'Culper Research conducts investigative research focused on uncovering financial misrepresentation. Specializes in consumer and healthcare companies with complex international supply chains.', d1: -0.1, m1: -2.0, m3: -5.4, m6: -7.2, m12: -9.8, winRatio: 52, highest: 44, lowest: -18, reports: 14, delisted: 1, frequency: '~1/mo', sparkData: [4,5,5,6,7,8,8], reportHistory: [] },
+  { name: 'Fuzzy Panda Research', type: 'researcher', country: 'United States', sector: 'Technology', founded: '2020', location: 'Austin, USA', style: 'Forensic Research', website: 'fuzzypandaresearch.com', bio: 'A newer entrant focused on technology and EV companies. Fuzzy Panda Research uses channel checks and patent analysis to identify companies overstating their technological capabilities.', d1: -1.5, m1: -7.8, m3: -14.6, m6: -18.1, m12: -22.4, winRatio: 66, highest: 68, lowest: -26, reports: 18, delisted: 2, frequency: '~1/mo', sparkData: [10,13,15,14,18,21,22], reportHistory: [] },
+  { name: 'J Capital Research', type: 'researcher', country: 'Hong Kong', sector: 'Technology', founded: '2010', location: 'Hong Kong', style: 'Investigative', website: 'jcapitalresearch.com', bio: 'J Capital Research specializes in on-the-ground investigative work in China and Asia. Known for hiring local investigators to verify company claims about facilities, employees, and operations.', d1: -0.7, m1: -4.5, m3: -10.1, m6: -13.8, m12: -17.2, winRatio: 62, highest: 74, lowest: -21, reports: 28, delisted: 5, frequency: '~2/mo', sparkData: [10,12,13,13,15,17,17], reportHistory: [] },
+  { name: 'Wolfpack Research', type: 'activist', country: 'United States', sector: 'Healthcare', founded: '2017', location: 'Dallas, USA', style: 'Activist Short', website: 'wolfpackresearch.com', bio: 'Wolfpack Research focuses on healthcare and biotech companies with questionable clinical trial data or overstated commercial prospects. Known for collaboration with former industry insiders and scientists.', d1: -0.9, m1: -5.6, m3: -11.3, m6: -14.7, m12: -18.6, winRatio: 64, highest: 72, lowest: -29, reports: 20, delisted: 3, frequency: '~1/mo', sparkData: [9,11,13,12,15,18,18], reportHistory: [] },
+];
+
+/* ── Monthly returns data for investigator overview chart ── */
+const INV_MONTHLY_RETURNS = [
+  { month: 'Feb 2026', returnPct: -14.2, stocks: [{ticker:'ACME',name:'Acme Holdings',ret:-8.4},{ticker:'AIML',name:'AiMill Corp.',ret:-18.7},{ticker:'MDBV',name:'MediBravo Inc.',ret:-22.3},{ticker:'SOLR',name:'SolarEdge Alt.',ret:-12.1},{ticker:'VNDR',name:'Vendor Global',ret:-4.6}] },
+  { month: 'Jan 2026', returnPct: -11.8, stocks: [{ticker:'TSLA',name:'Tesla Inc.',ret:-11.8},{ticker:'HOOD',name:'Robinhood Markets',ret:-16.3},{ticker:'SNOW',name:'Snowflake Inc.',ret:-19.5}] },
+  { month: 'Dec 2025', returnPct: -9.4, stocks: [{ticker:'PLTR',name:'Palantir Technologies',ret:-7.2},{ticker:'COIN',name:'Coinbase Global',ret:-12.8},{ticker:'UPST',name:'Upstart Holdings',ret:-8.1}] },
+  { month: 'Nov 2025', returnPct: -16.7, stocks: [{ticker:'SMCI',name:'Super Micro Computer',ret:-28.4},{ticker:'RIVN',name:'Rivian Automotive',ret:-14.2},{ticker:'LCID',name:'Lucid Group',ret:-7.5}] },
+  { month: 'Oct 2025', returnPct: +3.2, stocks: [{ticker:'DKNG',name:'DraftKings Inc.',ret:+5.8},{ticker:'SOFI',name:'SoFi Technologies',ret:-2.1},{ticker:'AFRM',name:'Affirm Holdings',ret:+5.9}] },
+  { month: 'Sep 2025', returnPct: -22.1, stocks: [{ticker:'FB',name:'Meta Platforms',ret:+17.0},{ticker:'DXCM',name:'DexCom Inc.',ret:-76.0},{ticker:'GOLD',name:'Barrick Gold',ret:+16.0},{ticker:'BBAI',name:'BigBear.ai',ret:-13.0}] },
+  { month: 'Aug 2025', returnPct: -8.3, stocks: [{ticker:'CELH',name:'Celsius Holdings',ret:-11.2},{ticker:'CRWD',name:'CrowdStrike',ret:-6.4},{ticker:'PATH',name:'UiPath',ret:-7.3}] },
+  { month: 'Jul 2025', returnPct: -5.1, stocks: [{ticker:'BYND',name:'Beyond Meat',ret:-9.8},{ticker:'PLUG',name:'Plug Power',ret:-3.2},{ticker:'CHPT',name:'ChargePoint',ret:-2.3}] },
+  { month: 'Jun 2025', returnPct: -18.9, stocks: [{ticker:'NKLA',name:'Nikola Corp.',ret:-34.1},{ticker:'RIDE',name:'Lordstown Motors',ret:-22.4},{ticker:'WKHS',name:'Workhorse Group',ret:-0.2}] },
+  { month: 'May 2025', returnPct: -12.6, stocks: [{ticker:'QS',name:'QuantumScape',ret:-18.4},{ticker:'BLNK',name:'Blink Charging',ret:-9.2},{ticker:'FCEL',name:'FuelCell Energy',ret:-10.1}] },
+  { month: 'Apr 2025', returnPct: +1.4, stocks: [{ticker:'MARA',name:'Marathon Digital',ret:+8.2},{ticker:'IONQ',name:'IonQ Inc.',ret:-5.4}] },
+  { month: 'Mar 2025', returnPct: -7.8, stocks: [{ticker:'WISH',name:'ContextLogic',ret:-14.2},{ticker:'SKLZ',name:'Skillz Inc.',ret:-6.1},{ticker:'SPCE',name:'Virgin Galactic',ret:-3.1}] },
+];
+
+/* ══════════════════════════════════════════════════
+   INVESTIGATORS TAB — INITIALIZATION
+   ══════════════════════════════════════════════════ */
+function initInvestigatorsTab() {
+  renderInvPerformanceTable();
+  renderScatterChart('invOverviewScatter', 'd1', null, 'inv');
+  renderInvMonthlyChart();
+  renderInvTileSparklines();
+  loadProfile(0);
+}
+
+/* ── Hero tile sparklines ─────────────────────── */
+function renderInvTileSparklines() {
+  document.querySelectorAll('.inv-tile-spark').forEach(canvas => {
+    const vals = canvas.dataset.invSpark.split(',').map(Number);
+    const isUp = vals[vals.length-1] > vals[0];
+    const color = isUp ? '#22C55E' : '#FF2137';
+    new Chart(canvas, {
+      type: 'line',
+      data: { labels: vals, datasets: [{ data: vals, borderColor: color, borderWidth: 2, tension: .4, pointRadius: 0, fill: false }] },
+      options: { responsive: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: false }
+    });
+  });
+}
+
+/* ── Performance Table ────────────────────────── */
+let invSortCol = '12m';
+let invSortDir = -1; /* -1 = best first (most negative) */
+
+function renderInvPerformanceTable() {
+  const body = document.getElementById('invPerfBody');
+  const sorted = [...INVESTIGATOR_DATA].sort((a, b) => {
+    const colMap = { '1d': 'd1', '1m': 'm1', '3m': 'm3', '6m': 'm6', '12m': 'm12' };
+    const key = colMap[invSortCol];
+    return invSortDir * (a[key] - b[key]);
+  });
+
+  body.innerHTML = sorted.map(inv => {
+    const origIdx = INVESTIGATOR_DATA.indexOf(inv);
+    const logoColor = INV_LOGO_COLORS[origIdx] || '#35A5CF';
+    const logoInitial = inv.name.charAt(0);
+    const logoHtml = inv.logoUrl
+      ? '<div class="inv-row-logo"><img src="' + inv.logoUrl + '" alt="' + inv.name + '"></div>'
+      : '<div class="inv-row-logo" style="background:' + logoColor + '">' + logoInitial + '</div>';
+    const fmt = v => {
+      const cls = v < 0 ? 'inv-td-neg' : v > 0 ? 'inv-td-pos' : 'inv-td-neutral';
+      const prefix = v > 0 ? '+' : '';
+      return '<td class="' + cls + '">' + prefix + v.toFixed(1) + '%</td>';
+    };
+    return '<tr onclick="showInvStocks(\'' + inv.name.replace(/'/g, "\\'") + '\')">' +
+      '<td><div class="inv-td-name-wrap">' + logoHtml + inv.name + '</div></td>' +
+      fmt(inv.d1) + fmt(inv.m1) + fmt(inv.m3) + fmt(inv.m6) + fmt(inv.m12) +
+      '<td style="text-align:center"><canvas class="inv-mini-spark" data-inv-table-spark="' + inv.sparkData.join(',') + '" width="70" height="24"></canvas></td>' +
+    '</tr>';
+  }).join('');
+
+  /* Render inline sparklines */
+  body.querySelectorAll('.inv-mini-spark').forEach(canvas => {
+    const vals = canvas.dataset.invTableSpark.split(',').map(Number);
+    new Chart(canvas, {
+      type: 'line',
+      data: { labels: vals, datasets: [{ data: vals, borderColor: '#35A5CF', borderWidth: 1.5, tension: .4, pointRadius: 0, fill: false }] },
+      options: { responsive: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: false }
+    });
+  });
+
+  /* Highlight active sort column */
+  document.querySelectorAll('.inv-perf-table th').forEach(th => th.style.color = '');
+  const thIdx = { '1d': 1, '1m': 2, '3m': 3, '6m': 4, '12m': 5 }[invSortCol];
+  if (thIdx !== undefined) {
+    document.querySelectorAll('.inv-perf-table th')[thIdx].style.color = '#35A5CF';
+  }
+}
+
+function sortInvTable(col) {
+  if (col === invSortCol) {
+    invSortDir *= -1;
+  } else {
+    invSortCol = col;
+    invSortDir = -1;
+  }
+  renderInvPerformanceTable();
+}
+
+/* ── Monthly Returns Horizontal Bar Chart ─────── */
+let invMonthlyChart = null;
+let invSelectedMonth = null;
+
+function renderInvMonthlyChart() {
+  const ctx = document.getElementById('invMonthlyReturnsChart').getContext('2d');
+  const labels = INV_MONTHLY_RETURNS.map(d => d.month);
+  const data = INV_MONTHLY_RETURNS.map(d => d.returnPct);
+  const colors = data.map(v => v < 0 ? '#FF2137' : '#22C55E');
+
+  invMonthlyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: colors,
+        borderRadius: 4,
+        barPercentage: 0.6,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      onClick(evt, elems) {
+        if (!elems.length) return;
+        openInvDrilldown(elems[0].index);
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: ctx => {
+              const v = ctx.parsed.x;
+              return (v > 0 ? '+' : '') + v.toFixed(1) + '% avg return — click to expand';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#F4F6F8' },
+          ticks: { color: '#8A95A0', font: { size: 11, weight: '600' }, callback: v => (v > 0 ? '+' : '') + v + '%' },
+          border: { display: false }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: '#0E1D29', font: { size: 12, weight: '600' }, padding: 8 },
+          border: { display: false }
+        }
+      },
+      onHover(evt, elems) {
+        evt.native.target.style.cursor = elems.length ? 'pointer' : 'default';
+      }
+    }
+  });
+}
+
+function openInvDrilldown(idx) {
+  invSelectedMonth = idx;
+  const item = INV_MONTHLY_RETURNS[idx];
+
+  document.getElementById('invDrillTitle').textContent = item.month;
+  document.getElementById('invDrillSub').textContent = item.stocks.length + ' stock' + (item.stocks.length !== 1 ? 's' : '') + ' reported';
+
+  const maxAbs = Math.max(...item.stocks.map(s => Math.abs(s.ret)));
+  document.getElementById('invDrillBody').innerHTML = item.stocks.map((s, i) => {
+    const isNeg = s.ret < 0;
+    const color = isNeg ? '#FF2137' : '#22C55E';
+    const prefix = s.ret > 0 ? '+' : '';
+    const barPct = Math.min(100, (Math.abs(s.ret) / maxAbs) * 100);
+    return '<div class="inv-drill-row" style="animation-delay:' + (i * 0.05) + 's">' +
+      '<div class="inv-drill-ticker">' + s.ticker + '</div>' +
+      '<div class="inv-drill-name">' + s.name + '</div>' +
+      '<div class="inv-drill-return" style="color:' + color + '">' + prefix + s.ret.toFixed(1) + '%</div>' +
+      '<div class="inv-drill-bar-wrap"><div class="inv-drill-bar" style="width:' + barPct + '%;background:' + color + '"></div></div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('invMonthDrilldown').style.display = 'block';
+  document.getElementById('invMonthDrilldown').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeInvDrilldown() {
+  invSelectedMonth = null;
+  document.getElementById('invMonthDrilldown').style.display = 'none';
+}
+
+/* ── Sub-tab switching ────────────────────────── */
+function switchInvTab(tab) {
+  document.querySelectorAll('.inv-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.inv-tab-content').forEach(t => t.classList.remove('active'));
+
+  if (tab === 'overview') {
+    document.querySelectorAll('.inv-tab')[0].classList.add('active');
+    document.getElementById('inv-tab-overview').classList.add('active');
+  } else {
+    document.querySelectorAll('.inv-tab')[1].classList.add('active');
+    document.getElementById('inv-tab-profile').classList.add('active');
+  }
+}
+
+/* ── Profile loading ──────────────────────────── */
+function loadProfile(idx) {
+  idx = parseInt(idx);
+  const inv = INVESTIGATOR_DATA[idx];
+  if (!inv) return;
+
+  const logoEl = document.getElementById('profileLogo');
+  const logoColor = INV_LOGO_COLORS[idx] || '#35A5CF';
+  if (inv.logoUrl) {
+    logoEl.innerHTML = '<img src="' + inv.logoUrl + '" alt="' + inv.name + '">';
+    logoEl.style.background = 'transparent';
+  } else {
+    logoEl.textContent = inv.name.charAt(0);
+    logoEl.style.background = logoColor;
+  }
+  document.getElementById('profileName').textContent = inv.name;
+  document.getElementById('profileBio').textContent = inv.bio;
+  document.getElementById('profileFounded').textContent = inv.founded;
+  document.getElementById('profileLocation').textContent = inv.location;
+  document.getElementById('profileStyle').textContent = inv.style;
+  document.getElementById('profileWebsite').textContent = inv.website;
+
+  document.getElementById('factWinRatio').textContent = inv.winRatio + '%';
+  document.getElementById('factHighest').textContent = '+' + inv.highest + '%';
+  document.getElementById('factLowest').textContent = inv.lowest + '%';
+  document.getElementById('factReports').textContent = inv.reports;
+  document.getElementById('factDelisted').textContent = inv.delisted;
+  document.getElementById('factFrequency').textContent = inv.frequency;
+
+  /* Report History Table */
+  const tbody = document.getElementById('profileHistoryBody');
+  if (inv.reportHistory.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#5a6e7f;padding:24px">Detailed report history coming soon</td></tr>';
+    return;
+  }
+  /* Find max absolute return for scaling the bars */
+  const maxAbsReturn = Math.max(...inv.reportHistory.map(r => Math.abs(r.allTime)), 10);
+
+  tbody.innerHTML = inv.reportHistory.map(r => {
+    const retCls = r.allTime < 0 ? 'inv-td-neg' : 'inv-td-pos';
+    const avgCls = r.avg < 0 ? 'inv-td-neg' : 'inv-td-pos';
+    const barPct = Math.min(100, Math.abs(r.allTime) / maxAbsReturn * 100);
+    const barColor = r.allTime < 0 ? 'var(--red)' : 'var(--green)';
+    const barLabel = (r.allTime > 0 ? '+' : '') + r.allTime.toFixed(1) + '%';
+    const barHtml = '<div style="display:flex;align-items:center;gap:8px">' +
+      '<div style="flex:1;height:8px;background:var(--grey1);border-radius:4px;overflow:hidden;position:relative">' +
+        '<div style="width:' + barPct.toFixed(0) + '%;height:100%;background:' + barColor + ';border-radius:4px;transition:width .3s"></div>' +
+      '</div>' +
+      '<span style="font-size:12px;font-weight:700;color:' + barColor + ';min-width:52px;text-align:right">' + barLabel + '</span>' +
+    '</div>';
+    return '<tr>' +
+      '<td class="inv-td-name" style="color:var(--blue)">' + r.ticker + '</td>' +
+      '<td>' + r.date + '</td>' +
+      '<td class="' + retCls + '">' + (r.allTime > 0 ? '+' : '') + r.allTime.toFixed(1) + '%</td>' +
+      '<td>' + barHtml + '</td>' +
+      '<td class="' + avgCls + '">' + (r.avg > 0 ? '+' : '') + r.avg.toFixed(1) + '%</td>' +
+    '</tr>';
+  }).join('');
+}
+
+/* ── Open profile from table row click ────────── */
+function openInvProfile(name) {
+  navigateToInvProfile(name);
+}
+
+/* ── Show investigator's stocks panel (Overview tab) ── */
+function showInvStocks(name) {
+  const inv = INVESTIGATOR_DATA.find(d => d.name === name);
+  if (!inv) return;
+
+  /* Collect all stocks this researcher has reported on from monthly data */
+  let stocks = [];
+  INV_MONTHLY_RETURNS.forEach(month => {
+    /* These are aggregate — we don't have per-investigator breakdown in monthly data
+       so use the report history from the investigator data instead */
+  });
+
+  /* Use the investigator's report history */
+  stocks = inv.reportHistory || [];
+
+  /* Also scan ALL_YEARS data for additional reports by this investigator */
+  const extraStocks = [];
+  for (let y = 2024; y <= 2026; y++) {
+    const yearData = ALL_YEARS[y];
+    if (!yearData) continue;
+    Object.values(yearData).forEach(monthData => {
+      monthData.reports.forEach(r => {
+        if (r.inv === name && !stocks.find(s => s.ticker === r.ticker && s.date === r.date)) {
+          extraStocks.push({
+            ticker: r.ticker,
+            date: r.date + ', ' + y,
+            allTime: r.impact,
+            d5: Math.abs(r.impact) >= 5,
+            d10: Math.abs(r.impact) >= 10,
+            d25: Math.abs(r.impact) >= 25,
+            d50: Math.abs(r.impact) >= 50,
+            avg: r.impact,
+            headline: r.headline
+          });
+        }
+      });
+    });
+  }
+
+  const allStocks = [...stocks, ...extraStocks];
+
+  /* Get or create drilldown panel below the table */
+  let panel = document.getElementById('invStocksDrilldown');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'invStocksDrilldown';
+    panel.className = 'inv-drilldown';
+    panel.style.marginBottom = '28px';
+    const tableWrap = document.querySelector('#inv-tab-overview .inv-table-wrap');
+    tableWrap.parentNode.insertBefore(panel, tableWrap.nextSibling);
+  }
+
+  const origIdx = INVESTIGATOR_DATA.indexOf(inv);
+  const logoColor = INV_LOGO_COLORS[origIdx] || '#35A5CF';
+  const logoInitial = inv.name.charAt(0);
+  const logoHtml = inv.logoUrl
+    ? '<img src="' + inv.logoUrl + '" style="width:32px;height:32px;border-radius:8px;object-fit:cover">'
+    : '<div style="width:32px;height:32px;border-radius:8px;background:' + logoColor + ';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">' + logoInitial + '</div>';
+
+  panel.innerHTML =
+    '<div class="inv-drilldown-header">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        logoHtml +
+        '<div>' +
+          '<div class="inv-drilldown-title">' + name + '</div>' +
+          '<div class="inv-drilldown-sub">' + allStocks.length + ' stock' + (allStocks.length !== 1 ? 's' : '') + ' reported on &middot; <a href="#" onclick="event.preventDefault();navigateToInvProfile(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#35A5CF;text-decoration:none">View full profile &rarr;</a></div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="inv-drilldown-close" onclick="document.getElementById(\'invStocksDrilldown\').style.display=\'none\'">&times;</button>' +
+    '</div>';
+
+  if (allStocks.length === 0) {
+    panel.innerHTML += '<div style="color:#5a6e7f;text-align:center;padding:16px">No detailed stock data available yet</div>';
+  } else {
+    const maxAbs = Math.max(...allStocks.map(s => Math.abs(s.allTime || s.avg || 10)));
+    panel.innerHTML += allStocks.map((s, i) => {
+      const ret = s.allTime || s.avg || 0;
+      const isNeg = ret < 0;
+      const color = isNeg ? '#FF2137' : '#22C55E';
+      const prefix = ret > 0 ? '+' : '';
+      const barPct = Math.min(100, (Math.abs(ret) / maxAbs) * 100);
+      return '<div class="inv-drill-row" style="animation-delay:' + (i * 0.04) + 's">' +
+        '<div class="inv-drill-ticker">' + s.ticker + '</div>' +
+        '<div class="inv-drill-name">' + (s.date || '') + '</div>' +
+        '<div class="inv-drill-return" style="color:' + color + '">' + prefix + ret.toFixed(1) + '%</div>' +
+        '<div class="inv-drill-bar-wrap"><div class="inv-drill-bar" style="width:' + barPct + '%;background:' + color + '"></div></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  /* Highlight the clicked row */
+  document.querySelectorAll('.inv-perf-table tbody tr').forEach(tr => tr.style.background = '');
+  document.querySelectorAll('.inv-perf-table tbody tr').forEach(tr => {
+    if (tr.querySelector('.inv-td-name-wrap') && tr.querySelector('.inv-td-name-wrap').textContent.trim() === name) {
+      tr.style.background = 'rgba(53,165,207,.1)';
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   STOCK PAGE — PRICE CHART
+   ══════════════════════════════════════════════════ */
+let stockChart = null;
+
+/* Generate realistic CVNA-style price data */
+function generateStockPriceData(range) {
+  const rng = mulberry32(42);
+  const pts = [];
+  const events = [];
+  let count, startPrice, volatility, label;
+
+  switch(range) {
+    case '1d':  count = 78;  startPrice = 196; volatility = 0.3; break;
+    case '5d':  count = 65;  startPrice = 192; volatility = 0.8; break;
+    case '1m':  count = 22;  startPrice = 185; volatility = 1.5; break;
+    case '6m':  count = 130; startPrice = 140; volatility = 2.2; break;
+    case 'ytd': count = 35;  startPrice = 168; volatility = 2.0; break;
+    case '1y':  count = 252; startPrice = 52;  volatility = 2.5; break;
+    case 'all': count = 400; startPrice = 12;  volatility = 3.5; break;
+    default:    count = 35;  startPrice = 168; volatility = 2.0;
+  }
+
+  let price = startPrice;
+  const drift = (198.42 - startPrice) / count;
+  for (let i = 0; i < count; i++) {
+    price += drift + (rng() - 0.48) * volatility;
+    price = Math.max(price * 0.95, price); /* Floor */
+    pts.push(+price.toFixed(2));
+  }
+  /* Ensure last point matches current price */
+  pts[pts.length - 1] = 198.42;
+
+  /* Event markers for longer ranges */
+  if (count > 50) {
+    events.push({ idx: Math.floor(count * 0.25), type: 'report', label: 'Short Report' });
+    events.push({ idx: Math.floor(count * 0.55), type: 'earnings', label: 'Q3 Earnings' });
+    events.push({ idx: Math.floor(count * 0.75), type: 'report', label: 'Short Report #2' });
+    events.push({ idx: Math.floor(count * 0.88), type: 'event', label: 'Debt Restructuring' });
+  }
+
+  return { pts, events };
+}
+
+function initStockPage() {
+  renderStockChart('ytd');
+}
+
+function renderStockChart(range) {
+  const { pts, events } = generateStockPriceData(range);
+  const ctx = document.getElementById('stockPriceChart').getContext('2d');
+
+  if (stockChart) stockChart.destroy();
+
+  /* Build point markers for events */
+  const pointBg = pts.map(() => 'transparent');
+  const pointBorder = pts.map(() => 'transparent');
+  const pointRadius = pts.map(() => 0);
+
+  events.forEach(e => {
+    const color = e.type === 'report' ? '#FF2137' : e.type === 'earnings' ? '#F59E0B' : '#35A5CF';
+    pointBg[e.idx] = color;
+    pointBorder[e.idx] = '#fff';
+    pointRadius[e.idx] = 6;
+  });
+
+  /* Gradient fill */
+  const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+  gradient.addColorStop(0, 'rgba(53,165,207,.12)');
+  gradient.addColorStop(1, 'rgba(53,165,207,0)');
+
+  stockChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: pts.map((_, i) => i),
+      datasets: [{
+        data: pts,
+        borderColor: '#35A5CF',
+        borderWidth: 2,
+        tension: 0.3,
+        pointBackgroundColor: pointBg,
+        pointBorderColor: pointBorder,
+        pointBorderWidth: 2,
+        pointRadius: pointRadius,
+        pointHoverRadius: pointRadius.map(r => r > 0 ? r + 2 : 4),
+        fill: true,
+        backgroundColor: gradient,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          padding: 10,
+          cornerRadius: 8,
+          titleColor: '#fff',
+          bodyColor: '#c0cad4',
+          callbacks: {
+            title: (ctx) => {
+              const idx = ctx[0].dataIndex;
+              const ev = events.find(e => e.idx === idx);
+              return ev ? ev.label : '';
+            },
+            label: (ctx) => '$' + ctx.parsed.y.toFixed(2),
+          }
+        }
+      },
+      scales: {
+        x: {
+          display: false,
+        },
+        y: {
+          grid: { color: 'rgba(14,29,41,.04)' },
+          ticks: {
+            font: { size: 11, weight: '600' },
+            color: '#8A95A0',
+            callback: v => '$' + v,
+          },
+          border: { display: false },
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index',
+      }
+    }
+  });
+}
+
+function setStockRange(el, range) {
+  el.parentElement.querySelectorAll('.stk-toggle').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderStockChart(range);
+}
+
+/* ══════════════════════════════════════════════════
+   INVESTIGATOR PROFILE PAGE
+   ══════════════════════════════════════════════════ */
+
+/* Extended report data for Muddy Waters (example) — each entry has multi-period impact data */
+const MW_REPORTS = [
+  { ticker: 'SOLR', company: 'SolarEdge Alt.', date: 'Feb 17, 2026', sector: 'Technology', cap: 'Mid Cap', d1: -3.2, w1: -8.1, m1: -12.1, all: -12.1 },
+  { ticker: 'DKNG', company: 'DraftKings Inc.', date: 'Feb 2, 2026', sector: 'Consumer', cap: 'Large Cap', d1: -2.8, w1: -7.4, m1: -14.2, all: -14.2 },
+  { ticker: 'GSX', company: 'GSX Techedu', date: 'Apr 14, 2020', sector: 'Education', cap: 'Mid Cap', d1: -8.4, w1: -18.2, m1: -34.6, all: -96.4 },
+  { ticker: 'LK', company: 'Luckin Coffee', date: 'Jan 31, 2020', sector: 'Consumer', cap: 'Large Cap', d1: -10.2, w1: -14.8, m1: -22.3, all: -97.8 },
+  { ticker: 'ANTA', company: 'Anta Sports', date: 'Jul 8, 2019', sector: 'Consumer', cap: 'Large Cap', d1: -1.4, w1: -3.1, m1: -4.2, all: +12.8 },
+  { ticker: 'TAL', company: 'TAL Education', date: 'Jun 13, 2018', sector: 'Education', cap: 'Mid Cap', d1: -5.6, w1: -12.3, m1: -18.4, all: -88.2 },
+  { ticker: 'NQ', company: 'NQ Mobile', date: 'Oct 24, 2013', sector: 'Technology', cap: 'Small Cap', d1: -12.1, w1: -28.4, m1: -47.2, all: -99.1 },
+  { ticker: 'FMCN', company: 'Focus Media', date: 'Nov 21, 2011', sector: 'Media', cap: 'Mid Cap', d1: -6.8, w1: -15.7, m1: -24.1, all: -39.6 },
+  { ticker: 'ONP', company: 'Orient Paper', date: 'Jun 28, 2010', sector: 'Industrials', cap: 'Small Cap', d1: -14.2, w1: -31.4, m1: -42.1, all: -92.3 },
+  { ticker: 'RINO', company: 'RINO Intl.', date: 'Nov 10, 2010', sector: 'Industrials', cap: 'Small Cap', d1: -16.4, w1: -38.2, m1: -55.7, all: -100.0 },
+  { ticker: 'DGW', company: 'Duoyuan Global', date: 'Apr 26, 2011', sector: 'Industrials', cap: 'Small Cap', d1: -7.2, w1: -18.6, m1: -32.4, all: -97.4 },
+  { ticker: 'CCME', company: 'China MediaExpress', date: 'Feb 3, 2011', sector: 'Media', cap: 'Small Cap', d1: -11.3, w1: -22.8, m1: -38.2, all: -100.0 },
+  { ticker: 'SNDA', company: 'Shanda Games', date: 'Sep 15, 2011', sector: 'Technology', cap: 'Mid Cap', d1: -3.1, w1: -6.4, m1: -8.8, all: -28.4 },
+  { ticker: 'EDU', company: 'New Oriental', date: 'Jul 18, 2012', sector: 'Education', cap: 'Large Cap', d1: -15.6, w1: -22.4, m1: -28.8, all: +34.2 },
+  { ticker: 'AMC', company: 'AMC Entertainment', date: 'Aug 3, 2015', sector: 'Media', cap: 'Mid Cap', d1: -1.8, w1: -4.2, m1: -6.1, all: -52.1 },
+  { ticker: 'SMRT', company: 'Stein Mart', date: 'Mar 22, 2017', sector: 'Consumer', cap: 'Small Cap', d1: -8.4, w1: -14.2, m1: -21.6, all: -100.0 },
+  { ticker: 'MNST', company: 'Monster Bev.', date: 'Jan 9, 2016', sector: 'Consumer', cap: 'Large Cap', d1: -0.4, w1: -1.8, m1: +2.4, all: +42.6 },
+  { ticker: 'SL', company: 'SL Green Realty', date: 'Nov 14, 2017', sector: 'Financials', cap: 'Mid Cap', d1: -2.2, w1: -5.8, m1: -9.4, all: -44.2 },
+  { ticker: 'EROS', company: 'Eros STX Global', date: 'Sep 22, 2015', sector: 'Media', cap: 'Small Cap', d1: -9.8, w1: -22.4, m1: -38.6, all: -96.8 },
+  { ticker: 'MFIN', company: 'Medallion Fin.', date: 'Oct 18, 2017', sector: 'Financials', cap: 'Small Cap', d1: -4.6, w1: -12.8, m1: -19.2, all: -78.4 },
+  { ticker: 'STX', company: 'Sterling Check', date: 'May 7, 2022', sector: 'Technology', cap: 'Mid Cap', d1: -3.8, w1: -8.2, m1: -14.1, all: -36.8 },
+  { ticker: 'CVNA', company: 'Carvana Co.', date: 'Aug 12, 2022', sector: 'Consumer', cap: 'Mid Cap', d1: -6.2, w1: -11.8, m1: -24.6, all: +128.4 },
+  { ticker: 'PTON', company: 'Peloton Intl.', date: 'Feb 15, 2021', sector: 'Consumer', cap: 'Large Cap', d1: -2.4, w1: -8.6, m1: -18.2, all: -92.4 },
+  { ticker: 'WKHS', company: 'Workhorse Grp.', date: 'Mar 2, 2021', sector: 'Industrials', cap: 'Small Cap', d1: -7.8, w1: -18.4, m1: -32.6, all: -95.2 },
+  { ticker: 'XL', company: 'XL Fleet', date: 'Mar 3, 2021', sector: 'Industrials', cap: 'Small Cap', d1: -12.6, w1: -24.8, m1: -42.1, all: -96.8 },
+  { ticker: 'DQ', company: 'Daqo New Energy', date: 'Jun 22, 2021', sector: 'Technology', cap: 'Mid Cap', d1: -4.8, w1: -10.2, m1: -16.4, all: -68.4 },
+  { ticker: 'GRPN', company: 'Groupon Inc.', date: 'Oct 12, 2012', sector: 'Technology', cap: 'Mid Cap', d1: -3.4, w1: -8.8, m1: -14.2, all: -98.6 },
+  { ticker: 'OTLY', company: 'Oatly Group', date: 'Nov 18, 2021', sector: 'Consumer', cap: 'Mid Cap', d1: -5.2, w1: -11.4, m1: -22.8, all: -88.2 },
+  { ticker: 'IQ', company: 'iQIYI Inc.', date: 'Apr 7, 2020', sector: 'Technology', cap: 'Mid Cap', d1: -7.1, w1: -14.6, m1: -21.2, all: -82.4 },
+  { ticker: 'BABA', company: 'Alibaba Grp.', date: 'Sep 10, 2022', sector: 'Technology', cap: 'Mega Cap', d1: -0.8, w1: -2.4, m1: -5.2, all: -18.6 },
+  { ticker: 'LKNCY', company: 'Luckin (OTC)', date: 'Feb 1, 2020', sector: 'Consumer', cap: 'Mid Cap', d1: -6.2, w1: -10.4, m1: -18.8, all: -97.8 },
+  { ticker: 'PLUG', company: 'Plug Power', date: 'Jan 25, 2021', sector: 'Industrials', cap: 'Mid Cap', d1: -4.1, w1: -12.2, m1: -28.4, all: -88.6 },
+  { ticker: 'HYMC', company: 'Hycroft Mining', date: 'Apr 14, 2022', sector: 'Materials', cap: 'Small Cap', d1: -8.6, w1: -18.4, m1: -34.2, all: -82.4 },
+  { ticker: 'CLNE', company: 'Clean Energy', date: 'Jul 8, 2021', sector: 'Industrials', cap: 'Small Cap', d1: -3.8, w1: -9.2, m1: -16.4, all: -64.2 },
+  { ticker: 'RIDE', company: 'Lordstown Motors', date: 'Mar 12, 2021', sector: 'Industrials', cap: 'Small Cap', d1: -9.2, w1: -22.6, m1: -38.4, all: -99.8 },
+];
+
+/* Chart instances for cleanup */
+let ipBarChartInstance = null;
+let ipSectorPieInstance = null;
+let ipCapPieInstance = null;
+let ipCurrentBarPeriod = 'd1';
+let ipCurrentTablePeriod = 'd1';
+
+function navigateToInvProfile(invName) {
+  navigateTo('inv-profile');
+  setTimeout(() => {
+    if (!window._ipInit) {
+      window._ipInit = true;
+    }
+    renderInvProfilePage(invName);
+  }, 50);
+}
+
+function renderInvProfilePage(invName) {
+  /* Find investigator in INVESTIGATOR_DATA */
+  const inv = INVESTIGATOR_DATA.find(d => d.name === invName);
+  if (!inv) return;
+
+  const initials = invName.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+  const invIdx = INVESTIGATOR_DATA.indexOf(inv);
+  const logoColor = INV_LOGO_COLORS[invIdx % INV_LOGO_COLORS.length];
+
+  /* Use MW_REPORTS for Muddy Waters, otherwise generate synthetic data from reportHistory */
+  const reports = invName === 'Muddy Waters' ? MW_REPORTS : generateSyntheticReports(inv);
+
+  /* Store on window for slicer updates */
+  window._ipReports = reports;
+  window._ipInvName = invName;
+
+  /* Header */
+  document.getElementById('ipHeaderLogo').textContent = initials;
+  document.getElementById('ipHeaderLogo').style.background = logoColor;
+  document.getElementById('ipHeaderName').textContent = invName;
+  document.getElementById('ipHeaderMeta').textContent = `${inv.location} · Founded ${inv.founded} · ${inv.style} · ${inv.website}`;
+
+  /* Logo card */
+  document.getElementById('ipLogoCircle').textContent = initials;
+  document.getElementById('ipLogoCircle').style.background = logoColor;
+  document.getElementById('ipLogoName').innerHTML = invName.replace(' ', '<br>');
+
+  /* Stat cards */
+  const totalAll = reports.length;
+  const ytdReports = reports.filter(r => r.date.includes('2026'));
+  const successYTD = ytdReports.filter(r => r.all < 0).length;
+  const successRate = ytdReports.length > 0 ? Math.round((successYTD / ytdReports.length) * 100) : 0;
+
+  /* Calculate avg days between reports */
+  const sortedDates = reports.map(r => new Date(r.date)).sort((a,b) => a-b);
+  let avgDays = 18;
+  if (sortedDates.length > 1) {
+    let totalDiff = 0;
+    for (let i = 1; i < sortedDates.length; i++) {
+      totalDiff += (sortedDates[i] - sortedDates[i-1]) / (1000*60*60*24);
+    }
+    avgDays = Math.round(totalDiff / (sortedDates.length - 1));
+  }
+
+  const earliestDate = sortedDates[0];
+  const earliestStr = MONTH_NAMES[earliestDate.getMonth()] + ' ' + earliestDate.getFullYear();
+  const yearsTracked = Math.round((new Date() - earliestDate) / (1000*60*60*24*365));
+
+  document.getElementById('ipTotalAll').textContent = totalAll;
+  document.getElementById('ipTotalYTD').textContent = ytdReports.length;
+  document.getElementById('ipSuccessYTD').textContent = successYTD;
+  document.getElementById('ipSuccessRate').textContent = `${successRate}% success rate`;
+  document.getElementById('ipAvgDays').textContent = avgDays;
+  document.getElementById('ipEarliest').textContent = earliestStr;
+  document.getElementById('ipTrackYears').textContent = `~${yearsTracked} years tracked`;
+
+  /* News */
+  document.getElementById('ipNewsInvName').textContent = invName;
+  renderIpNews(invName);
+
+  /* Reset slicers */
+  ipCurrentBarPeriod = 'd1';
+  ipCurrentTablePeriod = 'd1';
+  document.querySelectorAll('#ipBarSlicer .ip-slicer-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('#ipTableSlicer .ip-slicer-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+
+  /* Reset scatter slicer */
+  document.querySelectorAll('#ipScatterSlicer .ip-slicer-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+
+  /* Render charts and table */
+  renderScatterChart('ipScatterChart', 'd1', invName, 'ip');
+  renderIpBarChart('d1');
+  renderIpStockTable('d1');
+  renderIpSectorPie(reports);
+  renderIpCapPie(reports);
+}
+
+function generateSyntheticReports(inv) {
+  const sectors = ['Technology','Consumer','Healthcare','Financials','Industrials','Media','Materials','Education'];
+  const caps = ['Small Cap','Mid Cap','Large Cap','Mega Cap'];
+  const tickers = ['ACME','ZETA','FLUX','NOVA','PRNT','KERN','VOLT','APEX','ODIN','RAZE','QUIK','FRST','BLZE','CRUX','PULS','WAVE','TRNX','AION','DRFT','CLAD','SYNC','ORBT','NXUS','VRDO','LUMA','TREX','HEXA','ONYX','PYRE','ZYRA','BOLT','MYNT','VXEL','KODA','RUNE'];
+  const names = ['Acme Corp','Zeta Holdings','Flux Energy','Nova Systems','Print Tech','Kern Bio','Volt Dynamics','Apex Labs','Odin Capital','RazeTech','QuickServ','FrostByte','Blaze Media','Crux Pharma','PulseNet','WavePoint','TransNex','Aion Group','DriftCo','Clad Works','SyncFi','OrbitAI','Nexus Grp','Verdo Inc','Luma Health','T-Rex Fin','Hexagon','OnyxStone','Pyre Inc','Zyra Bio','BoltPay','MyntCoin','VoxelAI','Koda Labs','RuneStone'];
+  const results = [];
+  const count = inv.reports || 15;
+  const seed = inv.name.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
+  function seededRand(i) { let x = Math.sin(seed + i*127.1) * 43758.5453; return x - Math.floor(x); }
+
+  for (let i = 0; i < Math.min(count, 35); i++) {
+    const r = seededRand(i);
+    const d1 = -(r * 14 + 0.5);
+    const w1 = d1 * (1.5 + seededRand(i+100)*1.5);
+    const m1 = w1 * (1.2 + seededRand(i+200)*1.2);
+    const allImpact = seededRand(i+300) < 0.15 ? m1 * -0.3 : m1 * (1.5 + seededRand(i+400)*2);
+    const year = 2026 - Math.floor(i * 16 / count);
+    const month = Math.floor(seededRand(i+500) * 12);
+    const day = Math.floor(seededRand(i+600) * 28) + 1;
+    results.push({
+      ticker: tickers[i % tickers.length],
+      company: names[i % names.length],
+      date: `${MONTH_NAMES[month]} ${day}, ${year}`,
+      sector: sectors[Math.floor(seededRand(i+700)*sectors.length)],
+      cap: caps[Math.floor(seededRand(i+800)*caps.length)],
+      d1: +d1.toFixed(1),
+      w1: +w1.toFixed(1),
+      m1: +m1.toFixed(1),
+      all: +allImpact.toFixed(1),
+    });
+  }
+  return results;
+}
+
+function renderIpBarChart(period) {
+  const reports = window._ipReports || [];
+  /* Sort by impact — most negative first */
+  const sorted = [...reports].sort((a,b) => a[period] - b[period]);
+  const labels = sorted.map(r => r.ticker);
+  const data = sorted.map(r => r[period]);
+  const colors = data.map(v => v < 0 ? '#FF2137' : '#22C55E');
+
+  if (ipBarChartInstance) ipBarChartInstance.destroy();
+
+  ipBarChartInstance = new Chart(document.getElementById('ipBarChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderRadius: 4,
+        barThickness: reports.length > 20 ? 8 : 14,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          titleFont: { size: 12, weight: '700' },
+          bodyFont: { size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            title: (items) => {
+              const idx = items[0].dataIndex;
+              return sorted[idx].ticker + ' — ' + sorted[idx].company;
+            },
+            label: (item) => {
+              const v = item.raw;
+              return (v > 0 ? '+' : '') + v.toFixed(1) + '% impact';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#F4F6F8' },
+          ticks: { font: { size: 11 }, color: '#8A95A0', callback: v => (v>0?'+':'') + v + '%' },
+          border: { display: false },
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 11, weight: '600' }, color: '#0E1D29' },
+          border: { display: false },
+        }
+      }
+    }
+  });
+}
+
+function renderIpStockTable(period) {
+  const reports = window._ipReports || [];
+  /* Sort by date descending */
+  const sorted = [...reports].sort((a,b) => new Date(b.date) - new Date(a.date));
+  const body = document.getElementById('ipStockBody');
+  body.innerHTML = sorted.map(r => {
+    const val = r[period];
+    const cls = val < 0 ? 'ip-impact-neg' : 'ip-impact-pos';
+    const prefix = val > 0 ? '+' : '';
+    const arrow = val < 0 ? '▼' : '▲';
+    return `<tr>
+      <td><span class="ip-stock-ticker" onclick="navigateTo('stock')">${r.ticker}</span> <span style="color:var(--grey3);font-size:12px">${r.company}</span></td>
+      <td>${r.date}</td>
+      <td><span class="${cls}">${arrow} ${prefix}${val.toFixed(1)}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderIpSectorPie(reports) {
+  const counts = {};
+  reports.forEach(r => { counts[r.sector] = (counts[r.sector]||0) + 1; });
+  const labels = Object.keys(counts);
+  const data = Object.values(counts);
+  const pieColors = ['#35A5CF','#FF2137','#22C55E','#F59E0B','#0E6B8A','#8A95A0','#0E1D29','#E2E6EA'];
+
+  if (ipSectorPieInstance) ipSectorPieInstance.destroy();
+  ipSectorPieInstance = new Chart(document.getElementById('ipSectorPie'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: pieColors.slice(0, labels.length), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '55%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { font: { size: 11, weight: '600' }, color: '#0E1D29', padding: 10, boxWidth: 12, borderRadius: 3 }
+        },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          bodyFont: { size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: (ctx) => ` ${ctx.label}: ${ctx.raw} reports (${Math.round(ctx.raw/reports.length*100)}%)`
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderIpCapPie(reports) {
+  const counts = {};
+  reports.forEach(r => { counts[r.cap] = (counts[r.cap]||0) + 1; });
+  /* Order: Mega > Large > Mid > Small */
+  const order = ['Mega Cap','Large Cap','Mid Cap','Small Cap'];
+  const labels = order.filter(c => counts[c]);
+  const data = labels.map(l => counts[l]);
+  const capColors = ['#0E1D29','#35A5CF','#F59E0B','#8A95A0'];
+
+  if (ipCapPieInstance) ipCapPieInstance.destroy();
+  ipCapPieInstance = new Chart(document.getElementById('ipCapPie'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: capColors.slice(0, labels.length), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '55%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { font: { size: 11, weight: '600' }, color: '#0E1D29', padding: 10, boxWidth: 12, borderRadius: 3 }
+        },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          bodyFont: { size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: (ctx) => ` ${ctx.label}: ${ctx.raw} reports (${Math.round(ctx.raw/reports.length*100)}%)`
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderIpNews(invName) {
+  const newsItems = [
+    { src: 'Activ8 Insights', srcColor: 'var(--red)', badge: 'A8', badgeBg: 'var(--red)', headline: `${invName}'s Latest Report: Initial Analysis and Market Reaction`, time: '3h ago', tags: [invName] },
+    { src: 'Bloomberg', srcColor: 'var(--grey3)', badge: 'BBG', badgeBg: 'var(--navy)', headline: `${invName} Report Triggers 8% Drop in Target Stock, SEC Filing Follows`, time: '6h ago', tags: ['Regulation'] },
+    { src: 'Financial Times', srcColor: 'var(--grey3)', badge: 'FT', badgeBg: 'var(--blue)', headline: `Inside ${invName}'s Research Process: How They Identify Targets`, time: '1d ago', tags: [invName, 'Deep Dive'] },
+    { src: 'Wall Street Journal', srcColor: 'var(--grey3)', badge: 'WSJ', badgeBg: 'var(--amber)', headline: `Short Sellers Under Scrutiny: ${invName} Responds to Critics`, time: '2d ago', tags: ['Industry'] },
+    { src: 'Activ8 Insights', srcColor: 'var(--red)', badge: 'A8', badgeBg: 'var(--red)', headline: `Performance Review: How ${invName}'s 2025 Picks Have Performed`, time: '3d ago', tags: [invName, 'Analysis'] },
+    { src: 'Reuters', srcColor: 'var(--grey3)', badge: 'REU', badgeBg: 'var(--grey3)', headline: `Target Company Issues Rebuttal to ${invName} Short Report`, time: '4d ago', tags: ['Rebuttal'] },
+  ];
+
+  document.getElementById('ipNewsFeed').innerHTML = newsItems.map(n => `
+    <div class="news-article">
+      <div class="news-badge" style="background:${n.badgeBg}">${n.badge}</div>
+      <div class="news-body">
+        <div class="news-src" style="color:${n.srcColor}">${n.src}</div>
+        <div class="news-headline">${n.headline}</div>
+        <div class="news-meta-row"><span>${n.time}</span>${n.tags.map(t => `<span class="news-tag" style="color:var(--blue)">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Scatter Plot: Investigator Rankings ──────── */
+/* Map INVESTIGATOR_DATA period fields to the slicer keys — returns signed value */
+function getInvAvgImpact(inv, period) {
+  if (period === 'd1') return inv.d1;
+  if (period === 'w1') return inv.m1;
+  if (period === 'm1') return inv.m3;
+  if (period === 'all') return inv.m12;
+  return inv.m12;
+}
+
+let ipScatterChartInstance = null;
+let invOverviewScatterInstance = null;
+
+function renderScatterChart(canvasId, period, highlightName, instanceKey) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+
+  /* Destroy previous */
+  if (instanceKey === 'ip' && ipScatterChartInstance) ipScatterChartInstance.destroy();
+  if (instanceKey === 'inv' && invOverviewScatterInstance) invOverviewScatterInstance.destroy();
+
+  /* Build data points for all investigators */
+  const highlighted = [];
+  const others = [];
+
+  INVESTIGATOR_DATA.forEach((inv, idx) => {
+    const avgImpact = getInvAvgImpact(inv, period);
+    const totalReports = inv.reports;
+    const winRate = inv.winRatio;
+    const point = {
+      x: totalReports,
+      y: avgImpact,
+      r: Math.max(5, winRate / 8),  /* Scale win rate to dot radius */
+      label: inv.name,
+      winRate: winRate,
+      idx: idx,
+    };
+    if (highlightName && inv.name === highlightName) {
+      highlighted.push(point);
+    } else if (!highlightName && winRate >= 65) {
+      highlighted.push(point);
+    } else {
+      others.push(point);
+    }
+  });
+
+  const periodLabels = { d1: '24 Hours', w1: '1 Week', m1: '1 Month', all: 'Since Report' };
+
+  /* Calculate symmetric Y range so 0% is always centered */
+  const allPoints = [...highlighted, ...others];
+  const allY = allPoints.map(p => p.y);
+  const maxAbs = Math.max(Math.abs(Math.min(...allY)), Math.abs(Math.max(...allY)), 5);
+  const yPad = Math.ceil(maxAbs * 1.2);
+
+  /* Zero-line plugin — draws a thick line at y=0 */
+  const zeroLinePlugin = {
+    id: 'zeroLine',
+    afterDatasetsDraw(chart) {
+      const { ctx, scales: { y: yScale } } = chart;
+      const yPixel = yScale.getPixelForValue(0);
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(chart.chartArea.left, yPixel);
+      ctx.lineTo(chart.chartArea.right, yPixel);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#0E1D29';
+      ctx.stroke();
+      /* Label */
+      ctx.font = '600 11px Inter, sans-serif';
+      ctx.fillStyle = '#0E1D29';
+      ctx.textAlign = 'right';
+      ctx.fillText('0%', chart.chartArea.left - 6, yPixel + 4);
+      ctx.restore();
+    }
+  };
+
+  const chart = new Chart(canvas, {
+    type: 'bubble',
+    data: {
+      datasets: [
+        {
+          label: highlightName || 'Top Performers',
+          data: highlighted,
+          backgroundColor: highlightName
+            ? 'rgba(53,165,207,.8)'
+            : highlighted.map(p => p.y < 0 ? 'rgba(255,33,55,.65)' : 'rgba(34,197,94,.65)'),
+          borderColor: highlightName
+            ? '#35A5CF'
+            : highlighted.map(p => p.y < 0 ? '#FF2137' : '#22C55E'),
+          borderWidth: 2,
+          hoverBorderWidth: 3,
+        },
+        {
+          label: 'Other Investigators',
+          data: others,
+          backgroundColor: others.map(p => p.y < 0 ? 'rgba(255,33,55,.18)' : 'rgba(34,197,94,.18)'),
+          borderColor: others.map(p => p.y < 0 ? 'rgba(255,33,55,.35)' : 'rgba(34,197,94,.35)'),
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(138,149,160,.5)',
+          hoverBorderColor: '#8A95A0',
+          hoverBorderWidth: 2,
+        }
+      ]
+    },
+    plugins: [zeroLinePlugin],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          titleFont: { size: 13, weight: '700' },
+          bodyFont: { size: 12 },
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            title: (items) => items[0].raw.label,
+            label: (ctx) => {
+              const d = ctx.raw;
+              const prefix = d.y > 0 ? '+' : '';
+              return [
+                'Total Reports: ' + d.x,
+                'Avg. Impact (' + (periodLabels[period]||period) + '): ' + prefix + d.y.toFixed(1) + '%',
+                'Win Rate: ' + d.winRate + '%',
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Total Reports Published', font: { size: 12, weight: '600' }, color: '#8A95A0' },
+          grid: { color: '#F4F6F8' },
+          ticks: { font: { size: 11 }, color: '#8A95A0' },
+          border: { display: false },
+        },
+        y: {
+          min: -yPad,
+          max: yPad,
+          title: { display: true, text: 'Avg. Report Impact (%)', font: { size: 12, weight: '600' }, color: '#8A95A0' },
+          grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' : '#F4F6F8' },
+          ticks: {
+            font: { size: 11 },
+            color: (ctx) => ctx.tick.value === 0 ? '#0E1D29' : '#8A95A0',
+            callback: v => v === 0 ? '' : (v > 0 ? '+' : '') + v + '%',
+          },
+          border: { display: false },
+        }
+      },
+      onClick: (event, elements) => {
+        if (elements.length > 0) {
+          const dsIdx = elements[0].datasetIndex;
+          const ptIdx = elements[0].index;
+          const dataset = dsIdx === 0 ? highlighted : others;
+          if (dataset[ptIdx]) {
+            const name = dataset[ptIdx].label;
+            navigateToInvProfile(name);
+          }
+        }
+      }
+    }
+  });
+
+  if (instanceKey === 'ip') ipScatterChartInstance = chart;
+  if (instanceKey === 'inv') invOverviewScatterInstance = chart;
+  return chart;
+}
+
+function setIpScatterPeriod(el, period) {
+  el.parentElement.querySelectorAll('.ip-slicer-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderScatterChart('ipScatterChart', period, window._ipInvName, 'ip');
+}
+
+function setInvScatterPeriod(el, period) {
+  el.parentElement.querySelectorAll('.ip-slicer-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderScatterChart('invOverviewScatter', period, null, 'inv');
+}
+
+function setIpBarPeriod(el, period) {
+  el.parentElement.querySelectorAll('.ip-slicer-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  ipCurrentBarPeriod = period;
+  renderIpBarChart(period);
+}
+
+function setIpTablePeriod(el, period) {
+  el.parentElement.querySelectorAll('.ip-slicer-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  ipCurrentTablePeriod = period;
+  renderIpStockTable(period);
+}
+</script>
+</body>
+</html>
