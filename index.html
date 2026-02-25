@@ -182,9 +182,12 @@
   /* ── Summary Cards ─────────────────────────────── */
   .summary-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
     margin-bottom: 20px;
+  }
+  .summary-row .card {
+    padding: 18px 16px;
   }
   .card {
     background: var(--white);
@@ -360,6 +363,55 @@
     flex-shrink: 0;
     margin-left: auto;
   }
+  .report-company-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--white);
+    flex-shrink: 0;
+    background: var(--navy);
+  }
+  .skom-badge {
+    display: inline-block;
+    background: rgba(245,158,11,.15);
+    color: var(--amber);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: .3px;
+    cursor: help;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .report-stoplights {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .stoplight {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--grey3);
+    letter-spacing: .2px;
+  }
+  .stoplight-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .stoplight-dot.red { background: var(--red); }
+  .stoplight-dot.yellow { background: var(--amber); }
+  .stoplight-dot.green { background: var(--green); }
 
   /* ── Investigator Sidebar ──────────────────────── */
   .inv-item {
@@ -556,6 +608,11 @@
     transition: all .2s;
   }
   .wl-stock:hover { background: var(--grey2); }
+  .wl-stock.has-reports { border-left: 3px solid var(--red); }
+  .wl-stock.no-reports { border-left: 3px solid var(--grey2); }
+  .wl-stock.wl-inv { border-left: 3px solid var(--blue); }
+  .wl-stock.dragging { opacity: .4; }
+  .wl-stock.drag-over { outline: 2px dashed var(--blue); outline-offset: -2px; }
   .wl-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .wl-info { flex: 1; min-width: 0; }
   .wl-ticker { font-size: 13px; font-weight: 700; }
@@ -563,6 +620,121 @@
   .wl-right { text-align: right; flex-shrink: 0; }
   .wl-price { font-size: 13px; font-weight: 600; }
   .wl-change { font-size: 11px; font-weight: 700; }
+  .wl-report-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    margin-top: 2px;
+    display: inline-block;
+  }
+  .wl-report-badge.has { background: rgba(255,33,55,.1); color: var(--red); }
+  .wl-report-badge.none { background: var(--grey1); color: var(--grey3); }
+  .wl-remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--grey2);
+    color: var(--grey3);
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all .15s;
+  }
+  .wl-remove-btn:hover { background: var(--red); color: #fff; }
+  .wl-stock:hover .wl-remove-btn { display: flex; }
+  .wl-drag-handle {
+    cursor: grab;
+    color: var(--grey3);
+    font-size: 14px;
+    flex-shrink: 0;
+    user-select: none;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .wl-stock:hover .wl-drag-handle { opacity: 1; }
+  .wl-search-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .wl-search-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--grey2);
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .wl-search-input:focus { border-color: var(--blue); }
+  .wl-search-input::placeholder { color: var(--grey3); }
+  .wl-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--grey2);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(14,29,41,.12);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 60;
+    display: none;
+  }
+  .wl-search-results.visible { display: block; }
+  .wl-search-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background .1s;
+  }
+  .wl-search-item:hover { background: var(--grey1); }
+  .wl-search-item .wl-add-btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .wl-search-item .wl-add-btn:hover { opacity: .8; }
+  .wl-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .wl-tab {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--grey2);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--grey3);
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .wl-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 
   /* ── News Feed ─────────────────────────────────── */
   .news-feed { display: flex; flex-direction: column; gap: 0; }
@@ -1923,6 +2095,9 @@
   <!-- ────────── PAGE: HOME ────────── -->
   <div id="page-home" class="page active">
 
+    <!-- ── Section Title ───────────────────────── -->
+    <div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:14px;letter-spacing:-.3px">This Past Week in Activist Short Selling</div>
+
     <!-- ── 1. Summary Cards ───────────────────── -->
     <div class="summary-row">
       <div class="card">
@@ -1945,6 +2120,17 @@
         <div class="card-value" style="color:var(--red)">-14.2%</div>
         <div class="card-change down"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg> within 5 trading days</div>
       </div>
+      <div class="card" style="cursor:pointer" onclick="navigateToInvProfile('Grizzly Research')">
+        <div class="card-label">Investigator on the Rise</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <div style="width:36px;height:36px;border-radius:10px;background:#22C55E;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0">G</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;line-height:1.2">Grizzly Research</div>
+            <div style="font-size:11px;color:var(--grey3);margin-top:2px">-22.3% avg impact this week</div>
+          </div>
+        </div>
+        <div class="card-change up" style="margin-top:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg> Most impactful this week</div>
+      </div>
     </div>
 
     <!-- ── 2. Biggest Stock Impacts + Latest News (side by side) ── -->
@@ -1953,7 +2139,7 @@
         <div class="card-header">
           <div>
             <div class="card-title">Biggest Stock Impacts This Week</div>
-            <div class="card-subtitle">Price change since report publication</div>
+            <div class="card-subtitle">All price changes reflect each stock's movement from the date the short report was published to the current price</div>
           </div>
           <div class="chip-group">
             <button class="chip active" onclick="setChip(this)">This Week</button>
@@ -2040,57 +2226,24 @@
       </div>
     </div>
 
-    <!-- ── 3. Activ8 Watchlist ────────────────── -->
+    <!-- ── 3. My Watchlist ────────────────────── -->
     <div class="card" style="margin-bottom:20px">
       <div class="card-header">
         <div>
-          <div class="card-title">Activ8 Watchlist <span class="badge-new" style="background:var(--blue);animation:none">Curated</span></div>
-          <div class="card-subtitle">8 stocks selected by our team based on recent activist activity</div>
-        </div>
-        <span class="view-all">Manage Watchlist &rarr;</span>
-      </div>
-      <div class="watchlist-grid">
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--red)"></div>
-          <div class="wl-info"><div class="wl-ticker">ACME</div><div class="wl-name">Acme Holdings</div></div>
-          <div class="wl-right"><div class="wl-price">$84.20</div><div class="wl-change" style="color:var(--red)">-8.4%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--red)"></div>
-          <div class="wl-info"><div class="wl-ticker">SOLR</div><div class="wl-name">SolarEdge Alt.</div></div>
-          <div class="wl-right"><div class="wl-price">$31.50</div><div class="wl-change" style="color:var(--red)">-12.1%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--red)"></div>
-          <div class="wl-info"><div class="wl-ticker">AIML</div><div class="wl-name">AiMill Corp.</div></div>
-          <div class="wl-right"><div class="wl-price">$122.40</div><div class="wl-change" style="color:var(--red)">-18.7%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--red)"></div>
-          <div class="wl-info"><div class="wl-ticker">MDBV</div><div class="wl-name">MediBravo Inc.</div></div>
-          <div class="wl-right"><div class="wl-price">$46.10</div><div class="wl-change" style="color:var(--red)">-22.3%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--amber)"></div>
-          <div class="wl-info"><div class="wl-ticker">VNDR</div><div class="wl-name">Vendor Global</div></div>
-          <div class="wl-right"><div class="wl-price">$17.82</div><div class="wl-change" style="color:var(--red)">-4.6%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--amber)"></div>
-          <div class="wl-info"><div class="wl-ticker">DKNG</div><div class="wl-name">DraftKings</div></div>
-          <div class="wl-right"><div class="wl-price">$38.42</div><div class="wl-change" style="color:var(--red)">-5.1%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--green)"></div>
-          <div class="wl-info"><div class="wl-ticker">SMCI</div><div class="wl-name">Super Micro</div></div>
-          <div class="wl-right"><div class="wl-price">$42.80</div><div class="wl-change" style="color:var(--green)">+3.2%</div></div>
-        </div>
-        <div class="wl-stock">
-          <div class="wl-dot" style="background:var(--green)"></div>
-          <div class="wl-info"><div class="wl-ticker">WOLF</div><div class="wl-name">Wolfspeed</div></div>
-          <div class="wl-right"><div class="wl-price">$11.24</div><div class="wl-change" style="color:var(--green)">+1.8%</div></div>
+          <div class="card-title">My Watchlist</div>
+          <div class="card-subtitle">Track stocks and investigators you're following</div>
         </div>
       </div>
+      <div class="wl-search-wrap">
+        <input type="text" class="wl-search-input" id="wlSearchInput" placeholder="Search tickers or investigators to add..." oninput="handleWlSearch(this.value)" onfocus="handleWlSearch(this.value)">
+        <div class="wl-search-results" id="wlSearchResults"></div>
+      </div>
+      <div class="wl-tabs">
+        <button class="wl-tab active" onclick="setWlTab(this,'all')">All</button>
+        <button class="wl-tab" onclick="setWlTab(this,'stocks')">Stocks</button>
+        <button class="wl-tab" onclick="setWlTab(this,'investigators')">Investigators</button>
+      </div>
+      <div class="watchlist-grid" id="watchlistGrid"></div>
     </div>
 
     <!-- ── 4. Recent Reports + Investigators ─── -->
@@ -2099,7 +2252,7 @@
         <div class="card-header">
           <div>
             <div class="card-title">Recent Short Reports <span class="badge-new">Live</span></div>
-            <div class="card-subtitle">Latest activist short selling reports</div>
+            <div class="card-subtitle">Most recent reports published by investigators</div>
           </div>
           <div class="chip-group">
             <button class="chip active red" onclick="filterReports('all',this)">All</button>
@@ -2108,11 +2261,56 @@
           </div>
         </div>
         <div class="report-feed">
-          <div class="report-item"><div class="report-time-col"><div class="report-ago">2h ago</div><div class="report-date">Feb 17</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Hindenburg Research</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Allegations of Inflated Revenue Through Related-Party Transactions</div><div class="report-target-row"><span class="report-ticker">ACME</span><span class="report-price">$84.20</span><span class="report-impact down">-8.4% today</span><canvas class="report-spark" data-values="92,91,89,88,86,85,84" data-color="down"></canvas></div></div></div>
-          <div class="report-item"><div class="report-time-col"><div class="report-ago">5h ago</div><div class="report-date">Feb 17</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Muddy Waters</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Questionable Accounting Practices and Overstated Backlog</div><div class="report-target-row"><span class="report-ticker">SOLR</span><span class="report-price">$31.50</span><span class="report-impact down">-12.1% today</span><canvas class="report-spark" data-values="36,35,34,33,32,32,31" data-color="down"></canvas></div></div></div>
-          <div class="report-item"><div class="report-time-col"><div class="report-ago">1d ago</div><div class="report-date">Feb 16</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Citron Research</span><span class="report-type update">Update</span></div><div class="report-headline">Follow-Up: Management Response Fails to Address Core Claims</div><div class="report-target-row"><span class="report-ticker">VNDR</span><span class="report-price">$17.82</span><span class="report-impact down">-4.6% since report</span><canvas class="report-spark" data-values="19,18.8,18.5,18.2,18,17.9,17.8" data-color="down"></canvas></div></div></div>
-          <div class="report-item"><div class="report-time-col"><div class="report-ago">2d ago</div><div class="report-date">Feb 15</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Kerrisdale Capital</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Overvalued AI Play With Minimal Proprietary Technology</div><div class="report-target-row"><span class="report-ticker">AIML</span><span class="report-price">$122.40</span><span class="report-impact down">-18.7% since report</span><canvas class="report-spark" data-values="150,145,140,135,130,125,122" data-color="down"></canvas></div></div></div>
-          <div class="report-item"><div class="report-time-col"><div class="report-ago">3d ago</div><div class="report-date">Feb 14</div></div><div class="report-body"><div class="report-meta"><span class="report-investigator">Grizzly Research</span><span class="report-type initial">Initial Report</span></div><div class="report-headline">Undisclosed Insider Selling and Channel-Stuffing Evidence</div><div class="report-target-row"><span class="report-ticker">MDBV</span><span class="report-price">$46.10</span><span class="report-impact down">-22.3% since report</span><canvas class="report-spark" data-values="59,56,53,50,48,47,46" data-color="down"></canvas></div></div></div>
+          <div class="report-item">
+            <div class="report-company-logo" style="background:var(--navy)">A</div>
+            <div class="report-time-col"><div class="report-ago">2h ago</div><div class="report-date">Feb 17</div></div>
+            <div class="report-body">
+              <div class="report-meta"><span class="report-investigator">Hindenburg Research</span></div>
+              <div class="report-headline">Allegations of Inflated Revenue Through Related-Party Transactions</div>
+              <div class="report-target-row"><span class="report-ticker">ACME</span><span class="report-price">$84.20</span><span class="report-impact down">-8.4% today</span><canvas class="report-spark" data-values="92,91,89,88,86,85,84" data-color="down"></canvas></div>
+              <div class="report-stoplights"><div class="stoplight"><span class="stoplight-dot red"></span>Gov</div><div class="stoplight"><span class="stoplight-dot yellow"></span>BM</div><div class="stoplight"><span class="stoplight-dot green"></span>BS</div></div>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-company-logo" style="background:var(--blue)">S</div>
+            <div class="report-time-col"><div class="report-ago">5h ago</div><div class="report-date">Feb 17</div></div>
+            <div class="report-body">
+              <div class="report-meta"><span class="report-investigator">Muddy Waters</span></div>
+              <div class="report-headline">Questionable Accounting Practices and Overstated Backlog</div>
+              <div class="report-target-row"><span class="report-ticker">SOLR</span><span class="report-price">$31.50</span><span class="report-impact down">-12.1% today</span><canvas class="report-spark" data-values="36,35,34,33,32,32,31" data-color="down"></canvas></div>
+              <div class="report-stoplights"><div class="stoplight"><span class="stoplight-dot yellow"></span>Gov</div><div class="stoplight"><span class="stoplight-dot red"></span>BM</div><div class="stoplight"><span class="stoplight-dot red"></span>BS</div></div>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-company-logo" style="background:var(--grey3)">V</div>
+            <div class="report-time-col"><div class="report-ago">1d ago</div><div class="report-date">Feb 16</div></div>
+            <div class="report-body">
+              <div class="report-meta"><span class="report-investigator">Citron Research</span></div>
+              <div class="report-headline">Follow-Up: Management Response Fails to Address Core Claims</div>
+              <div class="report-target-row"><span class="report-ticker">VNDR</span><span class="report-price">$17.82</span><span class="report-impact down">-4.6% since report</span><canvas class="report-spark" data-values="19,18.8,18.5,18.2,18,17.9,17.8" data-color="down"></canvas></div>
+              <div class="report-stoplights"><div class="stoplight"><span class="stoplight-dot green"></span>Gov</div><div class="stoplight"><span class="stoplight-dot yellow"></span>BM</div><div class="stoplight"><span class="stoplight-dot red"></span>BS</div></div>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-company-logo" style="background:var(--red)">A</div>
+            <div class="report-time-col"><div class="report-ago">2d ago</div><div class="report-date">Feb 15</div></div>
+            <div class="report-body">
+              <div class="report-meta"><span class="report-investigator">Kerrisdale Capital</span></div>
+              <div class="report-headline">Overvalued AI Play With Minimal Proprietary Technology</div>
+              <div class="report-target-row"><span class="report-ticker">AIML</span><span class="report-price">$122.40</span><span class="report-impact down">-18.7% since report</span><canvas class="report-spark" data-values="150,145,140,135,130,125,122" data-color="down"></canvas></div>
+              <div class="report-stoplights"><div class="stoplight"><span class="stoplight-dot red"></span>Gov</div><div class="stoplight"><span class="stoplight-dot red"></span>BM</div><div class="stoplight"><span class="stoplight-dot yellow"></span>BS</div></div>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-company-logo" style="background:#22C55E">M</div>
+            <div class="report-time-col"><div class="report-ago">3d ago</div><div class="report-date">Feb 14</div></div>
+            <div class="report-body">
+              <div class="report-meta"><span class="report-investigator">Grizzly Research</span><span class="skom-badge" title="Short King of the Month">SKOM</span></div>
+              <div class="report-headline">Undisclosed Insider Selling and Channel-Stuffing Evidence</div>
+              <div class="report-target-row"><span class="report-ticker">MDBV</span><span class="report-price">$46.10</span><span class="report-impact down">-22.3% since report</span><canvas class="report-spark" data-values="59,56,53,50,48,47,46" data-color="down"></canvas></div>
+              <div class="report-stoplights"><div class="stoplight"><span class="stoplight-dot red"></span>Gov</div><div class="stoplight"><span class="stoplight-dot yellow"></span>BM</div><div class="stoplight"><span class="stoplight-dot red"></span>BS</div></div>
+            </div>
+          </div>
         </div>
         <div style="text-align:center;padding-top:16px"><span class="view-all">View All Reports &rarr;</span></div>
       </div>
@@ -2128,37 +2326,36 @@
       </div>
     </div>
 
-    <!-- ── 5. Reports by Month + Sectors (with avg return) ── -->
-    <div class="grid-2">
-      <div class="card" id="monthlyReportsCard">
-        <div class="card-header">
-          <div><div class="card-title">Reports by Month</div><div class="card-subtitle">Click a month to view individual reports</div></div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <label for="yearSelect" style="font-size:12px;font-weight:600;color:var(--grey3);text-transform:uppercase;letter-spacing:.4px">Year</label>
-            <select id="yearSelect" onchange="switchYear(this.value)" style="appearance:none;-webkit-appearance:none;background:var(--navy);color:var(--white);border:none;border-radius:8px;padding:7px 32px 7px 14px;font-size:14px;font-weight:700;cursor:pointer;outline:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:12px"></select>
-          </div>
-        </div>
-        <div style="height:220px;position:relative;cursor:pointer"><canvas id="monthlyChart"></canvas></div>
-        <div id="monthDrilldown" style="display:none">
-          <div id="drilldownHeader" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px;border-top:1px solid var(--grey2);margin-top:16px">
-            <div style="display:flex;align-items:center;gap:10px"><div id="drilldownTitle" style="font-size:15px;font-weight:700"></div><div id="drilldownCount" class="tag" style="background:var(--navy);color:var(--white);font-size:11px"></div></div>
-            <button onclick="closeDrilldown()" style="background:none;border:1px solid var(--grey2);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--grey3);transition:all .15s" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--grey2)';this.style.color='var(--grey3)'">Close &times;</button>
-          </div>
-          <div id="drilldownBody" style="max-height:360px;overflow-y:auto"></div>
+    <!-- ── 5. Reports by Month and Targeted Sectors (combined) ── -->
+    <div class="card" id="monthlyReportsCard" style="margin-bottom:20px">
+      <div class="card-header">
+        <div><div class="card-title">Reports by Month and Targeted Sectors</div><div class="card-subtitle">Click a month to view individual reports &middot; Sector data updates with selected year</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label for="yearSelect" style="font-size:12px;font-weight:600;color:var(--grey3);text-transform:uppercase;letter-spacing:.4px">Year</label>
+          <select id="yearSelect" onchange="switchYear(this.value)" style="appearance:none;-webkit-appearance:none;background:var(--navy);color:var(--white);border:none;border-radius:8px;padding:7px 32px 7px 14px;font-size:14px;font-weight:700;cursor:pointer;outline:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%223%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;background-size:12px"></select>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Most Targeted Sectors</div><div class="card-subtitle">Report count &amp; avg. return</div></div>
-        </div>
-        <div style="height:180px;margin-bottom:20px"><canvas id="sectorChart"></canvas></div>
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px">
         <div>
-          <div class="sector-bar-item"><div class="sector-label">Technology</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:72%;background:var(--blue)"></div></div><div class="sector-count">18</div><div class="sector-return">+19.4%</div></div>
-          <div class="sector-bar-item"><div class="sector-label">Healthcare</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:48%;background:var(--red)"></div></div><div class="sector-count">12</div><div class="sector-return">+24.1%</div></div>
-          <div class="sector-bar-item"><div class="sector-label">Consumer</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:32%;background:var(--amber)"></div></div><div class="sector-count">8</div><div class="sector-return">+15.7%</div></div>
-          <div class="sector-bar-item"><div class="sector-label">Financials</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:20%;background:var(--navy)"></div></div><div class="sector-count">5</div><div class="sector-return">+12.3%</div></div>
-          <div class="sector-bar-item"><div class="sector-label">Energy</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:16%;background:var(--green)"></div></div><div class="sector-count">4</div><div class="sector-return">+21.8%</div></div>
+          <div style="height:220px;position:relative;cursor:pointer"><canvas id="monthlyChart"></canvas></div>
+          <div id="monthDrilldown" style="display:none">
+            <div id="drilldownHeader" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 12px;border-top:1px solid var(--grey2);margin-top:16px">
+              <div style="display:flex;align-items:center;gap:10px"><div id="drilldownTitle" style="font-size:15px;font-weight:700"></div><div id="drilldownCount" class="tag" style="background:var(--navy);color:var(--white);font-size:11px"></div></div>
+              <button onclick="closeDrilldown()" style="background:none;border:1px solid var(--grey2);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--grey3);transition:all .15s" onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseout="this.style.borderColor='var(--grey2)';this.style.color='var(--grey3)'">Close &times;</button>
+            </div>
+            <div id="drilldownBody" style="max-height:360px;overflow-y:auto"></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px">Most Targeted Sectors</div>
+          <div style="height:150px;margin-bottom:16px"><canvas id="sectorChart"></canvas></div>
+          <div id="sectorBarsContainer">
+            <div class="sector-bar-item"><div class="sector-label">Technology</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:72%;background:var(--blue)"></div></div><div class="sector-count">18</div><div class="sector-return">+19.4%</div></div>
+            <div class="sector-bar-item"><div class="sector-label">Healthcare</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:48%;background:var(--red)"></div></div><div class="sector-count">12</div><div class="sector-return">+24.1%</div></div>
+            <div class="sector-bar-item"><div class="sector-label">Consumer</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:32%;background:var(--amber)"></div></div><div class="sector-count">8</div><div class="sector-return">+15.7%</div></div>
+            <div class="sector-bar-item"><div class="sector-label">Financials</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:20%;background:var(--navy)"></div></div><div class="sector-count">5</div><div class="sector-return">+12.3%</div></div>
+            <div class="sector-bar-item"><div class="sector-label">Energy</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:16%;background:var(--green)"></div></div><div class="sector-count">4</div><div class="sector-return">+21.8%</div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -2166,7 +2363,7 @@
     <!-- ── 6. Investigator Avg. Returns (full width) ── -->
     <div class="card" style="margin-bottom:20px">
       <div class="card-header">
-        <div><div class="card-title">Investigator Avg. Returns</div><div class="card-subtitle">Click an investigator to view their profile</div></div>
+        <div><div class="card-title">Top Performing Investigators</div><div class="card-subtitle">Click a bar or name to view investigator profile</div></div>
         <div class="chip-group">
           <button class="chip" onclick="setChip(this)">30D</button>
           <button class="chip active" onclick="setChip(this)">90D</button>
@@ -4463,6 +4660,286 @@ function setIpTablePeriod(el, period) {
   ipCurrentTablePeriod = period;
   renderIpStockTable(period);
 }
+
+/* ══════════════════════════════════════════════════
+   MY WATCHLIST — Interactive watchlist with search,
+   add/remove, drag reorder, and report count badges
+   ══════════════════════════════════════════════════ */
+const STOCK_DATABASE = [
+  { ticker: 'ACME', name: 'Acme Holdings', price: 84.20, change: -8.4, reports: 3, type: 'stock' },
+  { ticker: 'SOLR', name: 'SolarEdge Alt.', price: 31.50, change: -12.1, reports: 2, type: 'stock' },
+  { ticker: 'AIML', name: 'AiMill Corp.', price: 122.40, change: -18.7, reports: 1, type: 'stock' },
+  { ticker: 'MDBV', name: 'MediBravo Inc.', price: 46.10, change: -22.3, reports: 2, type: 'stock' },
+  { ticker: 'VNDR', name: 'Vendor Global', price: 17.82, change: -4.6, reports: 1, type: 'stock' },
+  { ticker: 'DKNG', name: 'DraftKings', price: 38.42, change: -5.1, reports: 1, type: 'stock' },
+  { ticker: 'SMCI', name: 'Super Micro', price: 42.80, change: 3.2, reports: 0, type: 'stock' },
+  { ticker: 'WOLF', name: 'Wolfspeed', price: 11.24, change: 1.8, reports: 0, type: 'stock' },
+  { ticker: 'TSLA', name: 'Tesla Inc.', price: 198.42, change: -2.1, reports: 4, type: 'stock' },
+  { ticker: 'HOOD', name: 'Robinhood Markets', price: 22.15, change: -3.8, reports: 1, type: 'stock' },
+  { ticker: 'SNOW', name: 'Snowflake Inc.', price: 148.60, change: -6.2, reports: 1, type: 'stock' },
+  { ticker: 'PATH', name: 'UiPath Inc.', price: 18.40, change: -8.5, reports: 1, type: 'stock' },
+  { ticker: 'CELH', name: 'Celsius Holdings', price: 54.20, change: -4.1, reports: 1, type: 'stock' },
+  { ticker: 'CRWD', name: 'CrowdStrike', price: 312.80, change: 1.2, reports: 0, type: 'stock' },
+  { ticker: 'PLTR', name: 'Palantir', price: 24.60, change: 2.8, reports: 0, type: 'stock' },
+  { ticker: 'COIN', name: 'Coinbase', price: 178.90, change: -1.4, reports: 0, type: 'stock' },
+  { ticker: 'RIVN', name: 'Rivian Auto.', price: 14.80, change: -5.2, reports: 0, type: 'stock' },
+  { ticker: 'NIO', name: 'NIO Inc.', price: 7.42, change: -2.8, reports: 0, type: 'stock' },
+  { ticker: 'LCID', name: 'Lucid Group', price: 3.15, change: -4.5, reports: 0, type: 'stock' },
+  { ticker: 'SOFI', name: 'SoFi Technologies', price: 9.80, change: 1.5, reports: 0, type: 'stock' },
+];
+
+const INV_DATABASE = INV_POOL.map(name => ({
+  ticker: name.split(' ').map(w => w[0]).join('').toUpperCase(),
+  name: name,
+  type: 'investigator',
+  reports: INVESTIGATOR_DATA.find(d => d.name === name)?.reports || 0,
+}));
+
+let watchlistItems = [
+  { ticker: 'ACME', name: 'Acme Holdings', price: 84.20, change: -8.4, reports: 3, type: 'stock' },
+  { ticker: 'SOLR', name: 'SolarEdge Alt.', price: 31.50, change: -12.1, reports: 2, type: 'stock' },
+  { ticker: 'AIML', name: 'AiMill Corp.', price: 122.40, change: -18.7, reports: 1, type: 'stock' },
+  { ticker: 'MDBV', name: 'MediBravo Inc.', price: 46.10, change: -22.3, reports: 2, type: 'stock' },
+  { ticker: 'VNDR', name: 'Vendor Global', price: 17.82, change: -4.6, reports: 1, type: 'stock' },
+  { ticker: 'DKNG', name: 'DraftKings', price: 38.42, change: -5.1, reports: 1, type: 'stock' },
+  { ticker: 'SMCI', name: 'Super Micro', price: 42.80, change: 3.2, reports: 0, type: 'stock' },
+  { ticker: 'WOLF', name: 'Wolfspeed', price: 11.24, change: 1.8, reports: 0, type: 'stock' },
+];
+
+let wlFilter = 'all';
+let wlDragIdx = null;
+
+function setWlTab(el, tab) {
+  el.parentElement.querySelectorAll('.wl-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  wlFilter = tab;
+  renderWatchlist();
+}
+
+function renderWatchlist() {
+  const grid = document.getElementById('watchlistGrid');
+  const items = watchlistItems.filter(item => {
+    if (wlFilter === 'stocks') return item.type === 'stock';
+    if (wlFilter === 'investigators') return item.type === 'investigator';
+    return true;
+  });
+
+  grid.innerHTML = items.map((item, idx) => {
+    const hasReports = (item.reports || 0) > 0;
+    const typeClass = item.type === 'investigator' ? 'wl-inv' : (hasReports ? 'has-reports' : 'no-reports');
+    const reportBadgeClass = hasReports ? 'has' : 'none';
+    const reportText = item.type === 'investigator'
+      ? item.reports + ' reports published'
+      : (hasReports ? item.reports + ' short report' + (item.reports > 1 ? 's' : '') : '0 short reports');
+    const changeColor = (item.change || 0) < 0 ? 'var(--red)' : 'var(--green)';
+    const changePrefix = (item.change || 0) > 0 ? '+' : '';
+    const realIdx = watchlistItems.indexOf(item);
+
+    let priceHtml = '';
+    if (item.type === 'stock') {
+      priceHtml = '<div class="wl-right"><div class="wl-price">$' + (item.price || 0).toFixed(2) + '</div><div class="wl-change" style="color:' + changeColor + '">' + changePrefix + (item.change || 0).toFixed(1) + '%</div></div>';
+    }
+
+    return '<div class="wl-stock ' + typeClass + '" draggable="true" data-wl-idx="' + realIdx + '" ondragstart="wlDragStart(event,' + realIdx + ')" ondragover="wlDragOver(event)" ondragleave="wlDragLeave(event)" ondrop="wlDrop(event,' + realIdx + ')" ondragend="wlDragEnd(event)" style="position:relative">' +
+      '<button class="wl-remove-btn" onclick="event.stopPropagation();removeFromWatchlist(' + realIdx + ')" title="Remove">&times;</button>' +
+      '<div class="wl-drag-handle" title="Drag to reorder">&#9776;</div>' +
+      '<div class="wl-info"><div class="wl-ticker">' + item.ticker + (item.type === 'investigator' ? ' <span style="font-size:10px;color:var(--blue);font-weight:600">INV</span>' : '') + '</div><div class="wl-name">' + item.name + '</div><div class="wl-report-badge ' + reportBadgeClass + '">' + reportText + '</div></div>' +
+      priceHtml +
+    '</div>';
+  }).join('');
+}
+
+function addToWatchlist(ticker, type) {
+  if (watchlistItems.find(i => i.ticker === ticker && i.type === type)) return;
+  if (type === 'stock') {
+    const stock = STOCK_DATABASE.find(s => s.ticker === ticker);
+    if (stock) watchlistItems.push({...stock});
+  } else {
+    const inv = INV_DATABASE.find(i => i.ticker === ticker);
+    if (inv) watchlistItems.push({...inv});
+  }
+  renderWatchlist();
+  document.getElementById('wlSearchInput').value = '';
+  document.getElementById('wlSearchResults').classList.remove('visible');
+}
+
+function removeFromWatchlist(idx) {
+  watchlistItems.splice(idx, 1);
+  renderWatchlist();
+}
+
+function handleWlSearch(query) {
+  const results = document.getElementById('wlSearchResults');
+  if (!query || query.length < 1) {
+    results.classList.remove('visible');
+    return;
+  }
+  const q = query.toLowerCase();
+  const stockMatches = STOCK_DATABASE.filter(s =>
+    (s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)) &&
+    !watchlistItems.find(w => w.ticker === s.ticker && w.type === 'stock')
+  ).slice(0, 5);
+  const invMatches = INV_DATABASE.filter(i =>
+    (i.ticker.toLowerCase().includes(q) || i.name.toLowerCase().includes(q)) &&
+    !watchlistItems.find(w => w.name === i.name && w.type === 'investigator')
+  ).slice(0, 3);
+
+  if (stockMatches.length === 0 && invMatches.length === 0) {
+    results.innerHTML = '<div style="padding:12px 14px;color:var(--grey3);font-size:13px">No results found</div>';
+    results.classList.add('visible');
+    return;
+  }
+
+  let html = '';
+  stockMatches.forEach(s => {
+    html += '<div class="wl-search-item" onclick="addToWatchlist(\'' + s.ticker + '\',\'stock\')">' +
+      '<div><span style="font-weight:700">' + s.ticker + '</span> <span style="color:var(--grey3)">' + s.name + '</span></div>' +
+      '<button class="wl-add-btn" onclick="event.stopPropagation();addToWatchlist(\'' + s.ticker + '\',\'stock\')">+ Add</button>' +
+    '</div>';
+  });
+  invMatches.forEach(i => {
+    html += '<div class="wl-search-item" onclick="addToWatchlist(\'' + i.ticker + '\',\'investigator\')">' +
+      '<div><span style="font-weight:700;color:var(--blue)">' + i.name + '</span> <span style="font-size:10px;color:var(--blue)">INV</span></div>' +
+      '<button class="wl-add-btn" onclick="event.stopPropagation();addToWatchlist(\'' + i.ticker + '\',\'investigator\')">+ Add</button>' +
+    '</div>';
+  });
+  results.innerHTML = html;
+  results.classList.add('visible');
+}
+
+/* Drag and drop */
+function wlDragStart(e, idx) {
+  wlDragIdx = idx;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function wlDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const tile = e.target.closest('.wl-stock');
+  if (tile) tile.classList.add('drag-over');
+}
+function wlDragLeave(e) {
+  const tile = e.target.closest('.wl-stock');
+  if (tile) tile.classList.remove('drag-over');
+}
+function wlDrop(e, dropIdx) {
+  e.preventDefault();
+  const tile = e.target.closest('.wl-stock');
+  if (tile) tile.classList.remove('drag-over');
+  if (wlDragIdx === null || wlDragIdx === dropIdx) return;
+  const item = watchlistItems.splice(wlDragIdx, 1)[0];
+  watchlistItems.splice(dropIdx, 0, item);
+  wlDragIdx = null;
+  renderWatchlist();
+}
+function wlDragEnd(e) {
+  wlDragIdx = null;
+  document.querySelectorAll('.wl-stock').forEach(el => {
+    el.classList.remove('dragging');
+    el.classList.remove('drag-over');
+  });
+}
+
+/* Close search results on outside click */
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.wl-search-wrap')) {
+    document.getElementById('wlSearchResults').classList.remove('visible');
+  }
+});
+
+/* Initialize watchlist on load */
+renderWatchlist();
+
+/* ══════════════════════════════════════════════════
+   SECTOR DATA — Dynamic update when year changes
+   ══════════════════════════════════════════════════ */
+const SECTOR_COLORS_MAP = {
+  'Technology': 'var(--blue)',
+  'Healthcare': 'var(--red)',
+  'Consumer': 'var(--amber)',
+  'Financials': 'var(--navy)',
+  'Energy': 'var(--green)',
+  'Education': '#8A95A0',
+  'Industrials': '#0E6B8A',
+  'Media': '#F59E0B',
+  'Materials': '#22C55E',
+};
+
+/* Map tickers to sectors for generated data */
+const TICKER_SECTOR_MAP = {};
+TICKER_POOL.forEach((t, i) => {
+  const sectors = ['Technology','Healthcare','Consumer','Financials','Energy'];
+  TICKER_SECTOR_MAP[t] = sectors[i % sectors.length];
+});
+/* Override known tickers */
+Object.assign(TICKER_SECTOR_MAP, {
+  'TSLA':'Technology','DKNG':'Consumer','SNOW':'Technology','HOOD':'Financials',
+  'PATH':'Technology','CELH':'Consumer','CRWD':'Technology','MDBV':'Healthcare',
+  'AIML':'Technology','VNDR':'Consumer','SOLR':'Technology','ACME':'Financials',
+});
+
+let sectorChartInstance = null;
+
+function computeSectorData(yearData) {
+  const counts = {};
+  Object.values(yearData).forEach(month => {
+    month.reports.forEach(r => {
+      const sector = TICKER_SECTOR_MAP[r.ticker] || 'Technology';
+      counts[sector] = (counts[sector] || 0) + 1;
+    });
+  });
+  /* Sort by count descending */
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return sorted.slice(0, 5);
+}
+
+function updateSectorDisplay(yearData) {
+  const sectors = computeSectorData(yearData);
+  const maxCount = sectors.length > 0 ? sectors[0][1] : 1;
+
+  /* Update sector bars */
+  const container = document.getElementById('sectorBarsContainer');
+  container.innerHTML = sectors.map(([name, count]) => {
+    const color = SECTOR_COLORS_MAP[name] || 'var(--blue)';
+    const pct = Math.round((count / maxCount) * 100);
+    const avgRet = '+' + (10 + Math.round(count * 1.3)).toFixed(1) + '%';
+    return '<div class="sector-bar-item"><div class="sector-label">' + name + '</div><div class="sector-bar-bg"><div class="sector-bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div><div class="sector-count">' + count + '</div><div class="sector-return">' + avgRet + '</div></div>';
+  }).join('');
+
+  /* Update doughnut chart */
+  if (sectorChartInstance) sectorChartInstance.destroy();
+  const chartColors = ['#35A5CF','#FF2137','#F59E0B','#0E1D29','#22C55E','#8A95A0','#0E6B8A'];
+  sectorChartInstance = new Chart(document.getElementById('sectorChart'), {
+    type: 'doughnut',
+    data: {
+      labels: sectors.map(s => s[0]),
+      datasets: [{ data: sectors.map(s => s[1]), backgroundColor: chartColors.slice(0, sectors.length), borderWidth: 0 }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29', padding: 10, cornerRadius: 8,
+          callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + ' reports' }
+        }
+      }
+    }
+  });
+}
+
+/* Override switchYear to also update sectors */
+const _origSwitchYear = switchYear;
+switchYear = function(year) {
+  _origSwitchYear(year);
+  updateSectorDisplay(ALL_YEARS[parseInt(year)]);
+};
+
+/* Initialize sector display for 2026 */
+updateSectorDisplay(ALL_YEARS[2026]);
 </script>
 </body>
 </html>
