@@ -857,6 +857,12 @@
     top: 18px;
     right: 20px;
   }
+  .inv-tile-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,.55);
+    margin-top: 6px;
+    line-height: 1.3;
+  }
   .inv-tile-badge {
     display: inline-block;
     background: rgba(53,165,207,.2);
@@ -992,6 +998,58 @@
   .inv-td-pos { color: var(--green); }
   .inv-td-neg { color: var(--red); }
   .inv-td-neutral { color: var(--grey3); }
+
+  /* Heatmap cell styling */
+  .inv-heatmap-cell {
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    min-width: 56px;
+    display: inline-block;
+  }
+  .inv-heat-deep-red { background: #dc2626; color: #fff; }
+  .inv-heat-light-red { background: #fca5a5; color: #7f1d1d; }
+  .inv-heat-light-green { background: #bbf7d0; color: #14532d; }
+  .inv-heat-deep-green { background: #16a34a; color: #fff; }
+
+  /* Clickable investigator name */
+  .inv-td-name-wrap {
+    cursor: pointer;
+  }
+  .inv-td-name-wrap:hover {
+    text-decoration: underline;
+    text-decoration-color: #35A5CF;
+  }
+
+  /* Inline drilldown row */
+  .inv-inline-drill td {
+    padding: 0 !important;
+    border: none !important;
+  }
+  .inv-inline-drill-content {
+    background: #f8fafc;
+    border-left: 3px solid #35A5CF;
+    padding: 12px 16px;
+    margin: 4px 0 8px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .inv-drill-stock-row {
+    display: grid;
+    grid-template-columns: 60px 1fr repeat(5, 58px);
+    align-items: center;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .inv-drill-stock-row:last-child { border-bottom: none; }
+  .inv-drill-stock-header {
+    font-weight: 700;
+    color: #5a6e7f;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
 
   /* ── Section title ─────────────────────────── */
   .inv-section-title {
@@ -2381,6 +2439,7 @@
     <div class="inv-page">
 
       <!-- ── TOP HEADER: 3 Leader Tiles ── -->
+      <div style="text-align:right;font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px;letter-spacing:.2px">Data refreshed as of 02/17/2026</div>
       <div class="inv-hero-row">
         <div class="inv-tile">
           <div class="inv-tile-label">Latest Report</div>
@@ -2389,7 +2448,7 @@
             <span class="inv-tile-return neg">-2.0%</span>
             <canvas class="inv-tile-spark" data-inv-spark="40,38,36,35,37,39,38" width="80" height="28"></canvas>
           </div>
-          <div class="inv-tile-meta">Refreshed as of 02/17/2026</div>
+          <div class="inv-tile-desc">1-day return since report published</div>
         </div>
         <div class="inv-tile">
           <div class="inv-tile-label">2026 Leader</div>
@@ -2398,7 +2457,7 @@
             <span class="inv-tile-return pos">+35.0%</span>
             <canvas class="inv-tile-spark" data-inv-spark="10,18,22,28,30,33,35" width="80" height="28"></canvas>
           </div>
-          <div class="inv-tile-meta">Refreshed as of 02/17/2026</div>
+          <div class="inv-tile-desc">Best avg. return across all reports this year</div>
         </div>
         <div class="inv-tile">
           <div class="inv-tile-label">Short King of the Month <span class="inv-tile-badge">Feb 2026</span></div>
@@ -2411,14 +2470,13 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
             <span>Jan 2026: <strong>Fugazi Research</strong> +35.0%</span>
           </div>
-          <div class="inv-tile-meta">Refreshed as of 02/17/2026</div>
+          <div class="inv-tile-desc">Highest impact investigator this month</div>
         </div>
       </div>
 
-      <!-- ── Sub-tabs: Overview | Profile ── -->
+      <!-- ── Sub-tabs: Overview only (Profile is now a full page) ── -->
       <div class="inv-tabs-bar">
         <button class="inv-tab active" onclick="switchInvTab('overview')">Overview</button>
-        <button class="inv-tab" onclick="switchInvTab('profile')">Profile</button>
       </div>
 
       <!-- ═══ OVERVIEW TAB ══════════════════════════ -->
@@ -2426,25 +2484,10 @@
 
         <!-- Filters -->
         <div class="inv-filters">
-          <select class="inv-select" id="invFilterType">
+          <select class="inv-select" id="invFilterType" onchange="applyInvFilters()">
             <option value="all">All Types</option>
-            <option value="researcher">Researchers</option>
-            <option value="activist">Activists</option>
-          </select>
-          <select class="inv-select" id="invFilterSector">
-            <option value="all">All Sectors</option>
-            <option>Technology</option>
-            <option>Healthcare</option>
-            <option>Consumer</option>
-            <option>Financials</option>
-            <option>Energy</option>
-          </select>
-          <select class="inv-select" id="invFilterCountry">
-            <option value="all">All Countries</option>
-            <option>United States</option>
-            <option>United Kingdom</option>
-            <option>Hong Kong</option>
-            <option>Australia</option>
+            <option value="activist">Investigator</option>
+            <option value="researcher">Researcher</option>
           </select>
           <select class="inv-select" id="invSortBy" onchange="sortInvTable(this.value)">
             <option value="12m">Sort by: 12M Return</option>
@@ -2460,7 +2503,7 @@
           <div class="ip-scatter-header">
             <div>
               <div class="ip-scatter-title">Investigator Rankings</div>
-              <div class="ip-scatter-subtitle">Avg. report impact vs. total reports — larger dots = higher win rate. Click a dot to view profile.</div>
+              <div class="ip-scatter-subtitle">This chart compares investigative performance — avg. report impact vs. total reports published. Larger dots indicate higher win rate. Click any dot to view profile.</div>
             </div>
             <div class="ip-slicer" id="invScatterSlicer">
               <button class="ip-slicer-btn active" onclick="setInvScatterPeriod(this,'d1')">24 Hrs</button>
@@ -2480,11 +2523,13 @@
         </div>
 
         <!-- Performance Table -->
+        <div class="inv-section-title" style="margin-top:8px">Investigator Performance Rankings</div>
+        <div style="font-size:13px;color:#5a6e7f;margin-bottom:14px">Click any investigator to view their reports below</div>
         <div class="inv-table-wrap">
           <table class="inv-perf-table" id="invPerfTable">
             <thead>
               <tr>
-                <th class="inv-th-name">Researcher</th>
+                <th class="inv-th-name">Investigator</th>
                 <th class="inv-th-num" onclick="sortInvTable('1d')">1D</th>
                 <th class="inv-th-num" onclick="sortInvTable('1m')">1M</th>
                 <th class="inv-th-num" onclick="sortInvTable('3m')">3M</th>
@@ -2495,22 +2540,26 @@
             </thead>
             <tbody id="invPerfBody"></tbody>
           </table>
+          <div id="invSeeMoreWrap" style="text-align:center;padding:12px 0">
+            <button id="invSeeMoreBtn" onclick="toggleInvSeeMore()" style="background:none;border:1px solid #d1d5db;border-radius:8px;padding:8px 24px;font-size:13px;font-weight:600;color:#35A5CF;cursor:pointer">See More (79 total)</button>
+          </div>
         </div>
 
-        <!-- Monthly Report Returns Chart -->
-        <div class="inv-section-title">Monthly Report Returns</div>
-        <div class="inv-monthly-wrap">
-          <div style="height:420px"><canvas id="invMonthlyReturnsChart"></canvas></div>
-          <div id="invMonthDrilldown" class="inv-drilldown" style="display:none">
-            <div class="inv-drilldown-header">
-              <div>
-                <div class="inv-drilldown-title" id="invDrillTitle">September 2025</div>
-                <div class="inv-drilldown-sub" id="invDrillSub">4 reports</div>
-              </div>
-              <button class="inv-drilldown-close" onclick="closeInvDrilldown()">&times;</button>
+        <!-- Top Performing Investigators Bar Chart -->
+        <div class="card" style="padding:24px;margin-top:8px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+            <div>
+              <div class="card-title" style="margin:0">Top Performing Investigators</div>
+              <div style="font-size:13px;color:#5a6e7f;margin-top:4px">Click a bar or name to view investigator profile</div>
             </div>
-            <div id="invDrillBody"></div>
+            <div class="ip-slicer" id="invTopPerfSlicer">
+              <button class="ip-slicer-btn" onclick="setInvTopPerfPeriod(this,'30d')">30D</button>
+              <button class="ip-slicer-btn active" onclick="setInvTopPerfPeriod(this,'90d')">90D</button>
+              <button class="ip-slicer-btn" onclick="setInvTopPerfPeriod(this,'1y')">1Y</button>
+              <button class="ip-slicer-btn" onclick="setInvTopPerfPeriod(this,'all')">All Time</button>
+            </div>
           </div>
+          <div style="height:360px"><canvas id="invTopPerfChart"></canvas></div>
         </div>
 
       </div>
@@ -2917,6 +2966,35 @@
       <div class="ip-inv-title" id="ipHeaderName">Muddy Waters Research</div>
     </div>
     <div class="ip-inv-meta" id="ipHeaderMeta">San Francisco, USA &middot; Founded 2010 &middot; Forensic Activist &middot; muddywatersresearch.com</div>
+    <div class="ip-inv-bio" id="ipHeaderBio" style="font-size:13px;color:#5a6e7f;margin:12px 0 20px;line-height:1.6;max-width:800px"></div>
+
+    <!-- ═══ FAST FACTS ═════════════════════════════ -->
+    <div class="ip-fast-facts" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px">
+      <div class="ip-stat-card" style="text-align:center">
+        <div class="ip-stat-label">Win Ratio</div>
+        <div class="ip-stat-value" id="ipFactWinRatio" style="color:#22C55E">65%</div>
+      </div>
+      <div class="ip-stat-card" style="text-align:center">
+        <div class="ip-stat-label">Highest Winner</div>
+        <div class="ip-stat-value" id="ipFactHighest" style="color:#22C55E">+88%</div>
+      </div>
+      <div class="ip-stat-card" style="text-align:center">
+        <div class="ip-stat-label">Lowest Loser</div>
+        <div class="ip-stat-value" id="ipFactLowest" style="color:#FF2137">-31%</div>
+      </div>
+      <div class="ip-stat-card" style="text-align:center">
+        <div class="ip-stat-label"># of Reports</div>
+        <div class="ip-stat-value" id="ipFactReports">35</div>
+      </div>
+      <div class="ip-stat-card" style="text-align:center">
+        <div class="ip-stat-label"># Delisted</div>
+        <div class="ip-stat-value" id="ipFactDelisted">8</div>
+      </div>
+      <div class="ip-stat-card" style="text-align:center">
+        <div class="ip-stat-label">Report Frequency</div>
+        <div class="ip-stat-value" id="ipFactFrequency" style="font-size:18px">~2/mo</div>
+      </div>
+    </div>
 
     <!-- ═══ TOP STAT CARDS ═════════════════════════ -->
     <div class="ip-top-row">
@@ -3629,7 +3707,7 @@ const INV_MONTHLY_RETURNS = [
 function initInvestigatorsTab() {
   renderInvPerformanceTable();
   renderScatterChart('invOverviewScatter', 'd1', null, 'inv');
-  renderInvMonthlyChart();
+  renderInvTopPerfChart('90d');
   renderInvTileSparklines();
   loadProfile(0);
 }
@@ -3651,32 +3729,60 @@ function renderInvTileSparklines() {
 /* ── Performance Table ────────────────────────── */
 let invSortCol = '12m';
 let invSortDir = -1; /* -1 = best first (most negative) */
+let invShowAll = false;
+let invExpandedName = null; /* Currently expanded investigator drilldown */
+
+function getHeatmapClass(v) {
+  if (v <= -15) return 'inv-heat-deep-red';
+  if (v < -5) return 'inv-heat-light-red';
+  if (v < 0) return 'inv-heat-light-green';
+  return 'inv-heat-deep-green';
+}
+
+function getFilteredInvestigators() {
+  const typeFilter = document.getElementById('invFilterType').value;
+  let data = [...INVESTIGATOR_DATA];
+  if (typeFilter !== 'all') data = data.filter(inv => inv.type === typeFilter);
+  return data;
+}
 
 function renderInvPerformanceTable() {
   const body = document.getElementById('invPerfBody');
-  const sorted = [...INVESTIGATOR_DATA].sort((a, b) => {
+  const filtered = getFilteredInvestigators();
+  const sorted = filtered.sort((a, b) => {
     const colMap = { '1d': 'd1', '1m': 'm1', '3m': 'm3', '6m': 'm6', '12m': 'm12' };
     const key = colMap[invSortCol];
     return invSortDir * (a[key] - b[key]);
   });
 
-  body.innerHTML = sorted.map(inv => {
+  const showCount = invShowAll ? sorted.length : Math.min(8, sorted.length);
+  const visibleRows = sorted.slice(0, showCount);
+
+  body.innerHTML = visibleRows.map(inv => {
     const origIdx = INVESTIGATOR_DATA.indexOf(inv);
     const logoColor = INV_LOGO_COLORS[origIdx] || '#35A5CF';
     const logoInitial = inv.name.charAt(0);
     const logoHtml = inv.logoUrl
       ? '<div class="inv-row-logo"><img src="' + inv.logoUrl + '" alt="' + inv.name + '"></div>'
       : '<div class="inv-row-logo" style="background:' + logoColor + '">' + logoInitial + '</div>';
-    const fmt = v => {
-      const cls = v < 0 ? 'inv-td-neg' : v > 0 ? 'inv-td-pos' : 'inv-td-neutral';
+    const heatCell = v => {
+      const cls = getHeatmapClass(v);
       const prefix = v > 0 ? '+' : '';
-      return '<td class="' + cls + '">' + prefix + v.toFixed(1) + '%</td>';
+      return '<td><span class="inv-heatmap-cell ' + cls + '">' + prefix + v.toFixed(1) + '%</span></td>';
     };
-    return '<tr onclick="showInvStocks(\'' + inv.name.replace(/'/g, "\\'") + '\')">' +
-      '<td><div class="inv-td-name-wrap">' + logoHtml + inv.name + '</div></td>' +
-      fmt(inv.d1) + fmt(inv.m1) + fmt(inv.m3) + fmt(inv.m6) + fmt(inv.m12) +
+    const escapedName = inv.name.replace(/'/g, "\\'");
+    let rowHtml = '<tr onclick="showInvStocks(\'' + escapedName + '\')" style="cursor:pointer">' +
+      '<td><div class="inv-td-name-wrap">' + logoHtml + '<span>' + inv.name + ' <span style="font-size:10px;color:#35A5CF">&#x25B8;</span></span></div></td>' +
+      heatCell(inv.d1) + heatCell(inv.m1) + heatCell(inv.m3) + heatCell(inv.m6) + heatCell(inv.m12) +
       '<td style="text-align:center"><canvas class="inv-mini-spark" data-inv-table-spark="' + inv.sparkData.join(',') + '" width="70" height="24"></canvas></td>' +
     '</tr>';
+
+    /* If this investigator is expanded, add inline drilldown row */
+    if (invExpandedName === inv.name) {
+      rowHtml += buildInlineDrilldown(inv);
+    }
+
+    return rowHtml;
   }).join('');
 
   /* Render inline sparklines */
@@ -3695,6 +3801,84 @@ function renderInvPerformanceTable() {
   if (thIdx !== undefined) {
     document.querySelectorAll('.inv-perf-table th')[thIdx].style.color = '#35A5CF';
   }
+
+  /* Update See More button */
+  const seeMoreBtn = document.getElementById('invSeeMoreBtn');
+  const seeMoreWrap = document.getElementById('invSeeMoreWrap');
+  if (seeMoreWrap) {
+    if (sorted.length <= 8) {
+      seeMoreWrap.style.display = 'none';
+    } else {
+      seeMoreWrap.style.display = 'block';
+      seeMoreBtn.textContent = invShowAll ? 'Show Less' : 'See More (' + sorted.length + ' total)';
+    }
+  }
+}
+
+function toggleInvSeeMore() {
+  invShowAll = !invShowAll;
+  renderInvPerformanceTable();
+}
+
+function buildInlineDrilldown(inv) {
+  /* Collect stocks from reportHistory and ALL_YEARS */
+  let stocks = [...(inv.reportHistory || [])];
+  for (let y = 2024; y <= 2026; y++) {
+    const yearData = ALL_YEARS[y];
+    if (!yearData) continue;
+    Object.values(yearData).forEach(monthData => {
+      monthData.reports.forEach(r => {
+        if (r.inv === inv.name && !stocks.find(s => s.ticker === r.ticker && s.date === r.date)) {
+          stocks.push({ ticker: r.ticker, date: r.date + ', ' + y, allTime: r.impact, avg: r.impact, headline: r.headline });
+        }
+      });
+    });
+  }
+
+  /* Generate synthetic period returns for each stock (based on allTime) */
+  const rng = mulberry32(inv.name.length * 17 + inv.reports);
+  const stockRows = stocks.map(s => {
+    const base = s.allTime || s.avg || 0;
+    const d1 = +(base * (0.05 + rng() * 0.15)).toFixed(1);
+    const m1 = +(base * (0.2 + rng() * 0.3)).toFixed(1);
+    const m3 = +(base * (0.4 + rng() * 0.3)).toFixed(1);
+    const m6 = +(base * (0.6 + rng() * 0.25)).toFixed(1);
+    const m12 = +(base * (0.8 + rng() * 0.2)).toFixed(1);
+    return { ticker: s.ticker, date: s.date || '', d1, m1, m3, m6, m12 };
+  });
+
+  if (stockRows.length === 0) {
+    return '<tr class="inv-inline-drill"><td colspan="7"><div class="inv-inline-drill-content"><div style="color:#5a6e7f;text-align:center;padding:8px">No detailed stock data available — <a href="#" onclick="event.preventDefault();event.stopPropagation();navigateToInvProfile(\'' + inv.name.replace(/'/g, "\\'") + '\')" style="color:#35A5CF">View full profile &rarr;</a></div></div></td></tr>';
+  }
+
+  const header = '<div class="inv-drill-stock-row inv-drill-stock-header"><div>Ticker</div><div>Date</div><div>1D</div><div>1M</div><div>3M</div><div>6M</div><div>12M</div></div>';
+  const rows = stockRows.map(s => {
+    const fmtVal = v => {
+      const cls = getHeatmapClass(v);
+      const prefix = v > 0 ? '+' : '';
+      return '<div><span class="inv-heatmap-cell ' + cls + '" style="font-size:11px;padding:3px 6px;min-width:44px">' + prefix + v.toFixed(1) + '%</span></div>';
+    };
+    return '<div class="inv-drill-stock-row"><div style="font-weight:700">' + s.ticker + '</div><div style="color:#5a6e7f;font-size:11px">' + s.date + '</div>' + fmtVal(s.d1) + fmtVal(s.m1) + fmtVal(s.m3) + fmtVal(s.m6) + fmtVal(s.m12) + '</div>';
+  }).join('');
+
+  const escapedName = inv.name.replace(/'/g, "\\'");
+  return '<tr class="inv-inline-drill"><td colspan="7"><div class="inv-inline-drill-content">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+      '<div style="font-weight:700;font-size:14px;color:#0E1D29">' + inv.name + ' — Stocks Reported On (' + stockRows.length + ')</div>' +
+      '<div><a href="#" onclick="event.preventDefault();event.stopPropagation();navigateToInvProfile(\'' + escapedName + '\')" style="color:#35A5CF;font-size:12px;text-decoration:none;font-weight:600">View Full Profile &rarr;</a>' +
+      '&nbsp;&nbsp;<button onclick="event.stopPropagation();invExpandedName=null;renderInvPerformanceTable()" style="background:none;border:none;cursor:pointer;font-size:18px;color:#8A95A0">&times;</button></div>' +
+    '</div>' +
+    header + rows +
+  '</div></td></tr>';
+}
+
+function applyInvFilters() {
+  invExpandedName = null;
+  renderInvPerformanceTable();
+  /* Also re-render scatter chart with filter */
+  const activePeriodBtn = document.querySelector('#invScatterSlicer .ip-slicer-btn.active');
+  const period = activePeriodBtn ? activePeriodBtn.getAttribute('onclick').match(/'(\w+)'/)?.[1] || 'd1' : 'd1';
+  renderScatterChart('invOverviewScatter', period, null, 'inv');
 }
 
 function sortInvTable(col) {
@@ -3707,7 +3891,97 @@ function sortInvTable(col) {
   renderInvPerformanceTable();
 }
 
-/* ── Monthly Returns Horizontal Bar Chart ─────── */
+/* ── Top Performing Investigators Bar Chart (Investigators Page) ── */
+let invTopPerfChartInstance = null;
+
+function renderInvTopPerfChart(period) {
+  const canvas = document.getElementById('invTopPerfChart');
+  if (!canvas) return;
+  if (invTopPerfChartInstance) { invTopPerfChartInstance.destroy(); invTopPerfChartInstance = null; }
+
+  /* Map period to data key */
+  const keyMap = { '30d': 'm1', '90d': 'm3', '1y': 'm12', 'all': 'm12' };
+  const key = keyMap[period] || 'm3';
+
+  /* Sort investigators by absolute return */
+  const sorted = [...INVESTIGATOR_DATA].sort((a, b) => Math.abs(b[key]) - Math.abs(a[key]));
+  const top8 = sorted.slice(0, 8);
+
+  const labels = top8.map(inv => inv.name);
+  const values = top8.map(inv => Math.abs(inv[key]));
+  const colors = top8.map(inv => inv.winRatio >= 65 ? '#22C55E' : inv.winRatio >= 50 ? '#35A5CF' : '#8A95A0');
+
+  invTopPerfChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{ data: values, backgroundColor: colors, borderRadius: 6, barPercentage: 0.7 }]
+    },
+    plugins: [{
+      id: 'barValueLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          ctx.save();
+          ctx.font = '700 12px Inter, sans-serif';
+          ctx.fillStyle = '#0E1D29';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('+' + values[i].toFixed(1) + '%', bar.x + 6, bar.y);
+          ctx.restore();
+        });
+      }
+    }],
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          titleFont: { size: 13, weight: '700' },
+          bodyFont: { size: 12 },
+          padding: 12,
+          cornerRadius: 8,
+          callbacks: {
+            title: items => items[0].label,
+            label: ctx => {
+              const inv = top8[ctx.dataIndex];
+              return ['Avg. Return: +' + Math.abs(inv[key]).toFixed(1) + '%', 'Reports: ' + inv.reports, 'Win Rate: ' + inv.winRatio + '%'];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#F4F6F8' },
+          ticks: { callback: v => '+' + v + '%', font: { size: 11 }, color: '#8A95A0' },
+          border: { display: false }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 12, weight: '600' }, color: '#0E1D29' },
+          border: { display: false }
+        }
+      },
+      onClick: (event, elements) => {
+        if (elements.length > 0) {
+          const name = top8[elements[0].index].name;
+          navigateToInvProfile(name);
+        }
+      }
+    }
+  });
+}
+
+function setInvTopPerfPeriod(el, period) {
+  el.parentElement.querySelectorAll('.ip-slicer-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderInvTopPerfChart(period);
+}
+
+/* ── Monthly Returns Horizontal Bar Chart (LEGACY — replaced by Top Performers) ─────── */
 let invMonthlyChart = null;
 let invSelectedMonth = null;
 
@@ -3880,104 +4154,21 @@ function openInvProfile(name) {
 
 /* ── Show investigator's stocks panel (Overview tab) ── */
 function showInvStocks(name) {
-  const inv = INVESTIGATOR_DATA.find(d => d.name === name);
-  if (!inv) return;
-
-  /* Collect all stocks this researcher has reported on from monthly data */
-  let stocks = [];
-  INV_MONTHLY_RETURNS.forEach(month => {
-    /* These are aggregate — we don't have per-investigator breakdown in monthly data
-       so use the report history from the investigator data instead */
-  });
-
-  /* Use the investigator's report history */
-  stocks = inv.reportHistory || [];
-
-  /* Also scan ALL_YEARS data for additional reports by this investigator */
-  const extraStocks = [];
-  for (let y = 2024; y <= 2026; y++) {
-    const yearData = ALL_YEARS[y];
-    if (!yearData) continue;
-    Object.values(yearData).forEach(monthData => {
-      monthData.reports.forEach(r => {
-        if (r.inv === name && !stocks.find(s => s.ticker === r.ticker && s.date === r.date)) {
-          extraStocks.push({
-            ticker: r.ticker,
-            date: r.date + ', ' + y,
-            allTime: r.impact,
-            d5: Math.abs(r.impact) >= 5,
-            d10: Math.abs(r.impact) >= 10,
-            d25: Math.abs(r.impact) >= 25,
-            d50: Math.abs(r.impact) >= 50,
-            avg: r.impact,
-            headline: r.headline
-          });
-        }
-      });
-    });
-  }
-
-  const allStocks = [...stocks, ...extraStocks];
-
-  /* Get or create drilldown panel below the table */
-  let panel = document.getElementById('invStocksDrilldown');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'invStocksDrilldown';
-    panel.className = 'inv-drilldown';
-    panel.style.marginBottom = '28px';
-    const tableWrap = document.querySelector('#inv-tab-overview .inv-table-wrap');
-    tableWrap.parentNode.insertBefore(panel, tableWrap.nextSibling);
-  }
-
-  const origIdx = INVESTIGATOR_DATA.indexOf(inv);
-  const logoColor = INV_LOGO_COLORS[origIdx] || '#35A5CF';
-  const logoInitial = inv.name.charAt(0);
-  const logoHtml = inv.logoUrl
-    ? '<img src="' + inv.logoUrl + '" style="width:32px;height:32px;border-radius:8px;object-fit:cover">'
-    : '<div style="width:32px;height:32px;border-radius:8px;background:' + logoColor + ';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">' + logoInitial + '</div>';
-
-  panel.innerHTML =
-    '<div class="inv-drilldown-header">' +
-      '<div style="display:flex;align-items:center;gap:12px">' +
-        logoHtml +
-        '<div>' +
-          '<div class="inv-drilldown-title">' + name + '</div>' +
-          '<div class="inv-drilldown-sub">' + allStocks.length + ' stock' + (allStocks.length !== 1 ? 's' : '') + ' reported on &middot; <a href="#" onclick="event.preventDefault();navigateToInvProfile(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#35A5CF;text-decoration:none">View full profile &rarr;</a></div>' +
-        '</div>' +
-      '</div>' +
-      '<button class="inv-drilldown-close" onclick="document.getElementById(\'invStocksDrilldown\').style.display=\'none\'">&times;</button>' +
-    '</div>';
-
-  if (allStocks.length === 0) {
-    panel.innerHTML += '<div style="color:#5a6e7f;text-align:center;padding:16px">No detailed stock data available yet</div>';
+  /* Toggle: if already expanded, collapse it */
+  if (invExpandedName === name) {
+    invExpandedName = null;
   } else {
-    const maxAbs = Math.max(...allStocks.map(s => Math.abs(s.allTime || s.avg || 10)));
-    panel.innerHTML += allStocks.map((s, i) => {
-      const ret = s.allTime || s.avg || 0;
-      const isNeg = ret < 0;
-      const color = isNeg ? '#FF2137' : '#22C55E';
-      const prefix = ret > 0 ? '+' : '';
-      const barPct = Math.min(100, (Math.abs(ret) / maxAbs) * 100);
-      return '<div class="inv-drill-row" style="animation-delay:' + (i * 0.04) + 's">' +
-        '<div class="inv-drill-ticker">' + s.ticker + '</div>' +
-        '<div class="inv-drill-name">' + (s.date || '') + '</div>' +
-        '<div class="inv-drill-return" style="color:' + color + '">' + prefix + ret.toFixed(1) + '%</div>' +
-        '<div class="inv-drill-bar-wrap"><div class="inv-drill-bar" style="width:' + barPct + '%;background:' + color + '"></div></div>' +
-      '</div>';
-    }).join('');
+    invExpandedName = name;
   }
+  renderInvPerformanceTable();
 
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-  /* Highlight the clicked row */
-  document.querySelectorAll('.inv-perf-table tbody tr').forEach(tr => tr.style.background = '');
-  document.querySelectorAll('.inv-perf-table tbody tr').forEach(tr => {
-    if (tr.querySelector('.inv-td-name-wrap') && tr.querySelector('.inv-td-name-wrap').textContent.trim() === name) {
-      tr.style.background = 'rgba(53,165,207,.1)';
-    }
-  });
+  /* Scroll the expanded row into view */
+  if (invExpandedName) {
+    setTimeout(() => {
+      const drillRow = document.querySelector('.inv-inline-drill');
+      if (drillRow) drillRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
 }
 
 /* ══════════════════════════════════════════════════
@@ -4199,6 +4390,24 @@ function renderInvProfilePage(invName) {
   document.getElementById('ipHeaderLogo').style.background = logoColor;
   document.getElementById('ipHeaderName').textContent = invName;
   document.getElementById('ipHeaderMeta').textContent = `${inv.location} · Founded ${inv.founded} · ${inv.style} · ${inv.website}`;
+
+  /* Bio */
+  const bioEl = document.getElementById('ipHeaderBio');
+  if (bioEl) bioEl.textContent = inv.bio || '';
+
+  /* Fast Facts */
+  const ffWin = document.getElementById('ipFactWinRatio');
+  const ffHigh = document.getElementById('ipFactHighest');
+  const ffLow = document.getElementById('ipFactLowest');
+  const ffRep = document.getElementById('ipFactReports');
+  const ffDel = document.getElementById('ipFactDelisted');
+  const ffFreq = document.getElementById('ipFactFrequency');
+  if (ffWin) ffWin.textContent = inv.winRatio + '%';
+  if (ffHigh) ffHigh.textContent = '+' + inv.highest + '%';
+  if (ffLow) ffLow.textContent = inv.lowest + '%';
+  if (ffRep) ffRep.textContent = inv.reports;
+  if (ffDel) ffDel.textContent = inv.delisted;
+  if (ffFreq) ffFreq.textContent = inv.frequency;
 
   /* Logo card */
   document.getElementById('ipLogoCircle').textContent = initials;
@@ -4542,6 +4751,33 @@ function renderScatterChart(canvasId, period, highlightName, instanceKey) {
     }
   };
 
+  /* Label plugin — draws investigator names next to each dot */
+  const dotLabelPlugin = {
+    id: 'dotLabels',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save();
+      ctx.font = '500 10px Inter, sans-serif';
+      ctx.textBaseline = 'middle';
+      chart.data.datasets.forEach((ds, dsIdx) => {
+        const meta = chart.getDatasetMeta(dsIdx);
+        meta.data.forEach((el, i) => {
+          const d = ds.data[i];
+          if (!d || !d.label) return;
+          /* Use shorter label: first word + initial of second word if long */
+          const parts = d.label.split(' ');
+          const shortLabel = parts.length > 1 ? parts[0] + ' ' + parts[1].charAt(0) + '.' : parts[0];
+          const x = el.x + el.options.radius + 4;
+          const y = el.y - 2;
+          ctx.fillStyle = dsIdx === 0 ? '#0E1D29' : '#8A95A0';
+          ctx.textAlign = 'left';
+          ctx.fillText(shortLabel, x, y);
+        });
+      });
+      ctx.restore();
+    }
+  };
+
   const chart = new Chart(canvas, {
     type: 'bubble',
     data: {
@@ -4570,10 +4806,11 @@ function renderScatterChart(canvasId, period, highlightName, instanceKey) {
         }
       ]
     },
-    plugins: [zeroLinePlugin],
+    plugins: [zeroLinePlugin, dotLabelPlugin],
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { right: 60 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -4604,8 +4841,6 @@ function renderScatterChart(canvasId, period, highlightName, instanceKey) {
           border: { display: false },
         },
         y: {
-          min: -yPad,
-          max: yPad,
           title: { display: true, text: 'Avg. Report Impact (%)', font: { size: 12, weight: '600' }, color: '#8A95A0' },
           grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' : '#F4F6F8' },
           ticks: {
@@ -4614,6 +4849,7 @@ function renderScatterChart(canvasId, period, highlightName, instanceKey) {
             callback: v => v === 0 ? '' : (v > 0 ? '+' : '') + v + '%',
           },
           border: { display: false },
+          grace: '15%',
         }
       },
       onClick: (event, elements) => {
