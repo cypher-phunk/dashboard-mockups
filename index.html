@@ -1245,7 +1245,7 @@
   /* ── Fast Facts ────────────────────────────── */
   .inv-fast-facts {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
   }
   .inv-fact-card {
@@ -2604,7 +2604,7 @@
             </div>
           </div>
 
-          <!-- Fast Facts Tiles -->
+          <!-- Fast Facts Tiles (4 cards — deduped) -->
           <div class="inv-fast-facts">
             <div class="inv-fact-card">
               <div class="inv-fact-icon" style="background:rgba(34,197,94,.12);color:var(--green)">
@@ -2628,26 +2628,41 @@
               <div class="inv-fact-label">Lowest Loser</div>
             </div>
             <div class="inv-fact-card">
-              <div class="inv-fact-icon" style="background:rgba(53,165,207,.12);color:var(--blue)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              </div>
-              <div class="inv-fact-value" id="factReports">42</div>
-              <div class="inv-fact-label"># of Reports</div>
-            </div>
-            <div class="inv-fact-card">
               <div class="inv-fact-icon" style="background:rgba(255,33,55,.12);color:var(--red)">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               </div>
               <div class="inv-fact-value" id="factDelisted">6</div>
               <div class="inv-fact-label"># Delisted</div>
             </div>
-            <div class="inv-fact-card">
-              <div class="inv-fact-icon" style="background:rgba(53,165,207,.12);color:var(--blue)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              </div>
-              <div class="inv-fact-value" id="factFrequency">~3/mo</div>
-              <div class="inv-fact-label">Report Frequency</div>
-            </div>
+          </div>
+        </div>
+
+        <!-- ═══ STAT CARDS (matches full profile page) ═══ -->
+        <div class="ip-top-row" id="profileStatCards" style="grid-template-columns:repeat(5,1fr);margin-bottom:24px">
+          <div class="ip-stat-card">
+            <div class="ip-stat-label">Total Reports All Time</div>
+            <div class="ip-stat-value" id="ptTotalAll">42</div>
+            <div class="ip-stat-sub">Tracked on Activ8</div>
+          </div>
+          <div class="ip-stat-card">
+            <div class="ip-stat-label">Total Reports YTD</div>
+            <div class="ip-stat-value" id="ptTotalYTD">4</div>
+            <div class="ip-stat-sub">2026 year-to-date</div>
+          </div>
+          <div class="ip-stat-card">
+            <div class="ip-stat-label">Successful Reports YTD</div>
+            <div class="ip-stat-value" id="ptSuccessYTD">3</div>
+            <div class="ip-stat-sub" id="ptSuccessRate">75% success rate</div>
+          </div>
+          <div class="ip-stat-card">
+            <div class="ip-stat-label">Avg. Days Between Reports</div>
+            <div class="ip-stat-value" id="ptAvgDays">18</div>
+            <div class="ip-stat-sub">Across all reports</div>
+          </div>
+          <div class="ip-stat-card">
+            <div class="ip-stat-label">Earliest Report</div>
+            <div class="ip-stat-value" id="ptEarliest" style="font-size:18px">Jun 2010</div>
+            <div class="ip-stat-sub" id="ptTrackYears">~16 years tracked</div>
           </div>
         </div>
 
@@ -2970,7 +2985,7 @@
     <div class="ip-inv-bio" id="ipHeaderBio" style="font-size:13px;color:#5a6e7f;margin:12px 0 20px;line-height:1.6;max-width:800px"></div>
 
     <!-- ═══ FAST FACTS ═════════════════════════════ -->
-    <div class="ip-fast-facts" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px">
+    <div class="ip-fast-facts" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
       <div class="ip-stat-card" style="text-align:center">
         <div class="ip-stat-label">Win Ratio</div>
         <div class="ip-stat-value" id="ipFactWinRatio" style="color:#22C55E">65%</div>
@@ -2984,16 +2999,8 @@
         <div class="ip-stat-value" id="ipFactLowest" style="color:#FF2137">-31%</div>
       </div>
       <div class="ip-stat-card" style="text-align:center">
-        <div class="ip-stat-label"># of Reports</div>
-        <div class="ip-stat-value" id="ipFactReports">35</div>
-      </div>
-      <div class="ip-stat-card" style="text-align:center">
         <div class="ip-stat-label"># Delisted</div>
         <div class="ip-stat-value" id="ipFactDelisted">8</div>
-      </div>
-      <div class="ip-stat-card" style="text-align:center">
-        <div class="ip-stat-label">Report Frequency</div>
-        <div class="ip-stat-value" id="ipFactFrequency" style="font-size:18px">~2/mo</div>
       </div>
     </div>
 
@@ -4113,9 +4120,33 @@ function loadProfile(idx) {
   document.getElementById('factWinRatio').textContent = inv.winRatio + '%';
   document.getElementById('factHighest').textContent = '+' + inv.highest + '%';
   document.getElementById('factLowest').textContent = inv.lowest + '%';
-  document.getElementById('factReports').textContent = inv.reports;
   document.getElementById('factDelisted').textContent = inv.delisted;
-  document.getElementById('factFrequency').textContent = inv.frequency;
+
+  /* ── Stat cards (matches full profile page) ── */
+  const ptReports = inv.name === 'Muddy Waters' ? MW_REPORTS : generateSyntheticReports(inv);
+  const ptTotalAll = ptReports.length;
+  const ptYTD = ptReports.filter(r => r.date.includes('2026'));
+  const ptSucc = ptYTD.filter(r => r.all < 0).length;
+  const ptRate = ptYTD.length > 0 ? Math.round((ptSucc / ptYTD.length) * 100) : 0;
+
+  const ptSorted = ptReports.map(r => new Date(r.date)).sort((a,b) => a - b);
+  let ptDays = 18;
+  if (ptSorted.length > 1) {
+    let diff = 0;
+    for (let i = 1; i < ptSorted.length; i++) diff += (ptSorted[i] - ptSorted[i-1]) / (1000*60*60*24);
+    ptDays = Math.round(diff / (ptSorted.length - 1));
+  }
+  const ptEarliest = ptSorted[0];
+  const ptEarliestStr = MONTH_NAMES[ptEarliest.getMonth()] + ' ' + ptEarliest.getFullYear();
+  const ptYears = Math.round((new Date() - ptEarliest) / (1000*60*60*24*365));
+
+  document.getElementById('ptTotalAll').textContent = ptTotalAll;
+  document.getElementById('ptTotalYTD').textContent = ptYTD.length;
+  document.getElementById('ptSuccessYTD').textContent = ptSucc;
+  document.getElementById('ptSuccessRate').textContent = ptRate + '% success rate';
+  document.getElementById('ptAvgDays').textContent = ptDays;
+  document.getElementById('ptEarliest').textContent = ptEarliestStr;
+  document.getElementById('ptTrackYears').textContent = '~' + ptYears + ' years tracked';
 
   /* Report History Table */
   const tbody = document.getElementById('profileHistoryBody');
@@ -4396,19 +4427,15 @@ function renderInvProfilePage(invName) {
   const bioEl = document.getElementById('ipHeaderBio');
   if (bioEl) bioEl.textContent = inv.bio || '';
 
-  /* Fast Facts */
+  /* Fast Facts (4 cards — deduped, no Report Frequency / # Reports) */
   const ffWin = document.getElementById('ipFactWinRatio');
   const ffHigh = document.getElementById('ipFactHighest');
   const ffLow = document.getElementById('ipFactLowest');
-  const ffRep = document.getElementById('ipFactReports');
   const ffDel = document.getElementById('ipFactDelisted');
-  const ffFreq = document.getElementById('ipFactFrequency');
   if (ffWin) ffWin.textContent = inv.winRatio + '%';
   if (ffHigh) ffHigh.textContent = '+' + inv.highest + '%';
   if (ffLow) ffLow.textContent = inv.lowest + '%';
-  if (ffRep) ffRep.textContent = inv.reports;
   if (ffDel) ffDel.textContent = inv.delisted;
-  if (ffFreq) ffFreq.textContent = inv.frequency;
 
   /* Logo card */
   document.getElementById('ipLogoCircle').textContent = initials;
