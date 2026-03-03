@@ -1447,7 +1447,7 @@
   .stk-chart-card {
     background: #fff;
     border-radius: 14px;
-    padding: 20px;
+    padding: 16px;
     box-shadow: 0 1px 4px rgba(14,29,41,.06);
   }
   .stk-chart-header {
@@ -1677,6 +1677,68 @@
     color: var(--grey3);
     line-height: 1.6;
   }
+  /* ── Summary Bar ── */
+  .stk-summary-section {
+    background: var(--grey1);
+    border-radius: 14px;
+    padding: 20px 20px 4px;
+    margin-bottom: 28px;
+  }
+  .stk-summary-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .stk-summary-section-sub {
+    font-size: 13px;
+    color: var(--grey3);
+    margin-bottom: 16px;
+  }
+  .stk-summary-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .stk-summary-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    border-left: 4px solid var(--grey2);
+  }
+  .stk-summary-card.red   { border-left-color: #FF2137; }
+  .stk-summary-card.amber { border-left-color: #F59E0B; }
+  .stk-summary-card.green { border-left-color: #22C55E; }
+  .stk-summary-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .stk-summary-score {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+  .stk-summary-score.red   { color: #FF2137; }
+  .stk-summary-score.amber { color: #F59E0B; }
+  .stk-summary-score.green { color: #22C55E; }
+  .stk-summary-status {
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .stk-summary-status.red   { color: #FF2137; }
+  .stk-summary-status.amber { color: #F59E0B; }
+  .stk-summary-status.green { color: #22C55E; }
+  .stk-summary-note {
+    font-size: 11px;
+    color: var(--grey3);
+    margin-top: 4px;
+  }
+
   .stk-tile-subtitle {
     font-size: 11px;
     color: var(--grey3);
@@ -2134,6 +2196,130 @@
     white-space: nowrap;
     z-index: 100;
     pointer-events: none;
+  }
+
+  /* ═══ STOCKS LIST PAGE ═══════════════════════ */
+  .stks-callout-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stks-timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .stks-timeline-item { text-align: center; }
+  .stks-timeline-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+  .stks-timeline-label {
+    font-size: 10px;
+    color: var(--grey3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-top: 2px;
+  }
+  .stks-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  .stks-detail-label {
+    color: var(--grey3);
+    font-weight: 500;
+    min-width: 85px;
+  }
+  .stks-detail-value {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .stks-inv-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stks-inv-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 10px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .stks-inv-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .stks-inv-name:hover { color: var(--blue); }
+  .stks-table-wrap {
+    overflow-x: auto;
+  }
+  .stks-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .stks-results-count {
+    font-size: 13px;
+    color: var(--grey3);
+    font-weight: 500;
+  }
+  .stks-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 12px 0;
+  }
+  .stks-page-btn {
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--grey2);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .stks-page-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .stks-page-btn.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .stks-page-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+  }
+  .stks-page-btn:disabled:hover { border-color: var(--grey2); color: var(--navy); }
+  .stks-page-info {
+    font-size: 12px;
+    color: var(--grey3);
+    margin-left: 12px;
   }
 
   /* ── Horizontal bar chart wrapper ────────── */
@@ -2970,7 +3156,7 @@
             <button class="stk-type-toggle" onclick="setChartType(this,'candle')">Candles</button>
           </div>
         </div>
-        <div style="height:320px"><canvas id="stockPriceChart"></canvas></div>
+        <div style="height:420px"><canvas id="stockPriceChart"></canvas></div>
         <div class="stk-chart-legend">
           <span><span class="stk-legend-dot" style="background:var(--red)"></span> Short Report Published</span>
           <span><span class="stk-legend-dot" style="background:var(--amber)"></span> Earnings</span>
@@ -3008,6 +3194,30 @@
         <div class="stk-peer"><div class="stk-peer-ticker">CELH</div><div class="stk-peer-date">Feb 11, 2026</div><div class="stk-peer-return" style="color:var(--green)">+13.4%</div></div>
         <div class="stk-peer"><div class="stk-peer-ticker">LMND</div><div class="stk-peer-date">Dec 14, 2025</div><div class="stk-peer-return" style="color:var(--red)">-4.8%</div></div>
         <div class="stk-peer"><div class="stk-peer-ticker">OPEN</div><div class="stk-peer-date">Oct 3, 2025</div><div class="stk-peer-return" style="color:var(--green)">+22.1%</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ KEY METRICS SUMMARY ═══ -->
+    <div class="stk-summary-section">
+      <div class="stk-summary-section-title">Key Metrics Summary</div>
+      <div class="stk-summary-section-sub">Composite scores across business model health, balance sheet resilience, and governance risk &mdash; each rated 0-10 relative to sector peers.</div>
+      <div class="stk-summary-bar">
+        <div class="stk-summary-card amber">
+          <div class="stk-summary-label">Business Model Quality Signals</div>
+          <div class="stk-summary-score amber">5.1</div>
+          <div class="stk-summary-status amber">On par with peers</div>
+        </div>
+        <div class="stk-summary-card amber">
+          <div class="stk-summary-label">Balance Sheet Stress</div>
+          <div class="stk-summary-score amber">5.0</div>
+          <div class="stk-summary-status amber">On par with peers</div>
+        </div>
+        <div class="stk-summary-card amber">
+          <div class="stk-summary-label">Governance</div>
+          <div class="stk-summary-score amber">4.1</div>
+          <div class="stk-summary-status amber">On par with peers</div>
+          <div class="stk-summary-note">3 of 4 indicators scored</div>
+        </div>
       </div>
     </div>
 
@@ -3070,7 +3280,7 @@
     </div>
 
     <!-- ═══ 7B: POOR GOVERNANCE CONCERNS ═════════ -->
-    <div class="stk-section-title">Poor Governance Concerns at Carvana</div>
+    <div class="stk-section-title">Governance</div>
     <div class="stk-section-sub">Insider behavior, ownership changes, and leadership stability</div>
     <div class="stk-gov-grid">
 
@@ -3448,6 +3658,88 @@
   </div>
   </div><!-- /page-inv-profile -->
 
+  <!-- ────────── PAGE: STOCKS ────────── -->
+  <div id="page-stocks" class="page" style="margin-top:8px">
+    <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px">Stocks</div>
+    <div style="font-size:13px;color:var(--grey3);margin-bottom:20px">All stocks targeted by activist short sellers</div>
+
+    <!-- ═══ CALLOUT CARDS ═══ -->
+    <div class="stks-callout-row">
+      <div class="card">
+        <div class="card-label">Report Timeline</div>
+        <div class="stks-timeline-grid" id="stksTimeline"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Most Recent Report</div>
+        <div id="stksRecentCard"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Most Impactful Report <span style="font-weight:400;text-transform:none;letter-spacing:0">(30 days)</span></div>
+        <div id="stksImpactCard"></div>
+      </div>
+    </div>
+
+    <!-- ═══ FILTERS ═══ -->
+    <div class="inv-filters" id="stksFilters">
+      <select class="inv-select" id="stksFilterInvestigator" onchange="applyStksFilters()">
+        <option value="all">All Investigators</option>
+      </select>
+      <select class="inv-select" id="stksFilterInvType" onchange="applyStksFilters()">
+        <option value="all">All Types</option>
+        <option value="activist">Investigator</option>
+        <option value="researcher">Researcher</option>
+      </select>
+      <select class="inv-select" id="stksFilterSector" onchange="applyStksFilters()">
+        <option value="all">All Sectors</option>
+      </select>
+      <select class="inv-select" id="stksFilterCap" onchange="applyStksFilters()">
+        <option value="all">All Market Caps</option>
+        <option value="Mega Cap">Mega Cap</option>
+        <option value="Large Cap">Large Cap</option>
+        <option value="Mid Cap">Mid Cap</option>
+        <option value="Small Cap">Small Cap</option>
+      </select>
+      <select class="inv-select" id="stksSort" onchange="applyStksFilters()">
+        <option value="date">Sort: Newest First</option>
+        <option value="biggest_decline">Sort: Biggest Decline</option>
+        <option value="largest_increase">Sort: Largest Increase</option>
+      </select>
+    </div>
+
+    <!-- ═══ MAIN TABLE ═══ -->
+    <div class="ip-card">
+      <div class="ip-card-header">
+        <div>
+          <div class="ip-card-title">All Short Reports</div>
+          <div class="ip-card-subtitle" id="stksTableSubtitle">Showing all stocks with published short reports</div>
+        </div>
+        <div class="ip-slicer" id="stksTableSlicer">
+          <button class="ip-slicer-btn active" onclick="setStksTablePeriod(this,'d1')">24 Hrs</button>
+          <button class="ip-slicer-btn" onclick="setStksTablePeriod(this,'w1')">1 Week</button>
+          <button class="ip-slicer-btn" onclick="setStksTablePeriod(this,'m1')">1 Month</button>
+          <button class="ip-slicer-btn" onclick="setStksTablePeriod(this,'all')">Since Report</button>
+        </div>
+      </div>
+      <div class="stks-results-bar">
+        <div class="stks-results-count" id="stksResultsCount"></div>
+      </div>
+      <div class="stks-table-wrap">
+        <table class="ip-stock-table" id="stksTable">
+          <thead>
+            <tr>
+              <th style="text-align:left">Ticker / Company</th>
+              <th style="text-align:left">Investigator</th>
+              <th style="text-align:left">Date Published</th>
+              <th style="text-align:right">Report Impact <span class="ip-tooltip-icon" data-tip="Stock price change for selected period">?</span></th>
+            </tr>
+          </thead>
+          <tbody id="stksTableBody"></tbody>
+        </table>
+      </div>
+      <div class="stks-pagination" id="stksPagination"></div>
+    </div>
+  </div><!-- /page-stocks -->
+
   </main>
 </div>
 
@@ -3729,8 +4021,8 @@ function closeDrilldown() {
   monthlyChart.update();
 }
 
-/* ── Sector Doughnut ─────────────────────────────── */
-new Chart(document.getElementById('sectorChart'), {
+/* ── Sector Doughnut (initial placeholder — replaced by updateSectorDisplay) ── */
+var sectorChartInitial = new Chart(document.getElementById('sectorChart'), {
   type: 'doughnut',
   data: {
     labels: ['Technology','Healthcare','Consumer','Financials','Energy'],
@@ -3918,6 +4210,10 @@ function navigateTo(pageName) {
   if (pageName === 'stock' && !window._stockTabInit) {
     window._stockTabInit = true;
     initStockPage();
+  }
+  if (pageName === 'stocks' && !window._stocksPageInit) {
+    window._stocksPageInit = true;
+    initStocksPage();
   }
 }
 
@@ -5975,8 +6271,259 @@ switchYear = function(year) {
   updateSectorDisplay(ALL_YEARS[parseInt(year)]);
 };
 
-/* Initialize sector display for 2026 */
+/* Initialize sector display for 2026 — destroy the initial placeholder chart first */
+if (sectorChartInitial) { sectorChartInitial.destroy(); sectorChartInitial = null; }
 updateSectorDisplay(ALL_YEARS[2026]);
+
+/*  ══════════════════════════════════════════════════
+    STOCKS LIST PAGE
+    ══════════════════════════════════════════════════ */
+var STKS_SECTORS = ['Technology','Consumer Discretionary','Healthcare','Financials','Industrials','Media','Materials','Education','Energy','Real Estate'];
+var STKS_CAPS = ['Small Cap','Mid Cap','Large Cap','Mega Cap'];
+var STKS_CAP_WEIGHTS = [0.35, 0.35, 0.20, 0.10];
+
+var stksAllData = [];
+var stksFiltered = [];
+var stksCurrentPage = 1;
+var STKS_PER_PAGE = 25;
+var stksCurrentPeriod = 'd1';
+
+function generateAllStocksData() {
+  const rng = mulberry32(31337);
+  const pick = arr => arr[Math.floor(rng() * arr.length)];
+  const randFloat = (lo, hi) => +(lo + rng() * (hi - lo)).toFixed(1);
+
+  function weightedPick(arr, weights) {
+    const r = rng();
+    let cum = 0;
+    for (let i = 0; i < weights.length; i++) { cum += weights[i]; if (r < cum) return arr[i]; }
+    return arr[arr.length - 1];
+  }
+
+  /* Build a name map from STOCK_DATABASE */
+  const nameMap = {};
+  STOCK_DATABASE.forEach(s => { nameMap[s.ticker] = s.name; });
+
+  /* Build inv type map from INVESTIGATOR_DATA */
+  const invTypeMap = {};
+  INVESTIGATOR_DATA.forEach(d => { invTypeMap[d.name] = d.type; });
+
+  const results = [];
+
+  /* Harvest ALL_YEARS data */
+  for (let y = 2008; y <= 2026; y++) {
+    const yearData = ALL_YEARS[y];
+    for (const [monthKey, monthData] of Object.entries(yearData)) {
+      monthData.reports.forEach(r => {
+        const baseImpact = Math.abs(r.impact);
+        const d1 = +(-baseImpact * (0.08 + rng() * 0.15)).toFixed(1);
+        const w1 = +(-baseImpact * (0.25 + rng() * 0.25)).toFixed(1);
+        const m1 = +(-baseImpact * (0.5 + rng() * 0.35)).toFixed(1);
+        const allVal = rng() < 0.18
+          ? +(baseImpact * (0.05 + rng() * 0.4)).toFixed(1)
+          : +(-baseImpact * (0.6 + rng() * 0.6)).toFixed(1);
+
+        const sector = pick(STKS_SECTORS);
+        const cap = weightedPick(STKS_CAPS, STKS_CAP_WEIGHTS);
+        const fullDate = r.date + ', ' + y;
+        const company = nameMap[r.ticker] || (r.ticker.charAt(0).toUpperCase() + r.ticker.slice(1).toLowerCase() + ' Corp.');
+        const invType = invTypeMap[r.inv] || 'researcher';
+
+        results.push({
+          ticker: r.ticker,
+          company,
+          investigator: r.inv,
+          invType,
+          date: fullDate,
+          dateObj: new Date(fullDate),
+          sector,
+          cap,
+          d1, w1, m1, all: allVal
+        });
+      });
+    }
+  }
+  /* Sort by date descending */
+  results.sort((a, b) => b.dateObj - a.dateObj);
+  return results;
+}
+
+function initStocksPage() {
+  stksAllData = generateAllStocksData();
+
+  /* Populate investigator dropdown */
+  const invSelect = document.getElementById('stksFilterInvestigator');
+  const invNames = [...new Set(stksAllData.map(r => r.investigator))].sort();
+  invNames.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    invSelect.appendChild(opt);
+  });
+
+  /* Populate sector dropdown */
+  const secSelect = document.getElementById('stksFilterSector');
+  STKS_SECTORS.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    secSelect.appendChild(opt);
+  });
+
+  renderStksCalloutCards();
+  applyStksFilters();
+}
+
+function renderStksCalloutCards() {
+  const now = new Date('2026-02-17');
+  const msPerDay = 86400000;
+
+  /* 1. Report Timeline */
+  const d7 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 7).length;
+  const d30 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 30).length;
+  const d90 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 90).length;
+  const d365 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 365).length;
+
+  document.getElementById('stksTimeline').innerHTML = [
+    { val: d7, label: '7 Days' },
+    { val: d30, label: '30 Days' },
+    { val: d90, label: '90 Days' },
+    { val: d365, label: '365 Days' }
+  ].map(t => `<div class="stks-timeline-item"><div class="stks-timeline-value">${t.val}</div><div class="stks-timeline-label">${t.label}</div></div>`).join('');
+
+  /* 2. Most Recent Report */
+  const recent = stksAllData[0];
+  if (recent) {
+    document.getElementById('stksRecentCard').innerHTML = `
+      <div style="margin-top:12px">
+        <span style="font-size:20px;font-weight:800;color:var(--navy)">${recent.ticker}</span>
+        <span style="font-size:13px;color:var(--grey3);margin-left:6px">${recent.company}</span>
+      </div>
+      <div class="stks-detail-row"><span class="stks-detail-label">Investigator</span><span class="stks-detail-value">${recent.investigator}</span></div>
+      <div class="stks-detail-row"><span class="stks-detail-label">Published</span><span class="stks-detail-value">${recent.date}</span></div>`;
+  }
+
+  /* 3. Most Impactful (30d) */
+  const recent30d = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 30);
+  const mostImpactful = [...recent30d].sort((a, b) => a.m1 - b.m1)[0];
+  if (mostImpactful) {
+    document.getElementById('stksImpactCard').innerHTML = `
+      <div style="margin-top:10px;margin-bottom:8px"><span class="tag down">${mostImpactful.m1.toFixed(1)}%</span></div>
+      <div class="stks-detail-row"><span class="stks-detail-label">Stock</span><span class="stks-detail-value">${mostImpactful.ticker} <span style="font-weight:500;color:var(--grey3)">${mostImpactful.company}</span></span></div>
+      <div class="stks-detail-row"><span class="stks-detail-label">Published</span><span class="stks-detail-value">${mostImpactful.date}</span></div>
+      <div class="stks-detail-row"><span class="stks-detail-label">Investigator</span><span class="stks-detail-value">${mostImpactful.investigator}</span></div>`;
+  }
+}
+
+function applyStksFilters() {
+  const inv = document.getElementById('stksFilterInvestigator').value;
+  const invType = document.getElementById('stksFilterInvType').value;
+  const sector = document.getElementById('stksFilterSector').value;
+  const cap = document.getElementById('stksFilterCap').value;
+  const sort = document.getElementById('stksSort').value;
+
+  let data = [...stksAllData];
+  if (inv !== 'all') data = data.filter(r => r.investigator === inv);
+  if (invType !== 'all') data = data.filter(r => r.invType === invType);
+  if (sector !== 'all') data = data.filter(r => r.sector === sector);
+  if (cap !== 'all') data = data.filter(r => r.cap === cap);
+
+  switch (sort) {
+    case 'date': data.sort((a, b) => b.dateObj - a.dateObj); break;
+    case 'biggest_decline': data.sort((a, b) => a[stksCurrentPeriod] - b[stksCurrentPeriod]); break;
+    case 'largest_increase': data.sort((a, b) => b[stksCurrentPeriod] - a[stksCurrentPeriod]); break;
+  }
+
+  stksFiltered = data;
+  stksCurrentPage = 1;
+  renderStksTable();
+  renderStksPagination();
+}
+
+function renderStksTable() {
+  const start = (stksCurrentPage - 1) * STKS_PER_PAGE;
+  const end = Math.min(start + STKS_PER_PAGE, stksFiltered.length);
+  const pageData = stksFiltered.slice(start, end);
+  const period = stksCurrentPeriod;
+
+  const body = document.getElementById('stksTableBody');
+  body.innerHTML = pageData.map(r => {
+    const val = r[period];
+    const cls = val < 0 ? 'ip-impact-neg' : 'ip-impact-pos';
+    const prefix = val > 0 ? '+' : '';
+    const arrow = val < 0 ? '\u25BC' : '\u25B2';
+
+    const initials = r.investigator.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    const invIdx = INV_POOL.indexOf(r.investigator);
+    const logoColor = INV_LOGO_COLORS[invIdx >= 0 ? invIdx % INV_LOGO_COLORS.length : 0];
+    const safeInv = r.investigator.replace(/'/g, "\\'");
+
+    return `<tr>
+      <td><span class="ip-stock-ticker" onclick="navigateTo('stock')">${r.ticker}</span> <span style="color:var(--grey3);font-size:12px">${r.company}</span></td>
+      <td><div class="stks-inv-cell"><div class="stks-inv-avatar" style="background:${logoColor}">${initials}</div><span class="stks-inv-name" onclick="navigateToInvProfile('${safeInv}')">${r.investigator}</span></div></td>
+      <td>${r.date}</td>
+      <td style="text-align:right"><span class="${cls}">${arrow} ${prefix}${val.toFixed(1)}%</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('stksResultsCount').textContent =
+    stksFiltered.length === 0
+      ? 'No results found'
+      : `Showing ${start + 1}\u2013${end} of ${stksFiltered.length} reports`;
+}
+
+function renderStksPagination() {
+  const totalPages = Math.ceil(stksFiltered.length / STKS_PER_PAGE);
+  const container = document.getElementById('stksPagination');
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+  let html = `<button class="stks-page-btn" ${stksCurrentPage === 1 ? 'disabled' : ''} onclick="goToStksPage(${stksCurrentPage - 1})">&laquo;</button>`;
+
+  const maxVisible = 7;
+  let pages = [];
+  if (totalPages <= maxVisible) {
+    pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  } else {
+    pages = [1];
+    let s = Math.max(2, stksCurrentPage - 2);
+    let e = Math.min(totalPages - 1, stksCurrentPage + 2);
+    if (s > 2) pages.push('...');
+    for (let i = s; i <= e; i++) pages.push(i);
+    if (e < totalPages - 1) pages.push('...');
+    pages.push(totalPages);
+  }
+
+  pages.forEach(p => {
+    if (p === '...') {
+      html += '<span style="padding:0 4px;color:var(--grey3)">\u2026</span>';
+    } else {
+      html += `<button class="stks-page-btn ${p === stksCurrentPage ? 'active' : ''}" onclick="goToStksPage(${p})">${p}</button>`;
+    }
+  });
+
+  html += `<button class="stks-page-btn" ${stksCurrentPage === totalPages ? 'disabled' : ''} onclick="goToStksPage(${stksCurrentPage + 1})">&raquo;</button>`;
+  html += `<span class="stks-page-info">Page ${stksCurrentPage} of ${totalPages}</span>`;
+
+  container.innerHTML = html;
+}
+
+function goToStksPage(page) {
+  const totalPages = Math.ceil(stksFiltered.length / STKS_PER_PAGE);
+  if (page < 1 || page > totalPages) return;
+  stksCurrentPage = page;
+  renderStksTable();
+  renderStksPagination();
+  document.getElementById('stksTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setStksTablePeriod(el, period) {
+  el.parentElement.querySelectorAll('.ip-slicer-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  stksCurrentPeriod = period;
+  const sort = document.getElementById('stksSort').value;
+  if (sort !== 'date') { applyStksFilters(); } else { renderStksTable(); }
+}
+
 </script>
 </body>
 </html>
