@@ -1284,13 +1284,13 @@
     z-index: 40;
   }
   .stk-company-name {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 800;
     letter-spacing: -.3px;
     line-height: 1.2;
   }
   .stk-ticker {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--blue);
     font-weight: 600;
     margin-top: 4px;
@@ -1307,28 +1307,35 @@
     gap: 1px;
   }
   .stk-ctx-label {
-    font-size: 9px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: .6px;
     color: #5a6e7f;
     font-weight: 600;
   }
   .stk-ctx-value {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #d0d8e0;
   }
   .stk-report-status {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
   }
-  .stk-report-date {
-    font-size: 12px;
+  .stk-report-row {
+    font-size: 13px;
     color: #8a95a0;
+    white-space: nowrap;
   }
-  .stk-report-date strong { color: #d0d8e0; }
-  .stk-report-count {
-    font-size: 12px;
-    margin-top: 4px;
+  .stk-report-row strong { color: #d0d8e0; font-weight: 700; }
+  .stk-since-label {
+    font-size: 11px;
+    color: #5a6e7f;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    font-weight: 600;
   }
   .stk-risk-badge {
     display: inline-block;
@@ -1348,10 +1355,92 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* ── Stock Search ─────────────────────────── */
+  .stk-search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .stk-search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--grey2);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+    background: #fff;
+  }
+  .stk-search-input:focus { border-color: var(--blue); }
+  .stk-search-input::placeholder { color: var(--grey3); }
+  .stk-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--grey2);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(14,29,41,.12);
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 60;
+    display: none;
+  }
+  .stk-search-results.visible { display: block; }
+  .stk-search-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background .1s;
+  }
+  .stk-search-item:hover { background: var(--grey1); }
+  .stk-search-ticker { font-weight: 700; color: var(--navy); min-width: 60px; }
+  .stk-search-name { flex: 1; color: var(--grey3); margin-left: 8px; }
+  .stk-search-reports {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .stk-search-reports.has { background: rgba(255,33,55,.1); color: var(--red); }
+  .stk-search-reports.none { background: var(--grey1); color: var(--grey3); }
+
+  /* ── Non-covered fallback ────────────────── */
+  .stk-fallback {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    margin-top: 20px;
+  }
+  .stk-fallback.visible { display: block; }
+  .stk-fallback-icon { font-size: 48px; margin-bottom: 16px; color: var(--grey2); }
+  .stk-fallback-title { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .stk-fallback-sub { font-size: 14px; color: var(--grey3); margin-bottom: 24px; }
+  .stk-fallback-btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+  .stk-fallback-btn:hover { opacity: .85; }
+
   /* ── Chart + Sidebar layout ────────────────── */
   .stk-chart-row {
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 340px;
     gap: 16px;
     margin-bottom: 20px;
   }
@@ -1361,11 +1450,34 @@
     padding: 20px;
     box-shadow: 0 1px 4px rgba(14,29,41,.06);
   }
+  .stk-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
   .stk-chart-toggles {
     display: flex;
     gap: 4px;
-    margin-bottom: 14px;
   }
+  .stk-type-toggles {
+    display: flex;
+    gap: 4px;
+  }
+  .stk-type-toggle {
+    background: var(--grey1);
+    border: none;
+    color: var(--grey3);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .stk-type-toggle.active { background: var(--blue); color: #fff; }
+  .stk-type-toggle:hover:not(.active) { background: var(--grey2); }
   .stk-toggle {
     background: var(--grey1);
     border: none;
@@ -1425,7 +1537,7 @@
     font-size: 10px;
     color: var(--grey3);
     white-space: nowrap;
-    min-width: 36px;
+    min-width: 78px;
     padding-top: 2px;
   }
   .stk-news-hl { font-weight: 600; color: var(--navy); }
@@ -1565,6 +1677,53 @@
     color: var(--grey3);
     line-height: 1.6;
   }
+  .stk-tile-subtitle {
+    font-size: 11px;
+    color: var(--grey3);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  .stk-tile-divider {
+    border: none;
+    border-top: 1px solid var(--grey1);
+    margin: 12px 0;
+  }
+  .stk-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .stk-metric-label { color: var(--grey3); font-weight: 500; }
+  .stk-metric-value { color: var(--navy); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stk-vs-peers {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--grey1);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .stk-vs-peers .label { color: var(--grey3); }
+  .stk-vs-peers .value { font-weight: 700; }
+  .stk-tile-quarter {
+    font-size: 10px;
+    color: var(--grey3);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    font-weight: 600;
+  }
+  .stk-tile-desc {
+    font-size: 12px;
+    color: #4a5568;
+    line-height: 1.65;
+    margin-top: 0;
+  }
   .stk-diag-detail strong { color: var(--navy); font-weight: 600; }
   .stk-diag-meta {
     font-size: 10px;
@@ -1586,6 +1745,34 @@
     border-radius: 14px;
     padding: 20px;
     box-shadow: 0 1px 4px rgba(14,29,41,.06);
+    border-top: 3px solid transparent;
+  }
+  .stk-gov-card.red { border-top-color: var(--red); }
+  .stk-gov-card.green { border-top-color: var(--green); }
+  .stk-gov-card.amber { border-top-color: var(--amber); }
+  .stk-gov-subtitle {
+    font-size: 11px;
+    color: var(--grey3);
+    font-style: italic;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .stk-gov-score {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stk-gov-score-label {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .stk-gov-desc-full {
+    font-size: 12px;
+    color: #4a5568;
+    line-height: 1.65;
   }
   .stk-gov-title {
     font-size: 13px;
@@ -2725,8 +2912,25 @@
   <!-- ────────── PAGE: STOCK (Example: CVNA) ────────── -->
   <div id="page-stock" class="page">
 
+    <!-- ═══ STOCK SEARCH BAR ═══════════════════ -->
+    <div class="stk-search-wrap">
+      <input class="stk-search-input" id="stkSearchInput" type="text" placeholder="Search for a stock (e.g. TSLA, Carvana, DraftKings)..." oninput="handleStockSearch(this.value)" autocomplete="off">
+      <div class="stk-search-results" id="stkSearchResults"></div>
+    </div>
+
+    <!-- Non-covered stock fallback -->
+    <div class="stk-fallback" id="stkFallback">
+      <div class="stk-fallback-icon">&#128269;</div>
+      <div class="stk-fallback-title" id="stkFallbackTitle">No Short Report Available for SMCI</div>
+      <div class="stk-fallback-sub">This stock has no short seller reports in our database yet.</div>
+      <button class="stk-fallback-btn" onclick="addToWatchlist(activeStock,'stock')">Add to Watchlist</button>
+    </div>
+
+    <!-- ═══ STOCK CONTENT (hidden for non-covered) ═══ -->
+    <div id="stkContent">
+
     <!-- ═══ STICKY STOCK HEADER ═══════════════════ -->
-    <div class="stk-header">
+    <div class="stk-header" id="stkHeader">
       <div>
         <div class="stk-company-name">Carvana Co.</div>
         <div class="stk-ticker">NYSE: CVNA</div>
@@ -2742,32 +2946,34 @@
         <div class="stk-ctx-item"><span class="stk-ctx-label">52W Range</span><span class="stk-ctx-value">$32.10 – $284.50</span></div>
       </div>
       <div class="stk-report-status">
-        <div class="stk-report-date">Last Report: <strong>Jan 3, 2026</strong></div>
-        <div class="stk-report-date" style="color:#5a6e7f">46 days ago</div>
-        <div class="stk-report-count" style="margin-top:6px">
-          Total Reports: <strong>4</strong> &nbsp;<span class="stk-risk-badge stk-risk-high">High Risk</span>
-        </div>
-        <div class="stk-return-big" style="color:#22C55E">+18.4%</div>
+        <div class="stk-report-row">Total Reports: <strong>4</strong> &nbsp;<span class="stk-risk-badge stk-risk-high">High Risk</span></div>
+        <div class="stk-report-row">Last Report: <strong>Jan 3, 2026</strong> · 46 days ago</div>
+        <div><span class="stk-since-label">Since Last Report:</span> <span class="stk-return-big" style="color:#22C55E">+18.4%</span></div>
       </div>
     </div>
 
     <!-- ═══ CHART + SIDEBAR ══════════════════════ -->
     <div class="stk-chart-row">
       <div class="stk-chart-card">
-        <div class="stk-chart-toggles">
-          <button class="stk-toggle" onclick="setStockRange(this,'1d')">1D</button>
-          <button class="stk-toggle" onclick="setStockRange(this,'5d')">5D</button>
-          <button class="stk-toggle" onclick="setStockRange(this,'1m')">1M</button>
-          <button class="stk-toggle" onclick="setStockRange(this,'6m')">6M</button>
-          <button class="stk-toggle active" onclick="setStockRange(this,'ytd')">YTD</button>
-          <button class="stk-toggle" onclick="setStockRange(this,'1y')">1Y</button>
-          <button class="stk-toggle" onclick="setStockRange(this,'all')">All</button>
+        <div class="stk-chart-header">
+          <div class="stk-chart-toggles">
+            <button class="stk-toggle" onclick="setStockRange(this,'1d')">1D</button>
+            <button class="stk-toggle" onclick="setStockRange(this,'5d')">5D</button>
+            <button class="stk-toggle" onclick="setStockRange(this,'1m')">1M</button>
+            <button class="stk-toggle" onclick="setStockRange(this,'6m')">6M</button>
+            <button class="stk-toggle active" onclick="setStockRange(this,'ytd')">YTD</button>
+            <button class="stk-toggle" onclick="setStockRange(this,'1y')">1Y</button>
+            <button class="stk-toggle" onclick="setStockRange(this,'all')">All</button>
+          </div>
+          <div class="stk-type-toggles">
+            <button class="stk-type-toggle active" onclick="setChartType(this,'line')">Line</button>
+            <button class="stk-type-toggle" onclick="setChartType(this,'candle')">Candles</button>
+          </div>
         </div>
         <div style="height:320px"><canvas id="stockPriceChart"></canvas></div>
         <div class="stk-chart-legend">
           <span><span class="stk-legend-dot" style="background:var(--red)"></span> Short Report Published</span>
           <span><span class="stk-legend-dot" style="background:var(--amber)"></span> Earnings</span>
-          <span><span class="stk-legend-dot" style="background:var(--blue)"></span> Key Event</span>
         </div>
       </div>
 
@@ -2775,10 +2981,10 @@
       <div class="stk-sidebar-stack">
         <div class="stk-side-card">
           <div class="stk-side-title">Latest News</div>
-          <div class="stk-news-item"><div class="stk-news-time">2h</div><div><div class="stk-news-hl">Hindenburg Alleges Related-Party Transactions Inflate CVNA Revenue</div><div class="stk-news-src">Activ8 Insights</div></div></div>
-          <div class="stk-news-item"><div class="stk-news-time">5h</div><div><div class="stk-news-hl">CVNA Q4 Earnings Beat Estimates But Guidance Disappoints</div><div class="stk-news-src">Bloomberg</div></div></div>
-          <div class="stk-news-item"><div class="stk-news-time">1d</div><div><div class="stk-news-hl">Used Car Market Softens as Credit Standards Tighten</div><div class="stk-news-src">Wall Street Journal</div></div></div>
-          <div class="stk-news-item"><div class="stk-news-time">2d</div><div><div class="stk-news-hl">Analyst Downgrades CVNA Citing Valuation Stretch</div><div class="stk-news-src">Financial Times</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">Feb 28, 2026</div><div><div class="stk-news-hl">Hindenburg Alleges Related-Party Transactions Inflate CVNA Revenue</div><div class="stk-news-src">Activ8 Insights</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">Feb 28, 2026</div><div><div class="stk-news-hl">CVNA Q4 Earnings Beat Estimates But Guidance Disappoints</div><div class="stk-news-src">Bloomberg</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">Feb 27, 2026</div><div><div class="stk-news-hl">Used Car Market Softens as Credit Standards Tighten</div><div class="stk-news-src">Wall Street Journal</div></div></div>
+          <div class="stk-news-item"><div class="stk-news-time">Feb 26, 2026</div><div><div class="stk-news-hl">Analyst Downgrades CVNA Citing Valuation Stretch</div><div class="stk-news-src">Financial Times</div></div></div>
         </div>
         <div class="stk-side-card">
           <div class="stk-side-title">Ability to Borrow</div>
@@ -2793,7 +2999,7 @@
 
     <!-- ═══ PEER SHORTS STRIP ════════════════════ -->
     <div class="stk-peers">
-      <div class="stk-peers-title">Other Consumer Discretionary Shorts</div>
+      <div class="stk-peers-title">Other Short Reports in the Consumer Discretionary Sector</div>
       <div class="stk-peers-strip">
         <div class="stk-peer"><div class="stk-peer-ticker">DKNG</div><div class="stk-peer-date">Feb 2, 2026</div><div class="stk-peer-return" style="color:var(--green)">+14.2%</div></div>
         <div class="stk-peer"><div class="stk-peer-ticker">WISH</div><div class="stk-peer-date">Aug 22, 2024</div><div class="stk-peer-return" style="color:var(--green)">+88.7%</div></div>
@@ -2807,41 +3013,60 @@
 
     <!-- ═══ 7A: BUSINESS MODEL QUALITY SIGNALS ═══ -->
     <div class="stk-section-title">Business Model Quality Signals</div>
-    <div class="stk-section-sub">Are revenues translating into durable profitability?</div>
+    <div class="stk-section-sub">Measures whether a company's core economics &mdash; cost structure, margins, and operating efficiency &mdash; are holding up or quietly eroding relative to sector peers. Score 0-10 (where scores 0-4 are red, 4-6 are orange, and 6-10 are green).</div>
     <div class="stk-diag-row">
+
+      <!-- Tile 1: Revenue Quality Decay -->
       <div class="stk-diag-card red">
-        <div class="stk-diag-label">Revenue Quality Decay <span class="stk-info" title="Cost Ratio = COGS / Revenue. Higher = worse. Sector-adjusted: >5 worse than peers, <5 better.">i</span></div>
-        <div class="stk-diag-score" style="color:var(--red)">6.3</div>
-        <div class="stk-diag-status" style="color:var(--red)">Worse than peers</div>
-        <div class="stk-diag-detail">
-          <strong>Cost Ratio (COGS / Revenue)</strong><br>
-          CVNA: 0.87 vs Sector Avg: 0.72<br>
-          Higher cost absorption suggests thin unit economics and rising fulfillment costs eroding revenue quality.
-        </div>
-        <div class="stk-diag-meta">Latest: Q3 2025 &middot; Sector-adjusted</div>
+        <div class="stk-diag-label" title="Score 10 = costs falling relative to revenue vs peers; score 0 = costs rising much faster than peers.">Revenue Quality Decay</div>
+        <div class="stk-tile-subtitle">Measures the sustainability of the revenue stream itself.</div>
+        <div class="stk-diag-score" style="color:var(--red)">3.2</div>
+        <div class="stk-diag-status" style="color:var(--red)">Below peers</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-metric-row"><span class="stk-metric-label">Revenue</span><span class="stk-metric-value">$3.66B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Cost of Revenue</span><span class="stk-metric-value">$3.17B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">YoY Cost Ratio Change</span><span class="stk-metric-value" style="color:var(--red)">+2.4%</span></div>
+        <div class="stk-vs-peers"><span class="label">vs Sector Peers</span><span class="value" style="color:var(--green)">-0.8%</span></div>
+        <div class="stk-tile-quarter">Most Recent: Q3 2025</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-tile-desc">A rising cost-of-revenue ratio signals that Carvana is spending more per dollar of revenue than it did a year ago, while sector peers are moving in the opposite direction. This divergence suggests the company's unit economics are under pressure from higher reconditioning, logistics, or acquisition costs. When cost ratios climb faster than peers over multiple quarters, it often points to structural margin erosion rather than a one-time expense spike, and may indicate the company is sacrificing profitability to sustain top-line growth.</div>
+        <div class="stk-tile-quarter">Quarters evaluated: Q1 2025 &ndash; Q3 2025</div>
       </div>
+
+      <!-- Tile 2: Gross Margin Compression -->
       <div class="stk-diag-card green">
-        <div class="stk-diag-label">Gross Margin Compression <span class="stk-info" title="Gross Margin = Gross Profit / Revenue. Sector-adjusted score.">i</span></div>
-        <div class="stk-diag-score" style="color:var(--green)">3.7</div>
+        <div class="stk-diag-label" title="Score 10 = margin expanding much faster than sector; score 0 = margin compressing much faster than sector.">Gross Margin Compression</div>
+        <div class="stk-tile-subtitle">Measures the health and durability of the core business model.</div>
+        <div class="stk-diag-score" style="color:var(--green)">6.8</div>
         <div class="stk-diag-status" style="color:var(--green)">Better than peers</div>
-        <div class="stk-diag-detail">
-          <strong>Gross Margin: 19.2%</strong><br>
-          vs Sector Avg: 16.8%<br>
-          GPU improvements from ADESA integration and wholesale arbitrage continue to outperform sector benchmarks.
-        </div>
-        <div class="stk-diag-meta">Latest: FY 2025 &middot; Sector-adjusted</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-metric-row"><span class="stk-metric-label">Revenue</span><span class="stk-metric-value">$3.66B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Gross Profit</span><span class="stk-metric-value">$702M</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">YoY Gross Margin Change</span><span class="stk-metric-value" style="color:var(--green)">+1.8%</span></div>
+        <div class="stk-vs-peers"><span class="label">vs Sector Peers</span><span class="value" style="color:var(--green)">+0.4%</span></div>
+        <div class="stk-tile-quarter">Most Recent: Q3 2025</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-tile-desc">Carvana's gross margin expanded year-over-year and outpaced the sector average, suggesting the core business is becoming more efficient at converting revenue into gross profit. The widening gap versus peers indicates operational improvements from scale efficiencies, better vehicle sourcing, or reduced reconditioning costs. However, investors should monitor whether this expansion is sustainable or driven by temporary factors like favorable used-car pricing cycles or one-time gains from ADESA integration synergies.</div>
+        <div class="stk-tile-quarter">Quarters evaluated: Q1 2025 &ndash; Q3 2025</div>
       </div>
-      <div class="stk-diag-card green">
-        <div class="stk-diag-label">Operating Leverage Breakdown <span class="stk-info" title="EBIT / Revenue. Measures how efficiently revenue converts to operating profit.">i</span></div>
-        <div class="stk-diag-score" style="color:var(--green)">4.3</div>
-        <div class="stk-diag-status" style="color:var(--green)">Better than peers</div>
-        <div class="stk-diag-detail">
-          <strong>EBIT Margin: 6.1%</strong><br>
-          vs Sector Avg: 4.8%<br>
-          Operating leverage improving as fixed costs are spread across higher unit volumes. SGA ratio declining.
-        </div>
-        <div class="stk-diag-meta">Latest: FY 2025 &middot; Sector-adjusted</div>
+
+      <!-- Tile 3: Operating Leverage Breakdown -->
+      <div class="stk-diag-card amber">
+        <div class="stk-diag-label" title="Score 10 = EBIT margin expanding much faster than sector; score 0 = EBIT margin compressing much faster.">Operating Leverage Breakdown</div>
+        <div class="stk-tile-subtitle">Measures the efficiency and scalability of the entire business model.</div>
+        <div class="stk-diag-score" style="color:var(--amber)">5.2</div>
+        <div class="stk-diag-status" style="color:var(--amber)">On par with peers</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-metric-row"><span class="stk-metric-label">Revenue</span><span class="stk-metric-value">$3.66B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">EBIT</span><span class="stk-metric-value">$223M</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">YoY EBIT/Revenue Change</span><span class="stk-metric-value" style="color:var(--green)">+0.6%</span></div>
+        <div class="stk-vs-peers"><span class="label">vs Sector Peers</span><span class="value" style="color:var(--green)">+0.3%</span></div>
+        <div class="stk-tile-quarter">Most Recent: Q3 2025</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-tile-desc">While Carvana's EBIT margin improvement slightly exceeds the sector average, the gap is narrow enough to warrant caution. An operating leverage score near the midpoint means the company is tracking in line with peers rather than pulling ahead. A falling EBIT-to-revenue ratio in future quarters would signal that SG&A, D&A, or other operating expenses are scaling faster than revenue, undermining the thesis that the company is achieving true operating leverage from its growing vehicle volume.</div>
+        <div class="stk-tile-quarter">Quarters evaluated: Q1 2025 &ndash; Q3 2025</div>
       </div>
+
     </div>
 
     <!-- ═══ 7B: POOR GOVERNANCE CONCERNS ═════════ -->
@@ -2849,57 +3074,48 @@
     <div class="stk-section-sub">Insider behavior, ownership changes, and leadership stability</div>
     <div class="stk-gov-grid">
 
-      <!-- Market vs Insider Positioning -->
-      <div class="stk-gov-card">
-        <div class="stk-gov-title">Market vs. Insider Positioning</div>
-        <div class="stk-gov-desc">Net dollar flow comparison: public market buying vs insider selling over the last 12 months.</div>
+      <!-- Tile 1: Market vs. Insider Money Flows -->
+      <div class="stk-gov-card red">
+        <div class="stk-gov-title">Market vs. Insider Money Flows</div>
+        <div class="stk-gov-subtitle">Dollar-weighted comparison of public market activity versus executive and officer trading over the last 90 days.</div>
+        <div class="stk-gov-score" style="color:var(--red)">2.8</div>
+        <div class="stk-gov-score-label" style="color:var(--red)">High insider divergence</div>
+        <hr class="stk-tile-divider">
         <div class="stk-flow-row">
           <div class="stk-flow-label">Market</div>
           <div class="stk-flow-bar-bg"><div class="stk-flow-bar" style="width:72%;background:var(--green)"></div></div>
           <div class="stk-flow-val" style="color:var(--green)">+$1.4B</div>
         </div>
-        <div class="stk-flow-row">
+        <div class="stk-metric-row"><span class="stk-metric-label">Market Net Flow Score</span><span class="stk-metric-value" style="color:var(--green)">8.2</span></div>
+        <div class="stk-flow-row" style="margin-top:6px">
           <div class="stk-flow-label">Executives</div>
           <div class="stk-flow-bar-bg"><div class="stk-flow-bar" style="width:48%;background:var(--red)"></div></div>
           <div class="stk-flow-val" style="color:var(--red)">-$680M</div>
         </div>
-        <div class="stk-flow-row">
+        <div class="stk-metric-row"><span class="stk-metric-label">Exec Net Flow Score</span><span class="stk-metric-value" style="color:var(--red)">1.4</span></div>
+        <div class="stk-flow-row" style="margin-top:6px">
           <div class="stk-flow-label">Officers</div>
           <div class="stk-flow-bar-bg"><div class="stk-flow-bar" style="width:24%;background:var(--red)"></div></div>
           <div class="stk-flow-val" style="color:var(--red)">-$142M</div>
         </div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Officer Net Flow Score</span><span class="stk-metric-value" style="color:var(--red)">2.8</span></div>
+        <hr class="stk-tile-divider">
+        <div class="stk-gov-desc-full">The sharp divergence between public market inflows and insider selling is a classic warning signal. While institutional and retail investors are net buyers, executives and officers are liquidating significant positions, suggesting those with the most inside knowledge may not share the market's optimism about the company's trajectory.</div>
       </div>
 
-      <!-- Insider Ownership Change -->
-      <div class="stk-gov-card">
-        <div class="stk-gov-title">Insider Ownership Change (Rolling 12M)</div>
-        <div class="stk-gov-desc">Net % change in insider holdings relative to starting position. Measures conviction reduction.</div>
-        <div class="stk-gov-stat-row">
-          <div class="stk-gov-stat">
-            <div class="stk-gov-stat-val" style="color:var(--red)">-6.4%</div>
-            <div class="stk-gov-stat-label">Net Change</div>
-          </div>
-          <div class="stk-gov-stat">
-            <div class="stk-gov-stat-val">1.86M</div>
-            <div class="stk-gov-stat-label">Shares Sold</div>
-          </div>
-          <div class="stk-gov-stat">
-            <div class="stk-gov-stat-val">0.12M</div>
-            <div class="stk-gov-stat-label">Shares Bought</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coordinated Insider Selling -->
-      <div class="stk-gov-card">
+      <!-- Tile 2: Coordinated Insider Selling -->
+      <div class="stk-gov-card red">
         <div class="stk-gov-title">Coordinated Insider Selling</div>
-        <div class="stk-gov-desc">Identifies clustered insider sales within short windows. Higher score = more coordinated, more concerning.</div>
+        <div class="stk-gov-subtitle">Identifies concentrated bursts of insider selling activity within short windows, adjusted for recency.</div>
+        <div class="stk-gov-score" style="color:var(--red)">7.4</div>
+        <div class="stk-gov-score-label" style="color:var(--red)">High risk cluster detected</div>
+        <hr class="stk-tile-divider">
         <div class="stk-cluster-gauge"><div class="stk-cluster-needle" style="left:74%"></div></div>
         <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--grey3);margin-bottom:12px"><span>Low Risk</span><span>High Risk</span></div>
         <div class="stk-gov-stat-row">
           <div class="stk-gov-stat">
-            <div class="stk-gov-stat-val" style="color:var(--red)">74</div>
-            <div class="stk-gov-stat-label">Cluster Score</div>
+            <div class="stk-gov-stat-val" style="color:var(--red)">Dec 15, 2025</div>
+            <div class="stk-gov-stat-label">Cluster Date</div>
           </div>
           <div class="stk-gov-stat">
             <div class="stk-gov-stat-val">5</div>
@@ -2907,22 +3123,50 @@
           </div>
           <div class="stk-gov-stat">
             <div class="stk-gov-stat-val">12</div>
-            <div class="stk-gov-stat-label">Trades (90D)</div>
+            <div class="stk-gov-stat-label">Trades</div>
           </div>
         </div>
+        <hr class="stk-tile-divider">
+        <div class="stk-gov-desc-full">Five insiders executed 12 sell transactions within a tight window around December 15, 2025. Coordinated selling clusters are statistically rare in normal operations and often precede negative catalysts. The recency-adjusted score of 7.4 reflects both the magnitude and proximity of this activity.</div>
       </div>
 
-      <!-- CFO Turnover -->
-      <div class="stk-gov-card">
+      <!-- Tile 3: Insider Ownership Change -->
+      <div class="stk-gov-card red">
+        <div class="stk-gov-title">Insider Ownership Change</div>
+        <div class="stk-gov-subtitle">Net change in insider share holdings over the trailing 12 months relative to starting position.</div>
+        <div class="stk-gov-score" style="color:var(--red)">2.1</div>
+        <div class="stk-gov-score-label" style="color:var(--red)">Significant insider reduction</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-gov-stat-row">
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val" style="color:var(--red)">-6.4%</div>
+            <div class="stk-gov-stat-label">Ownership Change</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">0.12M</div>
+            <div class="stk-gov-stat-label">Shares Bought</div>
+          </div>
+          <div class="stk-gov-stat">
+            <div class="stk-gov-stat-val">1.86M</div>
+            <div class="stk-gov-stat-label">Shares Sold</div>
+          </div>
+        </div>
+        <hr class="stk-tile-divider">
+        <div class="stk-gov-desc-full">Insiders collectively reduced their holdings by 6.4% over the past 12 months, with sell volume outpacing purchases by more than 15x. Declining insider ownership erodes the alignment between management and shareholders, raising questions about long-term conviction.</div>
+      </div>
+
+      <!-- Tile 4: CFO Turnover -->
+      <div class="stk-gov-card amber">
         <div class="stk-gov-title">CFO Turnover</div>
-        <div class="stk-gov-desc">Leadership stability signal. Frequent CFO changes correlate with accounting restatements and governance failures.</div>
+        <div class="stk-gov-subtitle">Leadership stability signal based on finance executive continuity over the trailing 36 months.</div>
+        <hr class="stk-tile-divider">
         <div class="stk-gov-stat-row">
           <div class="stk-gov-stat">
             <div class="stk-gov-stat-val" style="color:var(--red)">2</div>
             <div class="stk-gov-stat-label">CFO Changes (36M)</div>
           </div>
           <div class="stk-gov-stat">
-            <div class="stk-gov-stat-val" style="color:var(--amber)">1.4 yr</div>
+            <div class="stk-gov-stat-val" style="color:var(--amber)">16.8 mo</div>
             <div class="stk-gov-stat-label">Avg Tenure</div>
           </div>
           <div class="stk-gov-stat">
@@ -2930,48 +3174,68 @@
             <div class="stk-gov-stat-label">Days Since Last</div>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--grey3);margin-top:10px">Sector avg tenure: 3.2 years &middot; Sector avg changes (36M): 0.6</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-gov-desc-full">Two CFO changes in 36 months is well above the sector average of 0.6 changes, and the average tenure of 16.8 months falls far short of the sector norm of 3.2 years. Frequent CFO turnover correlates with accounting restatements, delayed filings, and governance instability.</div>
       </div>
+
     </div>
 
     <!-- ═══ 7C: BALANCE SHEET STRESS ═════════════ -->
     <div class="stk-section-title">Balance Sheet Stress</div>
-    <div class="stk-section-sub">How long can the company sustain operations without refinancing?</div>
+    <div class="stk-section-sub">Measures a company's financial resilience across cash runway, leverage, and cash flow coverage &mdash; relative to sector peers.</div>
     <div class="stk-diag-row">
-      <div class="stk-diag-card red">
-        <div class="stk-diag-label">Liquidity Score <span class="stk-info" title="1 = More runway than peers. <1 = Worse. <2 = Much worse.">i</span></div>
-        <div class="stk-diag-score" style="color:var(--red)">-0.18</div>
-        <div class="stk-diag-status" style="color:var(--red)">Worse than peers</div>
-        <div class="stk-diag-detail">
-          <strong>Cash:</strong> $2.2B<br>
-          <strong>Borrowing Capacity:</strong> $590M<br>
-          <strong>Cash Runway:</strong> 77 months<br>
-          <strong>Liquidity Runway:</strong> 97 months
-        </div>
-        <div class="stk-diag-meta">Scale: 1 = more runway &middot; &lt;1 worse &middot; &lt;2 much worse</div>
-      </div>
+
+      <!-- Tile 1: Cash Runway -->
       <div class="stk-diag-card amber">
-        <div class="stk-diag-label">Liabilities / Total Assets <span class="stk-info" title="<0.40 strong | 0.40-0.70 normal | >0.70 elevated | >0.90 concerning">i</span></div>
-        <div class="stk-diag-score" style="color:var(--amber)">0.70</div>
-        <div class="stk-diag-status" style="color:var(--amber)">Elevated structural risk</div>
-        <div class="stk-diag-detail">
-          <strong>Total Liabilities:</strong> $6.9B<br>
-          <strong>Total Assets:</strong> $9.8B<br>
-          At the upper boundary of normal range. Debt restructuring in 2023 reduced interest burden but principal remains elevated.
-        </div>
-        <div class="stk-diag-meta">&lt;0.40 strong &middot; 0.40–0.70 normal &middot; &gt;0.70 elevated &middot; &gt;0.90 concerning</div>
+        <div class="stk-diag-label" title="Score 10 = much longer runway than peers; score 0 = critically shorter runway than peers.">Cash Runway</div>
+        <div class="stk-tile-subtitle">Measures how long the company can sustain operations from existing cash and cash flow.</div>
+        <div class="stk-diag-score" style="color:var(--amber)">4.2</div>
+        <div class="stk-diag-status" style="color:var(--amber)">Slightly below peers</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-metric-row"><span class="stk-metric-label">Cash</span><span class="stk-metric-value">$2.2B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Operating Cash Flow</span><span class="stk-metric-value">$3.45B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Cash Runway</span><span class="stk-metric-value">77 months</span></div>
+        <div class="stk-vs-peers"><span class="label">vs Sector Peers</span><span class="value">84 months</span></div>
+        <div class="stk-tile-quarter">Most Recent: Q3 2025</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-tile-desc">Carvana's 77-month cash runway trails the sector average of 84 months, though the gap is modest. The company's improving operating cash flow has significantly extended its runway from the crisis levels of 2022, but elevated debt servicing requirements and capital-intensive operations keep it slightly behind asset-lighter peers.</div>
+        <div class="stk-tile-quarter">Quarters evaluated: Q1 2025 &ndash; Q3 2025</div>
       </div>
+
+      <!-- Tile 2: Leverage Ratio -->
+      <div class="stk-diag-card red">
+        <div class="stk-diag-label" title="Score 10 = leverage declining much faster than peers; score 0 = leverage rising much faster than peers.">Leverage Ratio</div>
+        <div class="stk-tile-subtitle">Measures the trajectory of financial leverage relative to total asset base.</div>
+        <div class="stk-diag-score" style="color:var(--red)">3.8</div>
+        <div class="stk-diag-status" style="color:var(--red)">Worse than peers</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-metric-row"><span class="stk-metric-label">Total Assets</span><span class="stk-metric-value">$9.8B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Total Liabilities</span><span class="stk-metric-value">$6.9B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">YoY Leverage Ratio</span><span class="stk-metric-value" style="color:var(--red)">+1.2%</span></div>
+        <div class="stk-vs-peers"><span class="label">vs Sector Peers</span><span class="value" style="color:var(--green)">-0.3%</span></div>
+        <div class="stk-tile-quarter">Most Recent: Q3 2025</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-tile-desc">Carvana's liabilities-to-assets ratio increased 1.2% year-over-year while sector peers reduced theirs by 0.3%. The 0.70x leverage ratio sits at the upper boundary of the normal range, and the diverging trend versus peers raises concerns about the company's ability to deleverage at the same pace as its competitors.</div>
+        <div class="stk-tile-quarter">Quarters evaluated: Q1 2025 &ndash; Q3 2025</div>
+      </div>
+
+      <!-- Tile 3: Cash Flow Coverage -->
       <div class="stk-diag-card green">
-        <div class="stk-diag-label">Operating Cash Flow / Liabilities <span class="stk-info" title=">0.25 strong | 0.10-0.25 moderate | <0.10 weak | <0.05 severe">i</span></div>
-        <div class="stk-diag-score" style="color:var(--green)">0.50</div>
-        <div class="stk-diag-status" style="color:var(--green)">Strong cash-based coverage</div>
-        <div class="stk-diag-detail">
-          <strong>Total Liabilities:</strong> $6.9B<br>
-          <strong>Net CFO:</strong> $3.45B<br>
-          Significant improvement from negative CFO in 2022. Operating cash generation now covers roughly half of total liabilities annually.
-        </div>
-        <div class="stk-diag-meta">&gt;0.25 strong &middot; 0.10–0.25 moderate &middot; &lt;0.10 weak &middot; &lt;0.05 severe</div>
+        <div class="stk-diag-label" title="Score 10 = OCF-to-liabilities improving much faster than peers; score 0 = deteriorating much faster.">Cash Flow Coverage</div>
+        <div class="stk-tile-subtitle">Measures the company's ability to service liabilities from operating cash flow.</div>
+        <div class="stk-diag-score" style="color:var(--green)">7.1</div>
+        <div class="stk-diag-status" style="color:var(--green)">Better than peers</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-metric-row"><span class="stk-metric-label">Operating Cash Flow</span><span class="stk-metric-value">$3.45B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">Total Liabilities</span><span class="stk-metric-value">$6.9B</span></div>
+        <div class="stk-metric-row"><span class="stk-metric-label">YoY OCF-to-Liabilities</span><span class="stk-metric-value" style="color:var(--green)">+8.4%</span></div>
+        <div class="stk-vs-peers"><span class="label">vs Sector Peers</span><span class="value" style="color:var(--green)">+2.1%</span></div>
+        <div class="stk-tile-quarter">Most Recent: Q3 2025</div>
+        <hr class="stk-tile-divider">
+        <div class="stk-tile-desc">Carvana's operating cash flow coverage is improving at four times the sector rate, driven by the dramatic turnaround in operating efficiency since 2022. At 0.50x, the company generates enough cash to cover half its total liabilities annually &mdash; a significant improvement that reflects genuine operational progress rather than financial engineering.</div>
+        <div class="stk-tile-quarter">Quarters evaluated: Q1 2025 &ndash; Q3 2025</div>
       </div>
+
     </div>
 
     <!-- ═══ COMING SOON ══════════════════════════ -->
@@ -2997,6 +3261,8 @@
         <button class="stk-fb-btn stk-fb-secondary">Give Feedback</button>
       </div>
     </div>
+
+    </div><!-- /stkContent -->
 
   </div><!-- /page-stock -->
 
@@ -4250,13 +4516,64 @@ function showInvStocks(name) {
    STOCK PAGE — PRICE CHART
    ══════════════════════════════════════════════════ */
 let stockChart = null;
+let currentChartType = 'line';
+let currentStockRange = 'ytd';
+
+/* Custom plugin: draw candlestick wicks */
+const candleWickPlugin = {
+  id: 'candleWick',
+  afterDatasetsDraw(chart) {
+    if (!chart.config._config._ohlcData) return;
+    const meta = chart.getDatasetMeta(0);
+    const ctx = chart.ctx;
+    const ohlcData = chart.config._config._ohlcData;
+    meta.data.forEach((bar, i) => {
+      if (!ohlcData[i]) return;
+      const { h, l, o, c } = ohlcData[i];
+      const x = bar.x;
+      const yScale = chart.scales.y;
+      const highY = yScale.getPixelForValue(h);
+      const lowY = yScale.getPixelForValue(l);
+      ctx.beginPath();
+      ctx.strokeStyle = c >= o ? '#22C55E' : '#FF2137';
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(x, highY);
+      ctx.lineTo(x, lowY);
+      ctx.stroke();
+    });
+  }
+};
+
+/* Generate date labels for x-axis */
+function generateDateLabels(range, count) {
+  const end = new Date(2026, 1, 28); /* Feb 28, 2026 */
+  const labels = [];
+  for (let i = count - 1; i >= 0; i--) {
+    const d = new Date(end);
+    switch(range) {
+      case '1d':
+        d.setMinutes(d.getMinutes() - i * 5);
+        labels.push(d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }));
+        break;
+      case '5d':
+        d.setHours(d.getHours() - i * 1);
+        labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        break;
+      default:
+        d.setDate(d.getDate() - i);
+        labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    }
+  }
+  return labels;
+}
 
 /* Generate realistic CVNA-style price data */
 function generateStockPriceData(range) {
   const rng = mulberry32(42);
   const pts = [];
+  const ohlc = [];
   const events = [];
-  let count, startPrice, volatility, label;
+  let count, startPrice, volatility;
 
   switch(range) {
     case '1d':  count = 78;  startPrice = 196; volatility = 0.3; break;
@@ -4272,22 +4589,44 @@ function generateStockPriceData(range) {
   let price = startPrice;
   const drift = (198.42 - startPrice) / count;
   for (let i = 0; i < count; i++) {
+    const open = +price.toFixed(2);
     price += drift + (rng() - 0.48) * volatility;
-    price = Math.max(price * 0.95, price); /* Floor */
-    pts.push(+price.toFixed(2));
+    price = Math.max(price * 0.95, price);
+    const close = +price.toFixed(2);
+    const high = +(Math.max(open, close) + rng() * volatility * 0.6).toFixed(2);
+    const low = +(Math.min(open, close) - rng() * volatility * 0.6).toFixed(2);
+    pts.push(close);
+    ohlc.push({ o: open, h: high, l: low, c: close });
   }
-  /* Ensure last point matches current price */
   pts[pts.length - 1] = 198.42;
+  ohlc[ohlc.length - 1].c = 198.42;
 
-  /* Event markers for longer ranges */
+  const dateLabels = generateDateLabels(range, count);
+
+  /* Event markers for longer ranges — with enhanced data */
   if (count > 50) {
-    events.push({ idx: Math.floor(count * 0.25), type: 'report', label: 'Short Report' });
-    events.push({ idx: Math.floor(count * 0.55), type: 'earnings', label: 'Q3 Earnings' });
-    events.push({ idx: Math.floor(count * 0.75), type: 'report', label: 'Short Report #2' });
-    events.push({ idx: Math.floor(count * 0.88), type: 'event', label: 'Debt Restructuring' });
+    events.push({
+      idx: Math.floor(count * 0.25), type: 'report',
+      label: 'Short Report Published',
+      investigator: 'Hindenburg Research',
+      date: 'Jan 3, 2026'
+    });
+    events.push({
+      idx: Math.floor(count * 0.55), type: 'earnings',
+      label: 'Q3 Earnings',
+      date: 'Oct 15, 2025',
+      epsActual: 0.45, epsEstimate: 0.38,
+      revActual: 3.66, revEstimate: 3.45
+    });
+    events.push({
+      idx: Math.floor(count * 0.75), type: 'report',
+      label: 'Short Report Published',
+      investigator: 'Muddy Waters',
+      date: 'Sep 8, 2025'
+    });
   }
 
-  return { pts, events };
+  return { pts, ohlc, dateLabels, events };
 }
 
 function initStockPage() {
@@ -4295,24 +4634,30 @@ function initStockPage() {
 }
 
 function renderStockChart(range) {
-  const { pts, events } = generateStockPriceData(range);
+  const { pts, ohlc, dateLabels, events } = generateStockPriceData(range);
   const ctx = document.getElementById('stockPriceChart').getContext('2d');
 
   if (stockChart) stockChart.destroy();
 
-  /* Build point markers for events */
+  if (currentChartType === 'candle') {
+    renderCandlestickChart(ctx, pts, ohlc, dateLabels, events);
+  } else {
+    renderLineChart(ctx, pts, dateLabels, events);
+  }
+}
+
+function renderLineChart(ctx, pts, dateLabels, events) {
   const pointBg = pts.map(() => 'transparent');
   const pointBorder = pts.map(() => 'transparent');
   const pointRadius = pts.map(() => 0);
 
   events.forEach(e => {
-    const color = e.type === 'report' ? '#FF2137' : e.type === 'earnings' ? '#F59E0B' : '#35A5CF';
+    const color = e.type === 'report' ? '#FF2137' : '#F59E0B';
     pointBg[e.idx] = color;
     pointBorder[e.idx] = '#fff';
     pointRadius[e.idx] = 6;
   });
 
-  /* Gradient fill */
   const gradient = ctx.createLinearGradient(0, 0, 0, 320);
   gradient.addColorStop(0, 'rgba(53,165,207,.12)');
   gradient.addColorStop(1, 'rgba(53,165,207,0)');
@@ -4320,7 +4665,7 @@ function renderStockChart(range) {
   stockChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: pts.map((_, i) => i),
+      labels: dateLabels,
       datasets: [{
         data: pts,
         borderColor: '#35A5CF',
@@ -4346,21 +4691,44 @@ function renderStockChart(range) {
           cornerRadius: 8,
           titleColor: '#fff',
           bodyColor: '#c0cad4',
+          displayColors: false,
           callbacks: {
-            title: (ctx) => {
-              const idx = ctx[0].dataIndex;
+            title: (items) => {
+              const idx = items[0].dataIndex;
               const ev = events.find(e => e.idx === idx);
-              return ev ? ev.label : '';
+              if (ev && ev.type === 'report') return ev.investigator + ' | ' + ev.date;
+              if (ev && ev.type === 'earnings') return ev.label + ' | ' + ev.date;
+              return dateLabels[idx] || '';
             },
-            label: (ctx) => '$' + ctx.parsed.y.toFixed(2),
+            label: (item) => '$' + item.parsed.y.toFixed(2),
+            afterBody: (items) => {
+              const idx = items[0].dataIndex;
+              const ev = events.find(e => e.idx === idx);
+              if (ev && ev.type === 'earnings') {
+                return [
+                  'EPS: $' + ev.epsActual.toFixed(2) + ' vs $' + ev.epsEstimate.toFixed(2) + ' est.',
+                  'Revenue: $' + ev.revActual.toFixed(2) + 'B vs $' + ev.revEstimate.toFixed(2) + 'B est.'
+                ];
+              }
+              return [];
+            }
           }
         }
       },
       scales: {
         x: {
-          display: false,
+          display: true,
+          grid: { display: false },
+          ticks: {
+            font: { size: 10, weight: '600' },
+            color: '#8A95A0',
+            maxTicksLimit: 8,
+            maxRotation: 0,
+          },
+          border: { display: false },
         },
         y: {
+          position: 'right',
           grid: { color: 'rgba(14,29,41,.04)' },
           ticks: {
             font: { size: 11, weight: '600' },
@@ -4378,11 +4746,199 @@ function renderStockChart(range) {
   });
 }
 
+function renderCandlestickChart(ctx, pts, ohlc, dateLabels, events) {
+  /* Build floating bar data: [min(o,c), max(o,c)] for body */
+  const barData = ohlc.map(d => [Math.min(d.o, d.c), Math.max(d.o, d.c)]);
+  const barColors = ohlc.map(d => d.c >= d.o ? '#22C55E' : '#FF2137');
+  const borderColors = ohlc.map(d => d.c >= d.o ? '#1a9e4a' : '#d41a2e');
+
+  /* Event marker dataset (scatter overlay) */
+  const evPts = events.map(e => ({ x: e.idx, y: ohlc[e.idx].h + 2 }));
+  const evColors = events.map(e => e.type === 'report' ? '#FF2137' : '#F59E0B');
+
+  const cfg = {
+    type: 'bar',
+    data: {
+      labels: dateLabels,
+      datasets: [
+        {
+          data: barData,
+          backgroundColor: barColors,
+          borderColor: borderColors,
+          borderWidth: 1,
+          barPercentage: 0.85,
+          categoryPercentage: 0.95,
+        },
+        {
+          type: 'scatter',
+          data: evPts,
+          pointBackgroundColor: evColors,
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          showLine: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0E1D29',
+          padding: 10,
+          cornerRadius: 8,
+          titleColor: '#fff',
+          bodyColor: '#c0cad4',
+          displayColors: false,
+          filter: (item) => item.datasetIndex === 0 || item.datasetIndex === 1,
+          callbacks: {
+            title: (items) => {
+              if (!items.length) return '';
+              const idx = items[0].datasetIndex === 1
+                ? events[items[0].dataIndex] ? events[items[0].dataIndex].idx : items[0].dataIndex
+                : items[0].dataIndex;
+              const ev = events.find(e => e.idx === idx);
+              if (items[0].datasetIndex === 1 && events[items[0].dataIndex]) {
+                const ev2 = events[items[0].dataIndex];
+                if (ev2.type === 'report') return ev2.investigator + ' | ' + ev2.date;
+                if (ev2.type === 'earnings') return ev2.label + ' | ' + ev2.date;
+              }
+              return dateLabels[idx] || '';
+            },
+            label: (item) => {
+              if (item.datasetIndex === 1) return '';
+              const d = ohlc[item.dataIndex];
+              return ['O: $' + d.o.toFixed(2) + '  H: $' + d.h.toFixed(2),
+                      'L: $' + d.l.toFixed(2) + '  C: $' + d.c.toFixed(2)];
+            },
+            afterBody: (items) => {
+              if (!items.length || items[0].datasetIndex !== 1) return [];
+              const ev = events[items[0].dataIndex];
+              if (ev && ev.type === 'earnings') {
+                return [
+                  'EPS: $' + ev.epsActual.toFixed(2) + ' vs $' + ev.epsEstimate.toFixed(2) + ' est.',
+                  'Revenue: $' + ev.revActual.toFixed(2) + 'B vs $' + ev.revEstimate.toFixed(2) + 'B est.'
+                ];
+              }
+              return [];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          display: true,
+          grid: { display: false },
+          ticks: {
+            font: { size: 10, weight: '600' },
+            color: '#8A95A0',
+            maxTicksLimit: 8,
+            maxRotation: 0,
+          },
+          border: { display: false },
+        },
+        y: {
+          position: 'right',
+          beginAtZero: false,
+          grid: { color: 'rgba(14,29,41,.04)' },
+          ticks: {
+            font: { size: 11, weight: '600' },
+            color: '#8A95A0',
+            callback: v => '$' + v,
+          },
+          border: { display: false },
+        }
+      },
+    },
+    plugins: [candleWickPlugin],
+    _ohlcData: ohlc,
+  };
+
+  stockChart = new Chart(ctx, cfg);
+}
+
 function setStockRange(el, range) {
   el.parentElement.querySelectorAll('.stk-toggle').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
+  currentStockRange = range;
   renderStockChart(range);
 }
+
+function setChartType(el, type) {
+  el.parentElement.querySelectorAll('.stk-type-toggle').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentChartType = type;
+  renderStockChart(currentStockRange);
+}
+
+/* ── Stock Search + Load ─────────────────────── */
+let activeStock = 'CVNA';
+
+function handleStockSearch(query) {
+  const results = document.getElementById('stkSearchResults');
+  if (!query || query.length < 1) {
+    results.classList.remove('visible');
+    return;
+  }
+  const q = query.toLowerCase();
+  const matches = STOCK_DATABASE.filter(s =>
+    s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+  ).slice(0, 8);
+
+  if (matches.length === 0) {
+    results.classList.remove('visible');
+    return;
+  }
+
+  results.innerHTML = matches.map(s => {
+    const rClass = s.reports > 0 ? 'has' : 'none';
+    const rText = s.reports > 0 ? s.reports + ' report' + (s.reports > 1 ? 's' : '') : 'No reports';
+    return '<div class="stk-search-item" onclick="loadStock(\'' + s.ticker + '\')">' +
+      '<span class="stk-search-ticker">' + s.ticker + '</span>' +
+      '<span class="stk-search-name">' + s.name + '</span>' +
+      '<span class="stk-search-reports ' + rClass + '">' + rText + '</span>' +
+      '</div>';
+  }).join('');
+  results.classList.add('visible');
+}
+
+function loadStock(ticker) {
+  activeStock = ticker;
+  const stock = STOCK_DATABASE.find(s => s.ticker === ticker);
+  if (!stock) return;
+
+  /* Clear search */
+  document.getElementById('stkSearchInput').value = '';
+  document.getElementById('stkSearchResults').classList.remove('visible');
+
+  if (stock.reports === 0) {
+    /* Show fallback, hide content */
+    document.getElementById('stkFallbackTitle').textContent = 'No Short Report Available for ' + ticker;
+    document.getElementById('stkFallback').classList.add('visible');
+    document.getElementById('stkContent').style.display = 'none';
+  } else {
+    /* Show content, hide fallback */
+    document.getElementById('stkFallback').classList.remove('visible');
+    document.getElementById('stkContent').style.display = '';
+    /* Reset chart to line/ytd */
+    currentChartType = 'line';
+    currentStockRange = 'ytd';
+    document.querySelectorAll('.stk-type-toggle').forEach((t,i) => t.classList.toggle('active', i===0));
+    document.querySelectorAll('.stk-toggle').forEach(t => t.classList.toggle('active', t.textContent === 'YTD'));
+    renderStockChart('ytd');
+  }
+}
+
+/* Close search results on outside click */
+document.addEventListener('click', e => {
+  if (!e.target.closest('.stk-search-wrap')) {
+    const r = document.getElementById('stkSearchResults');
+    if (r) r.classList.remove('visible');
+  }
+});
 
 /* ══════════════════════════════════════════════════
    INVESTIGATOR PROFILE PAGE
@@ -5146,6 +5702,7 @@ function setIpTablePeriod(el, period) {
    add/remove, drag reorder, and report count badges
    ══════════════════════════════════════════════════ */
 const STOCK_DATABASE = [
+  { ticker: 'CVNA', name: 'Carvana Co.', price: 198.42, change: 18.4, reports: 4, type: 'stock' },
   { ticker: 'ACME', name: 'Acme Holdings', price: 84.20, change: -8.4, reports: 3, type: 'stock' },
   { ticker: 'SOLR', name: 'SolarEdge Alt.', price: 31.50, change: -12.1, reports: 2, type: 'stock' },
   { ticker: 'AIML', name: 'AiMill Corp.', price: 122.40, change: -18.7, reports: 1, type: 'stock' },
