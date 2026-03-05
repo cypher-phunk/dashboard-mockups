@@ -1570,24 +1570,116 @@
   .stk-news-hl { font-weight: 600; color: var(--navy); }
   .stk-news-src { font-size: 10px; color: var(--grey3); margin-top: 2px; }
 
-  .stk-borrow-row {
+  /* Borrow rating result */
+  .stk-borrow-result {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 7px 0;
-    border-bottom: 1px solid var(--grey1);
-    font-size: 13px;
+    gap: 16px;
+    margin-bottom: 14px;
   }
-  .stk-borrow-row:last-child { border-bottom: none; }
-  .stk-borrow-yes {
+  .stk-borrow-chart-wrap {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .stk-borrow-chart-wrap canvas { width: 100% !important; height: 100% !important; }
+  .stk-borrow-info { flex: 1; }
+  .stk-borrow-label {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .stk-borrow-label.high { color: var(--green); }
+  .stk-borrow-label.low { color: var(--red); }
+  .stk-borrow-legend {
+    font-size: 11px;
+    color: var(--grey3);
+    line-height: 1.4;
+  }
+  .stk-borrow-waiting {
+    background: rgba(245,158,11,.1);
+    color: #B45309;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .stk-borrow-empty {
+    color: var(--grey3);
+    font-size: 12px;
+    text-align: center;
+    padding: 10px 0;
+    margin-bottom: 14px;
+  }
+
+  /* Borrow vote form */
+  .stk-borrow-form { border-top: 1px solid var(--grey1); padding-top: 12px; }
+  .stk-borrow-q {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .stk-borrow-options {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stk-borrow-opt {
+    flex: 1;
+    padding: 7px 6px;
+    border: 1.5px solid var(--grey2);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+  }
+  .stk-borrow-opt:hover { border-color: var(--navy); }
+  .stk-borrow-opt.selected {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .stk-borrow-select {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1.5px solid var(--grey2);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 10px;
+    background: #fff;
+    cursor: pointer;
+  }
+  .stk-borrow-submit {
+    width: 100%;
+    padding: 8px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .stk-borrow-submit:hover { opacity: .85; }
+  .stk-borrow-submit:disabled { opacity: .4; cursor: default; }
+  .stk-borrow-thanks {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--green);
-    font-weight: 700;
-    font-size: 12px;
-  }
-  .stk-borrow-no {
-    color: var(--red);
-    font-weight: 700;
-    font-size: 12px;
+    padding: 10px 0 4px;
   }
 
   /* ── Peer Shorts Strip ─────────────────────── */
@@ -2393,11 +2485,27 @@
   }
   .srch-input-icon svg { width: 20px; height: 20px; }
   .srch-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 32px;
+  }
+  .srch-results-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 12px;
-    margin-bottom: 32px;
   }
+  .srch-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--grey3);
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    padding: 12px 0 8px;
+    border-bottom: 1px solid var(--grey2);
+    margin-bottom: 12px;
+  }
+  .srch-section-label:first-child { padding-top: 0; }
   .srch-card {
     background: #fff;
     border: 1px solid var(--grey2);
@@ -2437,6 +2545,94 @@
     padding: 40px 20px;
     color: var(--grey3);
     font-size: 14px;
+  }
+  .srch-inv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .srch-inv-card {
+    background: #fff;
+    border: 1px solid var(--grey2);
+    border-left: 4px solid var(--grey3);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .srch-inv-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(14,29,41,.08); }
+  .srch-inv-card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .srch-inv-card-type {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    background: rgba(14,29,41,.08);
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .srch-inv-card-stats {
+    font-size: 12px;
+    color: var(--grey3);
+  }
+  .srch-report-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 16px;
+  }
+  .srch-report-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--grey1);
+    cursor: pointer;
+    transition: background .1s;
+    border-radius: 6px;
+  }
+  .srch-report-row:hover { background: var(--grey1); }
+  .srch-report-ticker {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--navy);
+    min-width: 52px;
+  }
+  .srch-report-company {
+    font-size: 12px;
+    color: var(--grey3);
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .srch-report-inv {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .srch-report-date {
+    font-size: 11px;
+    color: var(--grey3);
+    white-space: nowrap;
+  }
+  .srch-report-impact {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 48px;
+    text-align: right;
+    white-space: nowrap;
   }
   .srch-watchlist {
     background: var(--grey1);
@@ -3473,11 +3669,8 @@
         </div>
         <div class="stk-side-card">
           <div class="stk-side-title">Ability to Borrow</div>
-          <div class="stk-borrow-row"><span>Robinhood</span><span class="stk-borrow-yes">Available</span></div>
-          <div class="stk-borrow-row"><span>Fidelity</span><span class="stk-borrow-yes">Available</span></div>
-          <div class="stk-borrow-row"><span>Charles Schwab</span><span class="stk-borrow-no">Unavailable</span></div>
-          <div class="stk-borrow-row"><span>Webull</span><span class="stk-borrow-yes">Available</span></div>
-          <div class="stk-borrow-row"><span>Interactive Brokers</span><span class="stk-borrow-yes">Available</span></div>
+          <div id="stkBorrowResults"></div>
+          <div id="stkBorrowForm"></div>
         </div>
       </div>
     </div>
@@ -4041,27 +4234,17 @@
 
   <!-- ────────── PAGE: SEARCH ────────── -->
   <div id="page-search" class="page" style="margin-top:8px">
-    <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px">Search Stocks</div>
-    <div style="font-size:13px;color:var(--grey3);margin-bottom:24px">Find any stock in our database by ticker or company name</div>
+    <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px">Search</div>
+    <div style="font-size:13px;color:var(--grey3);margin-bottom:24px">Search across stocks, investigators, and reports</div>
     <div class="srch-wrap">
       <div style="background:var(--grey1);border-radius:14px;padding:20px 24px;margin-bottom:24px">
-        <div style="font-size:13px;color:var(--navy);line-height:1.6">Search for any stock in our database by ticker symbol or company name. If a stock isn&rsquo;t listed, you can add it to your watchlist below and we&rsquo;ll notify you when coverage becomes available.</div>
+        <div style="font-size:13px;color:var(--navy);line-height:1.6">Search for stocks by ticker or company name, find investigators by name, or browse short reports. If a stock isn&rsquo;t in our database, you can add it to your watchlist and we&rsquo;ll notify you when coverage becomes available.</div>
       </div>
       <div class="srch-input-wrap">
         <span class="srch-input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-        <input class="srch-input" id="srchInput" type="text" placeholder="Search by ticker or company name..." oninput="handleSearchPageInput(this.value)">
+        <input class="srch-input" id="srchInput" type="text" placeholder="Search stocks, investigators, or reports..." oninput="handleSearchPageInput(this.value)">
       </div>
       <div class="srch-results" id="srchResults"></div>
-      <div class="srch-watchlist">
-        <div class="srch-watchlist-title">Can&rsquo;t find what you&rsquo;re looking for?</div>
-        <div class="srch-watchlist-sub">Add a stock to your watchlist and we&rsquo;ll notify you when coverage becomes available.</div>
-        <div class="srch-watchlist-form" id="srchWatchlistForm">
-          <input class="srch-watchlist-input" id="srchWlTicker" type="text" placeholder="Ticker (e.g. AAPL)" style="width:130px">
-          <input class="srch-watchlist-input" id="srchWlCompany" type="text" placeholder="Company name" style="flex:1;min-width:180px">
-          <button class="srch-watchlist-btn" onclick="submitWatchlistRequest()">Add to Watchlist</button>
-        </div>
-        <div class="srch-watchlist-success" id="srchWlSuccess">&#10003; Added to your watchlist! We&rsquo;ll notify you when coverage is available.</div>
-      </div>
     </div>
   </div><!-- /page-search -->
 
@@ -4829,6 +5012,7 @@ function navigateTo(pageName) {
     window._stockTabInit = true;
     initStockPage();
   }
+  if (pageName === 'stock') renderBorrowSection(activeStock);
   if (pageName === 'stocks' && !window._stocksPageInit) {
     window._stocksPageInit = true;
     initStocksPage();
@@ -5847,6 +6031,7 @@ function loadStock(ticker) {
     document.querySelectorAll('.stk-type-toggle').forEach((t,i) => t.classList.toggle('active', i===0));
     document.querySelectorAll('.stk-toggle').forEach(t => t.classList.toggle('active', t.textContent === 'YTD'));
     renderStockChart('ytd');
+    renderBorrowSection(ticker);
   }
 }
 
@@ -5857,6 +6042,109 @@ document.addEventListener('click', e => {
     if (r) r.classList.remove('visible');
   }
 });
+
+/* ── Ability to Borrow — audience-sourced rating ── */
+let borrowChartInstance = null;
+
+function renderBorrowSection(ticker) {
+  const resultsEl = document.getElementById('stkBorrowResults');
+  const formEl = document.getElementById('stkBorrowForm');
+  if (!resultsEl || !formEl) return;
+
+  const data = BORROW_DATA[ticker];
+  const total = data ? data.easy + data.difficult : 0;
+
+  /* ── Results area ── */
+  if (total >= 10) {
+    const easyPct = Math.round((data.easy / total) * 100);
+    const diffPct = 100 - easyPct;
+    const isHigh = easyPct >= 60;
+    resultsEl.innerHTML =
+      '<div class="stk-borrow-result">' +
+        '<div class="stk-borrow-chart-wrap"><canvas id="borrowChart"></canvas></div>' +
+        '<div class="stk-borrow-info">' +
+          '<div class="stk-borrow-label ' + (isHigh ? 'high' : 'low') + '">' + (isHigh ? 'High' : 'Low') + '</div>' +
+          '<div class="stk-borrow-legend">Easy ' + easyPct + '% · Difficult ' + diffPct + '%</div>' +
+        '</div>' +
+      '</div>';
+    if (borrowChartInstance) borrowChartInstance.destroy();
+    borrowChartInstance = new Chart(document.getElementById('borrowChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Easy to Borrow', 'Difficult to Borrow'],
+        datasets: [{ data: [data.easy, data.difficult], backgroundColor: ['#22C55E', '#FF2137'], borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0E1D29', padding: 10, cornerRadius: 8, callbacks: { label: function(ctx) { return ctx.label + ': ' + Math.round(ctx.parsed / total * 100) + '%'; } } } }
+      }
+    });
+  } else if (total > 0) {
+    if (borrowChartInstance) { borrowChartInstance.destroy(); borrowChartInstance = null; }
+    resultsEl.innerHTML = '<div class="stk-borrow-waiting">Awaiting more user inputs (' + total + ' vote' + (total > 1 ? 's' : '') + ' so far)</div>';
+  } else {
+    if (borrowChartInstance) { borrowChartInstance.destroy(); borrowChartInstance = null; }
+    resultsEl.innerHTML = '<div class="stk-borrow-empty">No data yet — be the first to report</div>';
+  }
+
+  /* ── Vote form ── */
+  if (borrowVoted[ticker]) {
+    formEl.innerHTML = '<div class="stk-borrow-thanks">Thanks for your input!</div>';
+    return;
+  }
+  formEl.innerHTML =
+    '<div class="stk-borrow-form">' +
+      '<div class="stk-borrow-q">Are you having difficulty borrowing ' + ticker + '?</div>' +
+      '<div class="stk-borrow-options">' +
+        '<button class="stk-borrow-opt" data-val="easy" onclick="selectBorrowOpt(this)">Easy to Borrow</button>' +
+        '<button class="stk-borrow-opt" data-val="difficult" onclick="selectBorrowOpt(this)">Difficult to Borrow</button>' +
+      '</div>' +
+      '<div class="stk-borrow-q">Which brokerage?</div>' +
+      '<select class="stk-borrow-select" id="borrowBrokerage" onchange="checkBorrowReady()">' +
+        '<option value="">Select brokerage...</option>' +
+        '<option>Robinhood</option>' +
+        '<option>Fidelity</option>' +
+        '<option>Charles Schwab</option>' +
+        '<option>Webull</option>' +
+        '<option>Interactive Brokers</option>' +
+        '<option>Other</option>' +
+      '</select>' +
+      '<button class="stk-borrow-submit" id="borrowSubmitBtn" disabled onclick="submitBorrowVote(\'' + ticker + '\')">Submit</button>' +
+    '</div>';
+}
+
+function selectBorrowOpt(el) {
+  el.parentElement.querySelectorAll('.stk-borrow-opt').forEach(function(b) { b.classList.remove('selected'); });
+  el.classList.add('selected');
+  checkBorrowReady();
+}
+
+function checkBorrowReady() {
+  var sel = document.querySelector('.stk-borrow-opt.selected');
+  var brk = document.getElementById('borrowBrokerage');
+  var btn = document.getElementById('borrowSubmitBtn');
+  if (btn) btn.disabled = !(sel && brk && brk.value);
+}
+
+function submitBorrowVote(ticker) {
+  var sel = document.querySelector('.stk-borrow-opt.selected');
+  var brk = document.getElementById('borrowBrokerage');
+  if (!sel || !brk || !brk.value) return;
+
+  var vote = sel.getAttribute('data-val');
+  var brokerage = brk.value;
+
+  if (!BORROW_DATA[ticker]) BORROW_DATA[ticker] = { easy: 0, difficult: 0, brokerages: {} };
+  var d = BORROW_DATA[ticker];
+  if (vote === 'easy') d.easy++; else d.difficult++;
+  if (!d.brokerages[brokerage]) d.brokerages[brokerage] = { easy: 0, difficult: 0 };
+  if (vote === 'easy') d.brokerages[brokerage].easy++; else d.brokerages[brokerage].difficult++;
+
+  borrowVoted[ticker] = true;
+  renderBorrowSection(ticker);
+}
 
 /* ══════════════════════════════════════════════════
    INVESTIGATOR PROFILE PAGE
@@ -6643,6 +6931,16 @@ const STOCK_DATABASE = [
   { ticker: 'SOFI', name: 'SoFi Technologies', price: 9.80, change: 1.5, reports: 0, type: 'stock' },
 ];
 
+/* ── Borrow crowd-source data (mock) ─────────── */
+const BORROW_DATA = {
+  CVNA: { easy: 18, difficult: 7, brokerages: { Robinhood:{easy:5,difficult:2}, Fidelity:{easy:4,difficult:1}, 'Charles Schwab':{easy:3,difficult:2}, Webull:{easy:3,difficult:1}, 'Interactive Brokers':{easy:3,difficult:1} } },
+  DKNG: { easy: 12, difficult: 3, brokerages: { Robinhood:{easy:4,difficult:1}, Fidelity:{easy:3,difficult:0}, Webull:{easy:3,difficult:1}, 'Interactive Brokers':{easy:2,difficult:1} } },
+  TSLA: { easy: 22, difficult: 2, brokerages: { Robinhood:{easy:8,difficult:0}, Fidelity:{easy:6,difficult:1}, 'Charles Schwab':{easy:4,difficult:0}, Webull:{easy:2,difficult:1}, 'Interactive Brokers':{easy:2,difficult:0} } },
+  ACME: { easy: 3, difficult: 5, brokerages: { Fidelity:{easy:1,difficult:2}, 'Interactive Brokers':{easy:2,difficult:3} } },
+  SOLR: { easy: 2, difficult: 1, brokerages: { Robinhood:{easy:1,difficult:1}, Fidelity:{easy:1,difficult:0} } },
+};
+const borrowVoted = {};
+
 const INV_DATABASE = INV_POOL.map(name => ({
   ticker: name.split(' ').map(w => w[0]).join('').toUpperCase(),
   name: name,
@@ -7177,41 +7475,156 @@ function handleSearchPageInput(query) {
   renderSearchResults(query);
 }
 
+function buildReportIndex() {
+  var reports = [];
+  INVESTIGATOR_DATA.forEach(function(inv) {
+    if (!inv.reportHistory) return;
+    inv.reportHistory.forEach(function(r) {
+      var stock = STOCK_DATABASE.find(function(s) { return s.ticker === r.ticker; });
+      reports.push({
+        ticker: r.ticker,
+        company: stock ? stock.name : r.ticker,
+        investigator: inv.name,
+        date: r.date,
+        impact: r.allTime
+      });
+    });
+  });
+  return reports;
+}
+
 function renderSearchResults(query) {
   var container = document.getElementById('srchResults');
   var q = (query || '').toLowerCase().trim();
-  var matches = STOCK_DATABASE;
-  if (q.length > 0) {
-    matches = STOCK_DATABASE.filter(function(s) {
-      return s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
-    });
-  }
 
-  if (matches.length === 0) {
-    container.innerHTML = '<div class="srch-empty">No stocks found matching &ldquo;' + query + '&rdquo;. Try a different search or add it to your watchlist below.</div>';
+  /* Empty query: browse mode — show all stocks */
+  if (q.length === 0) {
+    var html = '<div class="srch-section-label">All Stocks (' + STOCK_DATABASE.length + ')</div>';
+    html += '<div class="srch-results-grid">';
+    html += STOCK_DATABASE.map(function(s) {
+      var badgeCls = s.reports > 0 ? 'has' : 'none';
+      var badgeText = s.reports > 0 ? s.reports + ' report' + (s.reports > 1 ? 's' : '') : 'No reports';
+      return '<div class="srch-card" onclick="loadStock(\'' + s.ticker + '\');navigateTo(\'stock\')">' +
+        '<div class="srch-card-ticker">' + s.ticker + '</div>' +
+        '<div class="srch-card-name">' + s.name + '</div>' +
+        '<span class="srch-card-badge ' + badgeCls + '">' + badgeText + '</span>' +
+        '</div>';
+    }).join('');
+    html += '</div>';
+    container.innerHTML = html;
     return;
   }
 
-  container.innerHTML = matches.map(function(s) {
-    var badgeCls = s.reports > 0 ? 'has' : 'none';
-    var badgeText = s.reports > 0 ? s.reports + ' report' + (s.reports > 1 ? 's' : '') : 'No reports';
-    return '<div class="srch-card" onclick="loadStock(\'' + s.ticker + '\');navigateTo(\'stock\')">' +
-      '<div class="srch-card-ticker">' + s.ticker + '</div>' +
-      '<div class="srch-card-name">' + s.name + '</div>' +
-      '<span class="srch-card-badge ' + badgeCls + '">' + badgeText + '</span>' +
-      '</div>';
-  }).join('');
+  /* Search across stocks, investigators, reports */
+  var stockMatches = STOCK_DATABASE.filter(function(s) {
+    return s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
+  });
+
+  var invMatches = INVESTIGATOR_DATA.filter(function(inv) {
+    return inv.name.toLowerCase().includes(q);
+  });
+
+  var allReports = buildReportIndex();
+  var reportMatches = allReports.filter(function(r) {
+    return r.ticker.toLowerCase().includes(q) ||
+           r.company.toLowerCase().includes(q) ||
+           r.investigator.toLowerCase().includes(q) ||
+           r.date.toLowerCase().includes(q);
+  });
+
+  var totalMatches = stockMatches.length + invMatches.length + reportMatches.length;
+
+  if (totalMatches === 0) {
+    var looksLikeTicker = /^[A-Z]{1,5}$/.test(query.trim());
+    if (looksLikeTicker) {
+      container.innerHTML =
+        '<div class="srch-empty">No results found for &ldquo;' + query + '&rdquo;</div>' +
+        '<div class="srch-watchlist">' +
+          '<div class="srch-watchlist-title">Add to Watchlist</div>' +
+          '<div class="srch-watchlist-sub">This stock isn&rsquo;t in our database yet. Add it to your watchlist and we&rsquo;ll notify you when coverage becomes available.</div>' +
+          '<div class="srch-watchlist-form">' +
+            '<input class="srch-watchlist-input" id="srchWlTicker" type="text" placeholder="Ticker" style="width:130px" value="' + query.trim() + '">' +
+            '<input class="srch-watchlist-input" id="srchWlCompany" type="text" placeholder="Company name" style="flex:1;min-width:180px">' +
+            '<button class="srch-watchlist-btn" onclick="submitWatchlistRequest()">Add to Watchlist</button>' +
+          '</div>' +
+          '<div class="srch-watchlist-success" id="srchWlSuccess">&#10003; Added to your watchlist! We&rsquo;ll notify you when coverage is available.</div>' +
+        '</div>';
+    } else {
+      container.innerHTML = '<div class="srch-empty">No results found for &ldquo;' + query + '&rdquo;. Try searching by ticker symbol, company name, or investigator name.</div>';
+    }
+    return;
+  }
+
+  var html = '';
+
+  /* Stocks section */
+  if (stockMatches.length > 0) {
+    html += '<div class="srch-section-label">Stocks (' + stockMatches.length + ')</div>';
+    html += '<div class="srch-results-grid">';
+    html += stockMatches.map(function(s) {
+      var badgeCls = s.reports > 0 ? 'has' : 'none';
+      var badgeText = s.reports > 0 ? s.reports + ' report' + (s.reports > 1 ? 's' : '') : 'No reports';
+      return '<div class="srch-card" onclick="loadStock(\'' + s.ticker + '\');navigateTo(\'stock\')">' +
+        '<div class="srch-card-ticker">' + s.ticker + '</div>' +
+        '<div class="srch-card-name">' + s.name + '</div>' +
+        '<span class="srch-card-badge ' + badgeCls + '">' + badgeText + '</span>' +
+        '</div>';
+    }).join('');
+    html += '</div>';
+  }
+
+  /* Investigators section */
+  if (invMatches.length > 0) {
+    html += '<div class="srch-section-label">Investigators (' + invMatches.length + ')</div>';
+    html += '<div class="srch-inv-grid">';
+    html += invMatches.map(function(inv) {
+      var idx = INVESTIGATOR_DATA.indexOf(inv);
+      var color = INV_LOGO_COLORS[idx % INV_LOGO_COLORS.length] || '#35A5CF';
+      var typeLabel = inv.type === 'activist' ? 'Activist' : 'Researcher';
+      return '<div class="srch-inv-card" style="border-left-color:' + color + '" onclick="navigateToInvProfile(\'' + inv.name.replace(/'/g, "\\'") + '\')">' +
+        '<div class="srch-inv-card-name">' + inv.name + '</div>' +
+        '<span class="srch-inv-card-type">' + typeLabel + '</span>' +
+        '<div class="srch-inv-card-stats">' + inv.reports + ' reports &middot; ' + inv.winRatio + '% win ratio</div>' +
+        '</div>';
+    }).join('');
+    html += '</div>';
+  }
+
+  /* Reports section */
+  if (reportMatches.length > 0) {
+    var capped = reportMatches.slice(0, 20);
+    html += '<div class="srch-section-label">Reports (' + reportMatches.length + (reportMatches.length > 20 ? ', showing 20' : '') + ')</div>';
+    html += '<div class="srch-report-list">';
+    html += capped.map(function(r) {
+      var impactColor = r.impact >= 0 ? '#22C55E' : '#FF2137';
+      var impactText = (r.impact >= 0 ? '+' : '') + r.impact.toFixed(1) + '%';
+      return '<div class="srch-report-row" onclick="loadStock(\'' + r.ticker + '\');navigateTo(\'stock\')">' +
+        '<span class="srch-report-ticker">' + r.ticker + '</span>' +
+        '<span class="srch-report-company">' + r.company + '</span>' +
+        '<span class="srch-report-inv">' + r.investigator + '</span>' +
+        '<span class="srch-report-date">' + r.date + '</span>' +
+        '<span class="srch-report-impact" style="color:' + impactColor + '">' + impactText + '</span>' +
+        '</div>';
+    }).join('');
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
 }
 
 function submitWatchlistRequest() {
-  var ticker = document.getElementById('srchWlTicker').value.trim();
-  var company = document.getElementById('srchWlCompany').value.trim();
-  if (!ticker) { document.getElementById('srchWlTicker').focus(); return; }
-  document.getElementById('srchWlTicker').value = '';
-  document.getElementById('srchWlCompany').value = '';
+  var tickerEl = document.getElementById('srchWlTicker');
+  if (!tickerEl) return;
+  var ticker = tickerEl.value.trim();
+  if (!ticker) { tickerEl.focus(); return; }
+  tickerEl.value = '';
+  var companyEl = document.getElementById('srchWlCompany');
+  if (companyEl) companyEl.value = '';
   var msg = document.getElementById('srchWlSuccess');
-  msg.classList.add('visible');
-  setTimeout(function() { msg.classList.remove('visible'); }, 4000);
+  if (msg) {
+    msg.classList.add('visible');
+    setTimeout(function() { msg.classList.remove('visible'); }, 4000);
+  }
 }
 
 function submitAboutForm() {
