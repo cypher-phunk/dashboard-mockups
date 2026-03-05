@@ -29,56 +29,83 @@
 
   /* ── Top Nav (matches Figma exactly) ───────────── */
   .topnav {
-    background: var(--navy);
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 30px;
+    padding: 14px 30px;
     position: sticky;
     top: 0;
     z-index: 100;
+    border-bottom: 1px solid var(--grey2);
+    max-height: 72px;
   }
   .topnav-logo {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .topnav-logo span { color: var(--red); }
-  .topnav-links { display: flex; gap: 28px; list-style: none; }
-  .topnav-links a {
-    color: var(--white);
-    font-size: 16px;
-    opacity: .8;
-    transition: opacity .2s;
-    font-weight: 400;
-  }
-  .topnav-links a:hover { opacity: 1; }
-  .topnav-links a.active { color: var(--red); opacity: 1; font-weight: 600; }
-  .topnav-right { display: flex; align-items: center; gap: 24px; }
-  .topnav-user {
-    color: var(--white);
-    font-size: 16px;
-    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    flex-shrink: 0;
+    margin-right: auto;
   }
-  .topnav-user svg { opacity: .7; }
-  .btn-cta {
-    background: var(--white);
+  .topnav-logo img {
+    width: 200px;
+    height: auto;
+    display: block;
+  }
+  .topnav-links { display: flex; gap: 24px; list-style: none; }
+  .topnav-links a {
     color: var(--navy);
-    border: 1px solid var(--blue);
-    border-radius: 41px;
-    padding: 10px 20px;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 3px 0 0 var(--blue);
-    transition: transform .15s, box-shadow .15s;
+    transition: color .2s;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .btn-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 0 0 var(--blue); }
+  .topnav-links a:hover { color: rgba(14,29,41,.6); }
+  .topnav-links a.active {
+    color: var(--navy);
+    position: relative;
+  }
+  .topnav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 1px;
+  }
+  .topnav-right { display: flex; align-items: center; gap: 12px; }
+  .topnav-user {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--navy);
+    border-radius: 6px;
+    color: var(--navy);
+    cursor: pointer;
+    transition: background .2s;
+    background: transparent;
+  }
+  .topnav-user:hover { background: rgba(14,29,41,.05); }
+  .topnav-user svg { width: 16px; height: 16px; }
+  .btn-cta {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    font-style: italic;
+    cursor: pointer;
+    transition: background .2s;
+    white-space: nowrap;
+    letter-spacing: .3px;
+  }
+  .btn-cta:hover { background: #1a2d3d; }
 
   /* ── Hero ──────────────────────────────────────── */
   .hero {
@@ -2215,12 +2242,20 @@
   .stks-timeline-value {
     font-size: 26px;
     font-weight: 800;
-    color: var(--navy);
+    color: #fff;
     line-height: 1.2;
   }
+  .stks-timeline-change {
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .stks-timeline-change.up { color: #22C55E; }
+  .stks-timeline-change.down { color: #FF2137; }
+  .stks-timeline-change.flat { color: rgba(255,255,255,.4); }
   .stks-timeline-label {
     font-size: 10px;
-    color: var(--grey3);
+    color: rgba(255,255,255,.55);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .4px;
@@ -2234,13 +2269,13 @@
     font-size: 13px;
   }
   .stks-detail-label {
-    color: var(--grey3);
+    color: rgba(255,255,255,.55);
     font-weight: 500;
     min-width: 85px;
   }
   .stks-detail-value {
     font-weight: 700;
-    color: var(--navy);
+    color: #fff;
   }
   .stks-inv-cell {
     display: flex;
@@ -2320,6 +2355,278 @@
     font-size: 12px;
     color: var(--grey3);
     margin-left: 12px;
+  }
+
+  /* ── Search page ─────────────────────────── */
+  .srch-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+  .srch-input-wrap {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .srch-input {
+    width: 100%;
+    height: 52px;
+    border: 2px solid var(--grey2);
+    border-radius: 14px;
+    padding: 0 20px 0 48px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--navy);
+    background: #fff;
+    outline: none;
+    transition: border-color .15s;
+    box-sizing: border-box;
+  }
+  .srch-input:focus { border-color: var(--blue); }
+  .srch-input::placeholder { color: var(--grey3); }
+  .srch-input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--grey3);
+    pointer-events: none;
+  }
+  .srch-input-icon svg { width: 20px; height: 20px; }
+  .srch-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .srch-card {
+    background: #fff;
+    border: 1px solid var(--grey2);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .srch-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(14,29,41,.08); }
+  .srch-card-ticker {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .srch-card-name {
+    font-size: 12px;
+    color: var(--grey3);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .srch-card-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .srch-card-badge.has { background: rgba(34,197,94,.12); color: #22C55E; }
+  .srch-card-badge.none { background: var(--grey1); color: var(--grey3); }
+  .srch-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--grey3);
+    font-size: 14px;
+  }
+  .srch-watchlist {
+    background: var(--grey1);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 8px;
+  }
+  .srch-watchlist-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .srch-watchlist-sub {
+    font-size: 13px;
+    color: var(--grey3);
+    margin-bottom: 16px;
+  }
+  .srch-watchlist-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .srch-watchlist-input {
+    height: 40px;
+    border: 1px solid var(--grey2);
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--navy);
+    background: #fff;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .srch-watchlist-input:focus { border-color: var(--blue); }
+  .srch-watchlist-input::placeholder { color: var(--grey3); }
+  .srch-watchlist-btn {
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--navy);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .srch-watchlist-btn:hover { background: #162a3a; }
+  .srch-watchlist-success {
+    font-size: 13px;
+    font-weight: 600;
+    color: #22C55E;
+    display: none;
+    margin-top: 10px;
+  }
+  .srch-watchlist-success.visible { display: block; }
+
+  /* ── About page ──────────────────────────── */
+  .about-wrap {
+    max-width: 860px;
+  }
+  .about-section {
+    margin-bottom: 32px;
+  }
+  .about-section-header {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 18px 22px;
+    color: #fff;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(14,29,41,.12);
+  }
+  .about-section-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .about-section-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,.55);
+  }
+  .about-metrics {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .about-metric-card {
+    background: #fff;
+    border: 1px solid var(--grey2);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .about-metric-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .about-metric-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--grey3);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 4px;
+    margin-top: 12px;
+  }
+  .about-metric-text {
+    font-size: 13px;
+    color: #4a5568;
+    line-height: 1.6;
+  }
+
+  /* ── About page section previews ─────── */
+  .about-preview {
+    background: var(--grey1);
+    border: 1px solid var(--grey2);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  .about-preview-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--grey3);
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .about-preview-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 16px;
+    border-left: 4px solid var(--grey2);
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(14,29,41,.04);
+  }
+  .about-preview-summary.red { border-left-color: #FF2137; }
+  .about-preview-summary.green { border-left-color: #22C55E; }
+  .about-preview-summary.amber { border-left-color: #F59E0B; }
+  .about-preview-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+  }
+  .about-preview-tile {
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border-top: 3px solid var(--grey2);
+    box-shadow: 0 1px 3px rgba(14,29,41,.04);
+  }
+  .about-preview-tile.red { border-top-color: #FF2137; }
+  .about-preview-tile.green { border-top-color: #22C55E; }
+  .about-preview-tile.amber { border-top-color: #F59E0B; }
+  .about-preview-tile-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .about-preview-tile-score {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .about-preview-tile-status {
+    font-size: 9px;
+    font-weight: 600;
+  }
+  .about-preview-caption {
+    font-size: 10px;
+    color: var(--grey3);
+    margin-top: 8px;
+    text-align: right;
+    font-style: italic;
   }
 
   /* ── Horizontal bar chart wrapper ────────── */
@@ -2435,21 +2742,21 @@
 
 <!-- ═══ TOP NAV ═══════════════════════════════════ -->
 <nav class="topnav">
-  <div class="topnav-logo">ACTIV<span>8</span>INSIGHTS</div>
+  <a class="topnav-logo" href="#">
+    <img src="https://activ8insights.com/wp-content/uploads/2026/01/full-logo-light-mode-transparent.svg" alt="Activ8Insights">
+  </a>
   <ul class="topnav-links">
     <li><a href="#">News</a></li>
     <li><a href="#">Reports</a></li>
-    <li><a href="#">Activist &amp; Researchers</a></li>
-    <li><a href="#" class="active">Dashboard</a></li>
-    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Investigators</a></li>
     <li><a href="#">Learn</a></li>
+    <li><a href="#" class="active">Dashboard</a></li>
   </ul>
   <div class="topnav-right">
-    <div class="topnav-user">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
-      Hi, David
-    </div>
-    <button class="btn-cta">Join Newsletter</button>
+    <a class="topnav-user" href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
+    </a>
+    <button class="btn-cta">Newsletter</button>
   </div>
 </nav>
 
@@ -2477,21 +2784,13 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 17V13"/><path d="M12 17V9"/><path d="M17 17V5"/></svg>
       <span class="tip">Stocks</span>
     </div>
-    <div class="sb-icon sb-example-stock" onclick="navigateTo('stock')">
+    <div class="sb-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span class="tip">Example: CVNA</span>
-    </div>
-    <div class="sb-icon sb-example-stock" onclick="navigateToInvProfile('Muddy Waters')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="tip">Example: Muddy Waters</span>
+      <span class="tip">Search</span>
     </div>
     <div class="sb-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span class="tip">Monthly Reports</span>
-    </div>
-    <div class="sb-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-      <span class="tip">Sectors</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span class="tip">About</span>
     </div>
     <div class="sb-spacer"></div>
     <div class="sb-avatar">
@@ -3665,16 +3964,16 @@
 
     <!-- ═══ CALLOUT CARDS ═══ -->
     <div class="stks-callout-row">
-      <div class="card">
-        <div class="card-label">Report Timeline</div>
+      <div class="inv-tile">
+        <div class="inv-tile-label">Reports Published</div>
         <div class="stks-timeline-grid" id="stksTimeline"></div>
       </div>
-      <div class="card">
-        <div class="card-label">Most Recent Report</div>
+      <div class="inv-tile">
+        <div class="inv-tile-label">Most Recent Report</div>
         <div id="stksRecentCard"></div>
       </div>
-      <div class="card">
-        <div class="card-label">Most Impactful Report <span style="font-weight:400;text-transform:none;letter-spacing:0">(30 days)</span></div>
+      <div class="inv-tile">
+        <div class="inv-tile-label">Most Impactful Report <span style="font-weight:400;text-transform:none;letter-spacing:0">(30 days)</span></div>
         <div id="stksImpactCard"></div>
       </div>
     </div>
@@ -3739,6 +4038,325 @@
       <div class="stks-pagination" id="stksPagination"></div>
     </div>
   </div><!-- /page-stocks -->
+
+  <!-- ────────── PAGE: SEARCH ────────── -->
+  <div id="page-search" class="page" style="margin-top:8px">
+    <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px">Search Stocks</div>
+    <div style="font-size:13px;color:var(--grey3);margin-bottom:24px">Find any stock in our database by ticker or company name</div>
+    <div class="srch-wrap">
+      <div style="background:var(--grey1);border-radius:14px;padding:20px 24px;margin-bottom:24px">
+        <div style="font-size:13px;color:var(--navy);line-height:1.6">Search for any stock in our database by ticker symbol or company name. If a stock isn&rsquo;t listed, you can add it to your watchlist below and we&rsquo;ll notify you when coverage becomes available.</div>
+      </div>
+      <div class="srch-input-wrap">
+        <span class="srch-input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <input class="srch-input" id="srchInput" type="text" placeholder="Search by ticker or company name..." oninput="handleSearchPageInput(this.value)">
+      </div>
+      <div class="srch-results" id="srchResults"></div>
+      <div class="srch-watchlist">
+        <div class="srch-watchlist-title">Can&rsquo;t find what you&rsquo;re looking for?</div>
+        <div class="srch-watchlist-sub">Add a stock to your watchlist and we&rsquo;ll notify you when coverage becomes available.</div>
+        <div class="srch-watchlist-form" id="srchWatchlistForm">
+          <input class="srch-watchlist-input" id="srchWlTicker" type="text" placeholder="Ticker (e.g. AAPL)" style="width:130px">
+          <input class="srch-watchlist-input" id="srchWlCompany" type="text" placeholder="Company name" style="flex:1;min-width:180px">
+          <button class="srch-watchlist-btn" onclick="submitWatchlistRequest()">Add to Watchlist</button>
+        </div>
+        <div class="srch-watchlist-success" id="srchWlSuccess">&#10003; Added to your watchlist! We&rsquo;ll notify you when coverage is available.</div>
+      </div>
+    </div>
+  </div><!-- /page-search -->
+
+  <!-- ────────── PAGE: ABOUT ────────── -->
+  <div id="page-about" class="page" style="margin-top:8px">
+    <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px">About This Dashboard</div>
+    <div style="font-size:13px;color:var(--grey3);margin-bottom:24px">How we analyze stocks and what our metrics mean</div>
+    <div class="about-wrap">
+
+      <!-- Intro -->
+      <div style="background:var(--grey1);border-radius:14px;padding:32px;margin-bottom:28px">
+        <div style="font-size:20px;font-weight:800;color:var(--navy);margin-bottom:12px">Our Approach</div>
+        <div style="font-size:14px;color:#4a5568;line-height:1.8">Activ8 Insights combines publicly available financial data with our own proprietary analytics to surface early warning signals in stocks targeted by activist short sellers. We pull data from SEC filings, earnings reports, insider transaction disclosures, and financial statement databases &mdash; then run our own scoring models on top of that raw data.</div>
+        <div style="font-size:14px;color:#4a5568;line-height:1.8;margin-top:12px">Our team of experienced financial data analysts continuously refines these models to ensure the data you see is accurate, timely, and actionable. Every metric is standardized against industry peers so you can compare companies on a level playing field.</div>
+      </div>
+
+      <!-- Stock page context -->
+      <div style="background:var(--navy);border-radius:14px;padding:18px 22px;margin-bottom:28px;color:#fff;box-shadow:0 2px 8px rgba(14,29,41,.12)">
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px">Understanding the Stock Page</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.6">The metrics described below power the analysis you see on each individual <strong style="color:#fff">Stock page</strong>. When you click into a stock, you&rsquo;ll find composite scores for Business Model Quality, Balance Sheet Stress, and Governance &mdash; each rated 0&ndash;10 relative to sector peers. This section explains what each metric measures, why it matters, and how we score it.</div>
+      </div>
+
+      <!-- Section 1: Business Model Quality Signals -->
+      <div class="about-section">
+        <div class="about-section-header">
+          <div class="about-section-title">Business Model Quality Signals</div>
+          <div class="about-section-desc">Is the company&rsquo;s core business healthy? These metrics look at revenue quality, margins, and cost efficiency.</div>
+        </div>
+        <div class="about-preview">
+          <div class="about-preview-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            As seen on the Stock page
+          </div>
+          <div class="about-preview-summary amber">
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:600;color:var(--navy)">Business Model Quality Signals</div>
+              <div style="font-size:10px;font-weight:600;color:#F59E0B;margin-top:2px">On par with peers</div>
+            </div>
+            <div style="font-size:24px;font-weight:800;color:#F59E0B;line-height:1">5.1</div>
+          </div>
+          <div class="about-preview-tiles">
+            <div class="about-preview-tile red">
+              <div class="about-preview-tile-name">Revenue Quality Decay</div>
+              <div class="about-preview-tile-score" style="color:#FF2137">3.2</div>
+              <div class="about-preview-tile-status" style="color:#FF2137">Below peers</div>
+            </div>
+            <div class="about-preview-tile green">
+              <div class="about-preview-tile-name">Gross Margin Compression</div>
+              <div class="about-preview-tile-score" style="color:#22C55E">7.5</div>
+              <div class="about-preview-tile-status" style="color:#22C55E">Better than peers</div>
+            </div>
+            <div class="about-preview-tile amber">
+              <div class="about-preview-tile-name">Operating Leverage</div>
+              <div class="about-preview-tile-score" style="color:#F59E0B">5.4</div>
+              <div class="about-preview-tile-status" style="color:#F59E0B">On par with peers</div>
+            </div>
+          </div>
+          <div class="about-preview-caption">Sample data &mdash; CVNA</div>
+        </div>
+        <div class="about-metrics">
+
+          <!-- RQD -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Revenue Quality Divergence (RQD)</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Are the company&rsquo;s sales actually turning into cash?</strong> A company can report revenue on paper, but if accounts receivable are growing faster than revenue, it may signal that customers aren&rsquo;t paying, demand is weak, or the company is &ldquo;stuffing the channel.&rdquo; Higher RQD = worse.</div>
+            <div class="about-metric-sub">How it works</div>
+            <div class="about-metric-text">We compare accounts receivable growth to revenue growth over the past 3 years. If receivables are outpacing revenue, that gap is the RQD score. We then compare each company against its <strong>industry peers</strong> using z-score standardization, so a restaurant chain is compared to other restaurants &mdash; not to software companies. The final score is scaled 0&ndash;10.</div>
+          </div>
+
+          <!-- GMC -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Gross Margin Compression (GMC)</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Are the company&rsquo;s sales actually profitable?</strong> If the cost to make a product is rising faster than revenue, margins are shrinking. That means weaker pricing power, increased competition, or declining unit economics. Lower GMC = worse.</div>
+            <div class="about-metric-sub">How it works</div>
+            <div class="about-metric-text">We calculate gross margin (revenue minus cost of goods, divided by revenue) for the last 3 years and track the year-over-year change. Compared against industry peers using the same z-score standardization as RQD. Margin pressure is one of the earliest signals before a company lowers guidance.</div>
+          </div>
+
+          <!-- OLB -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Operating Leverage Breakdown (OLB)</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>If this business grew, would it scale efficiently or burn through cash?</strong> When operating costs (hiring, R&amp;D, operations) grow faster than revenue, the company&rsquo;s &ldquo;flywheel&rdquo; is slowing down. Growth becomes cash-consumptive instead of cash-generative. Lower OLB = worse.</div>
+            <div class="about-metric-sub">How it works</div>
+            <div class="about-metric-text">We divide revenue growth by operating expense growth year-over-year. Industry z-scoring is essential here &mdash; software firms naturally run higher opex ratios than industrials. This metric is widely used by hedge funds as an early warning that margins are about to compress and guidance is about to drop.</div>
+          </div>
+
+        </div>
+        <div style="font-size:11px;color:var(--grey3);margin-top:12px;padding:0 4px;line-height:1.5"><strong>Scoring note:</strong> All Business Model metrics use industry-level z-score standardization and a weighted composite formula (0.5 &times; ratio + 0.3 &times; raw), scaled to 0&ndash;10. This approach is standard in forensic accounting and credit risk models.</div>
+      </div>
+
+      <!-- Section 2: Balance Sheet Stress -->
+      <div class="about-section">
+        <div class="about-section-header">
+          <div class="about-section-title">Balance Sheet Stress</div>
+          <div class="about-section-desc">Can the company survive? These metrics evaluate liquidity, debt load, and financial fragility.</div>
+        </div>
+        <div class="about-preview">
+          <div class="about-preview-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            As seen on the Stock page
+          </div>
+          <div class="about-preview-summary red">
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:600;color:var(--navy)">Balance Sheet Stress</div>
+              <div style="font-size:10px;font-weight:600;color:#FF2137;margin-top:2px">Below peers</div>
+            </div>
+            <div style="font-size:24px;font-weight:800;color:#FF2137;line-height:1">4.3</div>
+          </div>
+          <div class="about-preview-tiles">
+            <div class="about-preview-tile red">
+              <div class="about-preview-tile-name">Cash Runway</div>
+              <div class="about-preview-tile-score" style="color:#FF2137">2.8</div>
+              <div class="about-preview-tile-status" style="color:#FF2137">&lt; 12 months</div>
+            </div>
+            <div class="about-preview-tile amber">
+              <div class="about-preview-tile-name">Leverage Ratio</div>
+              <div class="about-preview-tile-score" style="color:#F59E0B">6.1</div>
+              <div class="about-preview-tile-status" style="color:#F59E0B">40&ndash;70% range</div>
+            </div>
+            <div class="about-preview-tile green">
+              <div class="about-preview-tile-name">Cashflow Coverage</div>
+              <div class="about-preview-tile-score" style="color:#22C55E">8.2</div>
+              <div class="about-preview-tile-status" style="color:#22C55E">Strong coverage</div>
+            </div>
+            <div class="about-preview-tile red">
+              <div class="about-preview-tile-name">Interest Coverage</div>
+              <div class="about-preview-tile-score" style="color:#FF2137">3.5</div>
+              <div class="about-preview-tile-status" style="color:#FF2137">Below 2x</div>
+            </div>
+            <div class="about-preview-tile green">
+              <div class="about-preview-tile-name">Goodwill &amp; Intangibles</div>
+              <div class="about-preview-tile-score" style="color:#22C55E">7.0</div>
+              <div class="about-preview-tile-status" style="color:#22C55E">&lt; 30% of assets</div>
+            </div>
+          </div>
+          <div class="about-preview-caption">Sample data &mdash; CVNA</div>
+        </div>
+        <div class="about-metrics">
+
+          <!-- Cash Runway -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Cash Runway</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>How many months can the company survive on its current cash?</strong> Under 12 months is distressed territory. Under 6 months means a forced capital raise (diluting shareholders) or default is likely. One of the most predictive distress indicators.</div>
+            <div class="about-metric-sub">How it works</div>
+            <div class="about-metric-text">Cash on hand divided by monthly operating cash burn.</div>
+          </div>
+
+          <!-- Leverage Ratio -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Leverage Ratio</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>How much of the company&rsquo;s assets are already claimed by creditors?</strong> This captures structural vulnerability that cash runway alone can&rsquo;t detect.</div>
+            <div class="about-metric-sub">How to read it</div>
+            <div class="about-metric-text"><strong>&lt; 40%</strong> = strong balance sheet &bull; <strong>40&ndash;70%</strong> = normal risk &bull; <strong>&gt; 70%</strong> = fragile, high creditor dominance &bull; <strong>&gt; 90%</strong> = near-insolvency (small shocks can wipe out equity)</div>
+          </div>
+
+          <!-- Cashflow Coverage -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Cashflow Coverage</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>If the company had to rely on operations alone, could it cover its debts?</strong> Operating cash flow divided by total liabilities. Shows how quickly cash generation could service the full obligation stack.</div>
+          </div>
+
+          <!-- Interest Coverage Ratio -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Interest Coverage Ratio</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Can the company afford its interest payments?</strong> EBIT divided by interest expense. Below 2 is unsafe. Below 1 means the company literally cannot cover its interest &mdash; restructuring risk. Short sellers treat this as a flashing red light.</div>
+          </div>
+
+          <!-- Goodwill & Intangibles -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Goodwill &amp; Intangibles Dependence</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Is the balance sheet inflated by &ldquo;soft&rdquo; assets?</strong> High goodwill and intangibles (often from acquisitions) can collapse during downturns, triggering impairment charges and sharp stock declines. Above 30&ndash;40% of total assets is a warning sign.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Section 3: Governance -->
+      <div class="about-section">
+        <div class="about-section-header">
+          <div class="about-section-title">Governance</div>
+          <div class="about-section-desc">Are insiders acting like they believe in the company? These signals track executive behavior, selling patterns, and financial engineering.</div>
+        </div>
+        <div class="about-preview">
+          <div class="about-preview-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            As seen on the Stock page
+          </div>
+          <div class="about-preview-summary amber">
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:600;color:var(--navy)">Governance</div>
+              <div style="font-size:10px;font-weight:600;color:#F59E0B;margin-top:2px">On par with peers</div>
+            </div>
+            <div style="font-size:24px;font-weight:800;color:#F59E0B;line-height:1">6.2</div>
+          </div>
+          <div class="about-preview-tiles" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
+            <div class="about-preview-tile red">
+              <div class="about-preview-tile-name">Insider Selling Composite</div>
+              <div class="about-preview-tile-score" style="color:#FF2137">3.8</div>
+              <div class="about-preview-tile-status" style="color:#FF2137">Heavy selling</div>
+            </div>
+            <div class="about-preview-tile green">
+              <div class="about-preview-tile-name">CFO/CAO Turnover</div>
+              <div class="about-preview-tile-score" style="color:#22C55E">8.5</div>
+              <div class="about-preview-tile-status" style="color:#22C55E">Stable</div>
+            </div>
+            <div class="about-preview-tile amber">
+              <div class="about-preview-tile-name">Share Dilution Velocity</div>
+              <div class="about-preview-tile-score" style="color:#F59E0B">4.1</div>
+              <div class="about-preview-tile-status" style="color:#F59E0B">Moderate dilution</div>
+            </div>
+            <div class="about-preview-tile green">
+              <div class="about-preview-tile-name">Guidance Miss Rate</div>
+              <div class="about-preview-tile-score" style="color:#22C55E">7.9</div>
+              <div class="about-preview-tile-status" style="color:#22C55E">Mostly hits</div>
+            </div>
+          </div>
+          <div class="about-preview-caption">Sample data &mdash; CVNA</div>
+        </div>
+        <div class="about-metrics">
+
+          <!-- Net Insider Selling & Composite -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Insider Selling Composite Score</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Are company insiders selling their own stock?</strong> When executives and directors persistently sell &mdash; especially C-suite members &mdash; it signals low conviction in the company&rsquo;s future. Our composite score (0&ndash;1) combines four dimensions into a single governance risk measure.</div>
+            <div class="about-metric-sub">What goes into the score</div>
+            <div class="about-metric-text">
+              <strong>Net selling (40% weight):</strong> How much of their total stake have insiders sold over 3/6/12 months?<br>
+              <strong>Executive seniority (20%):</strong> Are the sellers C-suite or low-level? C-suite selling is far more informative.<br>
+              <strong>Transaction type (15%):</strong> Are trades open-market sales (bearish) or administrative/routine?<br>
+              <strong>Selling clusters (15%):</strong> Are multiple insiders selling within the same 30-day window? Coordinated selling is a stronger signal.<br>
+              <strong>Sale size vs. holdings (10%):</strong> Did insiders sell a large portion of their personal stake?
+            </div>
+            <div class="about-metric-text" style="margin-top:8px">Recent activity is weighted more heavily (6-month half-life decay). A score near 1.0 means heavy, recent, senior-level insider selling.</div>
+          </div>
+
+          <!-- CFO/CAO Turnover -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">CFO/CAO Turnover Rate</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Is the company churning through financial leadership?</strong> Frequent CFO changes can signal internal accounting problems, misalignment on financial goals, or executive instability. More than 3 turnovers in 24 months is excessive; 0 is stable.</div>
+            <div class="about-metric-sub">What we track</div>
+            <div class="about-metric-text">Number of CFO changes in trailing 36 months, average tenure, days since last change, and a full timeline of who held the role and for how long.</div>
+          </div>
+
+          <!-- Share Dilution Velocity -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Share Dilution Velocity</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Is the company issuing new shares without improving cash flow?</strong> When share count goes up but free cash flow goes down, that&rsquo;s financial engineering &mdash; shareholders are being diluted while the business deteriorates.</div>
+            <div class="about-metric-sub">How it works</div>
+            <div class="about-metric-text">We separately measure the rate of share dilution (DV) and the rate of free cash flow change (PSV), then combine them. A high DV&ndash;PSV score means dilution is rising while fundamentals are falling &mdash; a red flag that standard metrics like free cash flow per share can miss for quarters.</div>
+          </div>
+
+          <!-- Guidance-to-Actual Miss Rate -->
+          <div class="about-metric-card">
+            <div class="about-metric-title">Guidance-to-Actual Miss Rate</div>
+            <div class="about-metric-sub">The question</div>
+            <div class="about-metric-text"><strong>Is management consistently over-promising and under-delivering?</strong> We track the percentage of quarters where actual revenue or EPS came in below company guidance. A high or accelerating miss rate is a governance red flag.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Questions & Suggestions -->
+      <div class="about-section">
+        <div style="background:var(--grey1);border-radius:14px;padding:24px">
+          <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px">Have a Question or Suggestion?</div>
+          <div style="font-size:13px;color:var(--grey3);margin-bottom:16px">We&rsquo;re always looking to improve our analysis. If you have questions about how a metric works, or want to suggest a new metric we should consider, let us know below.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;max-width:560px">
+            <input class="srch-watchlist-input" id="aboutName" type="text" placeholder="Your name" style="width:100%">
+            <input class="srch-watchlist-input" id="aboutEmail" type="email" placeholder="Email address" style="width:100%">
+            <select class="inv-select" id="aboutType" style="height:40px;font-size:13px;border-radius:8px">
+              <option value="question">I have a question about a metric</option>
+              <option value="suggestion">I want to suggest a new metric</option>
+              <option value="feedback">General feedback</option>
+            </select>
+            <textarea class="srch-watchlist-input" id="aboutMessage" placeholder="Your message..." style="width:100%;height:100px;padding:12px 14px;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+            <div>
+              <button class="srch-watchlist-btn" onclick="submitAboutForm()">Send Message</button>
+            </div>
+            <div class="srch-watchlist-success" id="aboutSuccess">&#10003; Thanks for reaching out! Our team will get back to you shortly.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /page-about -->
 
   </main>
 </div>
@@ -4188,7 +4806,7 @@ function navigateTo(pageName) {
   if (target) target.classList.add('active');
 
   document.querySelectorAll('.sb-icon').forEach(el => el.classList.remove('active'));
-  const idxMap = { home: 0, investigators: 1, stocks: 2, stock: 3, 'inv-profile': 1 };
+  const idxMap = { home: 0, investigators: 1, stocks: 2, search: 3, about: 4, stock: -1, 'inv-profile': 1 };
   const idx = idxMap[pageName] ?? -1;
   const icons = document.querySelectorAll('.sb-icon');
   if (idx >= 0 && icons[idx]) icons[idx].classList.add('active');
@@ -4215,11 +4833,15 @@ function navigateTo(pageName) {
     window._stocksPageInit = true;
     initStocksPage();
   }
+  if (pageName === 'search' && !window._searchPageInit) {
+    window._searchPageInit = true;
+    initSearchPage();
+  }
 }
 
 /* Wire sidebar clicks */
 document.querySelectorAll('.sb-icon').forEach((icon, i) => {
-  const pages = ['home','investigators','stocks','stock'];
+  const pages = ['home','investigators','stocks','search','about'];
   if (i < pages.length) {
     icon.addEventListener('click', () => navigateTo(pages[i]));
   }
@@ -6378,38 +7000,58 @@ function renderStksCalloutCards() {
   const now = new Date('2026-02-17');
   const msPerDay = 86400000;
 
-  /* 1. Report Timeline */
-  const d7 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 7).length;
-  const d30 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 30).length;
-  const d90 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 90).length;
-  const d365 = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 365).length;
+  /* 1. Report Timeline — current period + prior period for % change */
+  function countInRange(daysBack) {
+    return stksAllData.filter(r => (now - r.dateObj) / msPerDay <= daysBack).length;
+  }
+  function countPriorRange(daysBack) {
+    return stksAllData.filter(r => {
+      var age = (now - r.dateObj) / msPerDay;
+      return age > daysBack && age <= daysBack * 2;
+    }).length;
+  }
+  function pctChange(curr, prev) {
+    if (prev === 0 && curr === 0) return { text: '0%', cls: 'flat' };
+    if (prev === 0) return { text: '+100%', cls: 'up' };
+    var pct = ((curr - prev) / prev * 100).toFixed(0);
+    if (pct > 0) return { text: '\u25B2 +' + pct + '%', cls: 'up' };
+    if (pct < 0) return { text: '\u25BC ' + pct + '%', cls: 'down' };
+    return { text: '0%', cls: 'flat' };
+  }
 
-  document.getElementById('stksTimeline').innerHTML = [
-    { val: d7, label: '7 Days' },
-    { val: d30, label: '30 Days' },
-    { val: d90, label: '90 Days' },
-    { val: d365, label: '365 Days' }
-  ].map(t => `<div class="stks-timeline-item"><div class="stks-timeline-value">${t.val}</div><div class="stks-timeline-label">${t.label}</div></div>`).join('');
+  var periods = [
+    { days: 7, label: 'Past 7 Days' },
+    { days: 30, label: 'Past 30 Days' },
+    { days: 90, label: 'Past 90 Days' },
+    { days: 365, label: 'Past 365 Days' }
+  ];
 
-  /* 2. Most Recent Report */
+  document.getElementById('stksTimeline').innerHTML = periods.map(function(t) {
+    var curr = countInRange(t.days);
+    var prev = countPriorRange(t.days);
+    var chg = pctChange(curr, prev);
+    return '<div class="stks-timeline-item"><div class="stks-timeline-value">' + curr + '</div><div class="stks-timeline-change ' + chg.cls + '">' + chg.text + '</div><div class="stks-timeline-label">' + t.label + '</div></div>';
+  }).join('');
+
+  /* 2. Most Recent Report — text only */
   const recent = stksAllData[0];
   if (recent) {
     document.getElementById('stksRecentCard').innerHTML = `
       <div style="margin-top:12px">
-        <span style="font-size:20px;font-weight:800;color:var(--navy)">${recent.ticker}</span>
-        <span style="font-size:13px;color:var(--grey3);margin-left:6px">${recent.company}</span>
+        <span style="font-size:20px;font-weight:800;color:#fff">${recent.ticker}</span>
+        <span style="font-size:13px;color:rgba(255,255,255,.55);margin-left:6px">${recent.company}</span>
       </div>
       <div class="stks-detail-row"><span class="stks-detail-label">Investigator</span><span class="stks-detail-value">${recent.investigator}</span></div>
       <div class="stks-detail-row"><span class="stks-detail-label">Published</span><span class="stks-detail-value">${recent.date}</span></div>`;
   }
 
-  /* 3. Most Impactful (30d) */
+  /* 3. Most Impactful (30d) — text only */
   const recent30d = stksAllData.filter(r => (now - r.dateObj) / msPerDay <= 30);
   const mostImpactful = [...recent30d].sort((a, b) => a.m1 - b.m1)[0];
   if (mostImpactful) {
     document.getElementById('stksImpactCard').innerHTML = `
       <div style="margin-top:10px;margin-bottom:8px"><span class="tag down">${mostImpactful.m1.toFixed(1)}%</span></div>
-      <div class="stks-detail-row"><span class="stks-detail-label">Stock</span><span class="stks-detail-value">${mostImpactful.ticker} <span style="font-weight:500;color:var(--grey3)">${mostImpactful.company}</span></span></div>
+      <div class="stks-detail-row"><span class="stks-detail-label">Stock</span><span class="stks-detail-value">${mostImpactful.ticker} <span style="font-weight:500;color:rgba(255,255,255,.55)">${mostImpactful.company}</span></span></div>
       <div class="stks-detail-row"><span class="stks-detail-label">Published</span><span class="stks-detail-value">${mostImpactful.date}</span></div>
       <div class="stks-detail-row"><span class="stks-detail-label">Investigator</span><span class="stks-detail-value">${mostImpactful.investigator}</span></div>`;
   }
@@ -6522,6 +7164,65 @@ function setStksTablePeriod(el, period) {
   stksCurrentPeriod = period;
   const sort = document.getElementById('stksSort').value;
   if (sort !== 'date') { applyStksFilters(); } else { renderStksTable(); }
+}
+
+/* ══════════════════════════════════════════════════
+   SEARCH PAGE
+   ══════════════════════════════════════════════════ */
+function initSearchPage() {
+  renderSearchResults('');
+}
+
+function handleSearchPageInput(query) {
+  renderSearchResults(query);
+}
+
+function renderSearchResults(query) {
+  var container = document.getElementById('srchResults');
+  var q = (query || '').toLowerCase().trim();
+  var matches = STOCK_DATABASE;
+  if (q.length > 0) {
+    matches = STOCK_DATABASE.filter(function(s) {
+      return s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
+    });
+  }
+
+  if (matches.length === 0) {
+    container.innerHTML = '<div class="srch-empty">No stocks found matching &ldquo;' + query + '&rdquo;. Try a different search or add it to your watchlist below.</div>';
+    return;
+  }
+
+  container.innerHTML = matches.map(function(s) {
+    var badgeCls = s.reports > 0 ? 'has' : 'none';
+    var badgeText = s.reports > 0 ? s.reports + ' report' + (s.reports > 1 ? 's' : '') : 'No reports';
+    return '<div class="srch-card" onclick="loadStock(\'' + s.ticker + '\');navigateTo(\'stock\')">' +
+      '<div class="srch-card-ticker">' + s.ticker + '</div>' +
+      '<div class="srch-card-name">' + s.name + '</div>' +
+      '<span class="srch-card-badge ' + badgeCls + '">' + badgeText + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+function submitWatchlistRequest() {
+  var ticker = document.getElementById('srchWlTicker').value.trim();
+  var company = document.getElementById('srchWlCompany').value.trim();
+  if (!ticker) { document.getElementById('srchWlTicker').focus(); return; }
+  document.getElementById('srchWlTicker').value = '';
+  document.getElementById('srchWlCompany').value = '';
+  var msg = document.getElementById('srchWlSuccess');
+  msg.classList.add('visible');
+  setTimeout(function() { msg.classList.remove('visible'); }, 4000);
+}
+
+function submitAboutForm() {
+  var message = document.getElementById('aboutMessage').value.trim();
+  if (!message) { document.getElementById('aboutMessage').focus(); return; }
+  document.getElementById('aboutName').value = '';
+  document.getElementById('aboutEmail').value = '';
+  document.getElementById('aboutMessage').value = '';
+  var msg = document.getElementById('aboutSuccess');
+  msg.classList.add('visible');
+  setTimeout(function() { msg.classList.remove('visible'); }, 5000);
 }
 
 </script>
